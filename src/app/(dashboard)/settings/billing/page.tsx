@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Check, Sparkles, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function BillingPage() {
+function BillingContent() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
@@ -66,5 +66,13 @@ export default function BillingPage() {
         </ul>
       </div>
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense fallback={<div>Loading billing details...</div>}>
+      <BillingContent />
+    </Suspense>
   );
 }
