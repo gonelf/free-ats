@@ -1,8 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { Button } from "@/components/ui/button";
-import { Plus, Users, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { InviteDialog } from "@/components/team/InviteDialog";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Team — Free ATS",
+};
 
 const roleLabel: Record<string, string> = {
   OWNER: "Owner",
@@ -32,6 +37,7 @@ export default async function TeamPage() {
   });
 
   const org = member.organization;
+  const canInvite = ["OWNER", "ADMIN"].includes(member.role);
 
   return (
     <div className="max-w-2xl">
@@ -42,10 +48,7 @@ export default async function TeamPage() {
             {org.members.length} member{org.members.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button size="sm">
-          <Plus className="h-4 w-4" />
-          Invite Member
-        </Button>
+        {canInvite && <InviteDialog />}
       </div>
 
       {/* Members */}
@@ -106,6 +109,16 @@ export default async function TeamPage() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {org.invitations.length === 0 && org.members.length === 1 && (
+        <div className="rounded-xl border-2 border-dashed border-gray-200 p-8 text-center">
+          <Mail className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-sm font-medium text-gray-700 mb-1">Invite your team</p>
+          <p className="text-xs text-gray-400">
+            Collaborators can view jobs, manage candidates, and move them through the pipeline.
+          </p>
         </div>
       )}
     </div>

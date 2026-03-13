@@ -21,6 +21,7 @@ const navItems = [
   { href: "/jobs", label: "Jobs", icon: Briefcase },
   { href: "/candidates", label: "Candidates", icon: Users },
   { href: "/pipelines", label: "Pipelines", icon: GitBranch },
+  { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/email-templates", label: "Email Templates", icon: Mail },
   { href: "/team", label: "Team", icon: Users2 },
 ];

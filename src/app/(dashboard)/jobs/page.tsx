@@ -5,14 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Briefcase, MapPin, Users } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import type { Metadata } from "next";
+import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 
-async function getOrgId(userId: string) {
-  const member = await db.member.findFirstOrThrow({
-    where: { userId },
-    select: { organizationId: true },
-  });
-  return member.organizationId;
-}
+export const metadata: Metadata = {
+  title: "Jobs — Free ATS",
+  description: "Manage your open job postings and track candidate applications.",
+};
 
 const statusVariant = {
   OPEN: "success" as const,
@@ -26,18 +25,44 @@ export default async function JobsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const orgId = await getOrgId(user!.id);
-
-  const jobs = await db.job.findMany({
-    where: { organizationId: orgId },
-    include: {
-      _count: { select: { applications: true } },
-    },
-    orderBy: { createdAt: "desc" },
+  const member = await db.member.findFirstOrThrow({
+    where: { userId: user!.id },
+    select: { organizationId: true },
   });
+
+  const orgId = member.organizationId;
+
+  const [jobs, candidateCount, applicationCount, org] = await Promise.all([
+    db.job.findMany({
+      where: { organizationId: orgId },
+      include: {
+        _count: { select: { applications: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.candidate.count({ where: { organizationId: orgId } }),
+    db.application.count({ where: { job: { organizationId: orgId } } }),
+    db.organization.findUnique({
+      where: { id: orgId },
+      select: { plan: true },
+    }),
+  ]);
+
+  const hasJob = jobs.length > 0;
+  const hasCandidate = candidateCount > 0;
+  // "hasPipelineMove" means at least one application has been updated (moved) after creation
+  const hasPipelineMove = applicationCount > 0;
+  const isPro = org?.plan === "PRO";
 
   return (
     <div>
+      <OnboardingChecklist
+        hasJob={hasJob}
+        hasCandidate={hasCandidate}
+        hasPipelineMove={hasPipelineMove}
+        isPro={isPro}
+      />
+
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Jobs</h1>

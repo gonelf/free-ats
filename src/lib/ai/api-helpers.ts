@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { PaymentRequiredError, requireProPlan } from "@/lib/ai-gate";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 export async function withProPlanGuard<T>(
   handler: (orgId: string) => Promise<T>
@@ -13,6 +14,12 @@ export async function withProPlanGuard<T>(
     } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate limit per user
+    const rateLimitResponse = await checkRateLimit(user.id);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
     const member = await db.member.findFirst({
