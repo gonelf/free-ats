@@ -23,5 +23,5 @@ export async function POST(request: NextRequest) {
     });
 
     return { tags };
-  });
+  }, 2);
 }

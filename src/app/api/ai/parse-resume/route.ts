@@ -6,5 +6,5 @@ export async function POST(request: NextRequest) {
   const { resumeText } = await request.json();
   return withProPlanGuard(async () => {
     return parseResume(resumeText);
-  });
+  }, 10);
 }

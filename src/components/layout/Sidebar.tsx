@@ -12,6 +12,7 @@ import {
   BarChart3,
   Sparkles,
   LogOut,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -30,7 +31,21 @@ const bottomItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function Sidebar({ orgName, isPro }: { orgName: string; isPro: boolean }) {
+interface SidebarProps {
+  orgName: string;
+  isPro: boolean;
+  aiCreditsBalance: number;
+  aiCreditsMonthly: number;
+  aiCreditsResetAt: Date | null;
+}
+
+export function Sidebar({
+  orgName,
+  isPro,
+  aiCreditsBalance,
+  aiCreditsMonthly,
+  aiCreditsResetAt,
+}: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -39,6 +54,15 @@ export function Sidebar({ orgName, isPro }: { orgName: string; isPro: boolean })
     await supabase.auth.signOut();
     router.push("/login");
   }
+
+  const creditsPercent = Math.round((aiCreditsBalance / aiCreditsMonthly) * 100);
+  const creditsLow = creditsPercent <= 20;
+  const resetLabel = aiCreditsResetAt
+    ? new Date(aiCreditsResetAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
+    : null;
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
@@ -86,6 +110,40 @@ export function Sidebar({ orgName, isPro }: { orgName: string; isPro: boolean })
             );
           })}
         </ul>
+
+        {/* AI Credits (Pro only) */}
+        {isPro && (
+          <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <Zap className={cn("h-3.5 w-3.5", creditsLow ? "text-red-500" : "text-indigo-500")} />
+                <span className="text-xs font-semibold text-gray-700">AI Credits</span>
+              </div>
+              <span className={cn("text-xs font-medium tabular-nums", creditsLow ? "text-red-600" : "text-gray-600")}>
+                {aiCreditsBalance.toLocaleString()} / {aiCreditsMonthly.toLocaleString()}
+              </span>
+            </div>
+            <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  creditsLow ? "bg-red-500" : creditsPercent <= 50 ? "bg-amber-500" : "bg-indigo-500"
+                )}
+                style={{ width: `${creditsPercent}%` }}
+              />
+            </div>
+            {resetLabel && (
+              <p className="text-[11px] text-gray-400 mt-1.5">
+                Resets {resetLabel}
+              </p>
+            )}
+            {creditsLow && (
+              <p className="text-[11px] text-red-500 mt-1 font-medium">
+                Running low on credits
+              </p>
+            )}
+          </div>
+        )}
 
         {!isPro && (
           <div className="mt-6 rounded-lg bg-indigo-50 p-4">

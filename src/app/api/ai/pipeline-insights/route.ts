@@ -33,5 +33,5 @@ export async function POST(request: NextRequest) {
     `.trim();
 
     return analyzePipelineInsights(pipelineData);
-  });
+  }, 10);
 }

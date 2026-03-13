@@ -36,5 +36,5 @@ export async function POST(request: NextRequest) {
     });
 
     return result;
-  });
+  }, 5);
 }
