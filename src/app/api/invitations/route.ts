@@ -3,8 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -74,6 +72,7 @@ export async function POST(request: NextRequest) {
     const acceptUrl = `${appUrl}/invitations/accept?token=${invitation.token}`;
 
     if (process.env.RESEND_API_KEY) {
+      const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL || "noreply@freeats.app",
         to: normalizedEmail,
