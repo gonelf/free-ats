@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Candidates — kitehr",
+  title: "Candidates — KiteHR",
   description: "Browse and manage your candidate talent pool.",
 };
 

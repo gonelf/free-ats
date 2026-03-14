@@ -4,7 +4,7 @@ import { BarChart3, Users, Briefcase, TrendingUp, Clock } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Reports — kitehr",
+  title: "Reports — KiteHR",
 };
 
 export default async function ReportsPage() {

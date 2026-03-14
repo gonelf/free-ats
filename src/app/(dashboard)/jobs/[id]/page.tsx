@@ -19,9 +19,9 @@ export async function generateMetadata({
     where: { id },
     select: { title: true, location: true },
   });
-  if (!job) return { title: "Job — kitehr" };
+  if (!job) return { title: "Job — KiteHR" };
   return {
-    title: `${job.title}${job.location ? ` · ${job.location}` : ""} — kitehr`,
+    title: `${job.title}${job.location ? ` · ${job.location}` : ""} — KiteHR`,
   };
 }
 

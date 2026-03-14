@@ -18,10 +18,11 @@ import {
   UserPlus,
   Building2,
 } from "lucide-react";
+import { PublicNav, PublicFooter } from "@/components/public-layout";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "kitehr — Applicant Tracking System with AI Features",
+  title: "KiteHR — Applicant Tracking System with AI Features",
   description:
     "The free ATS for modern hiring teams. Unlimited users, job posts, and candidates — forever free. Add AI-powered features like resume parsing and candidate scoring when you're ready.",
 };
@@ -67,31 +68,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
-      {/* Nav */}
-      <header className="border-b border-white/5 bg-[#080c10]/80 backdrop-blur sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-6 flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Image src="/logo.svg" alt="kitehr logo" width={32} height={32} className="rounded-lg" />
-            <span className="font-semibold text-white">kitehr</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm text-white/50 hover:text-white transition-colors">
-              Pricing
-            </Link>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-white/50 hover:text-white transition-colors">
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-medium text-[#080c10] hover:bg-cyan-400 transition-colors"
-            >
-              Get started free
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicNav />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -107,7 +84,7 @@ export default async function HomePage() {
               <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150" />
               <Image
                 src="/logo.svg"
-                alt="kitehr"
+                alt="KiteHR"
                 width={80}
                 height={80}
                 className="relative rounded-2xl"
@@ -312,7 +289,7 @@ export default async function HomePage() {
           </div>
           <div className="relative">
             <div className="flex justify-center mb-6">
-              <Image src="/logo.svg" alt="kitehr" width={52} height={52} className="rounded-xl opacity-90" />
+              <Image src="/logo.svg" alt="KiteHR" width={52} height={52} className="rounded-xl opacity-90" />
             </div>
             <h2 className="text-4xl font-bold mb-4">
               Start hiring smarter today
@@ -334,26 +311,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-8">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/25">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="kitehr" width={24} height={24} className="rounded-md opacity-70" />
-            <span>kitehr</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link href="/pricing" className="hover:text-white/60 transition-colors">
-              Pricing
-            </Link>
-            <Link href="/login" className="hover:text-white/60 transition-colors">
-              Sign in
-            </Link>
-            <Link href="/signup" className="hover:text-white/60 transition-colors">
-              Sign up
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

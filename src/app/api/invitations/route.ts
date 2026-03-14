@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL || "noreply@freeats.app",
         to: normalizedEmail,
-        subject: `You've been invited to join ${org.name} on kitehr`,
+        subject: `You've been invited to join ${org.name} on KiteHR`,
         html: `
           <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
             <div style="margin-bottom: 24px;">
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
                 You're invited to join ${org.name}
               </h1>
               <p style="color: #6b7280; font-size: 15px; margin: 0;">
-                You've been invited to collaborate on <strong>${org.name}</strong>'s hiring pipeline on kitehr.
+                You've been invited to collaborate on <strong>${org.name}</strong>'s hiring pipeline on KiteHR.
               </p>
             </div>
 
