@@ -1,15 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Briefcase } from "lucide-react";
+import { ArrowRight, AlertCircle, Check } from "lucide-react";
+import { Suspense } from "react";
 
-export default function SignupPage() {
+const perks = [
+  "Unlimited users, jobs & candidates",
+  "Kanban pipeline & custom stages",
+  "Team collaboration — free forever",
+];
+
+function SignupForm() {
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,6 +22,8 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const invitationToken = searchParams.get("invitation_token");
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -28,10 +35,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: {
-          name,
-          company_name: companyName,
-        },
+        data: { name, company_name: companyName },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -39,6 +43,9 @@ export default function SignupPage() {
     if (error) {
       setError(error.message);
       setLoading(false);
+    } else if (invitationToken) {
+      router.push(`/invitations/accept?token=${encodeURIComponent(invitationToken)}`);
+      router.refresh();
     } else {
       router.push("/jobs");
       router.refresh();
@@ -46,81 +53,142 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 mb-4">
-            <Briefcase className="h-6 w-6 text-white" />
+    <div className="flex min-h-screen bg-[#080c10] text-white">
+      {/* Glow */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-cyan-500/8 blur-[120px] rounded-full" />
+      </div>
+
+      <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 mb-10">
+          <Image src="/logo.svg" alt="KiteHR" width={36} height={36} className="rounded-xl" />
+          <span className="font-semibold text-lg text-white">KiteHR</span>
+        </Link>
+
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold">Create your account</h1>
+            <p className="text-sm text-white/40 mt-1">Free forever. No credit card needed.</p>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create your ATS</h1>
-          <p className="text-sm text-gray-500 mt-1">Free forever. Pay only for AI.</p>
-        </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Your name</Label>
-              <Input
-                id="name"
-                placeholder="Jane Smith"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="company">Company name</Label>
-              <Input
-                id="company"
-                placeholder="Acme Corp"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Work email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="jane@acme.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Min. 8 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                minLength={8}
-                required
-              />
-            </div>
+          {/* Perks */}
+          <ul className="space-y-2 mb-7">
+            {perks.map((p) => (
+              <li key={p} className="flex items-center gap-2.5 text-sm text-white/50">
+                <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500/15">
+                  <Check className="h-2.5 w-2.5 text-green-400" />
+                </div>
+                {p}
+              </li>
+            ))}
+          </ul>
 
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-md px-3 py-2">
-                {error}
-              </p>
-            )}
+          <div className="rounded-2xl border border-white/8 bg-white/3 p-8">
+            <form onSubmit={handleSignup} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label htmlFor="name" className="block text-sm font-medium text-white/70">
+                    Your name
+                  </label>
+                  <input
+                    id="name"
+                    placeholder="Jane Smith"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label htmlFor="company" className="block text-sm font-medium text-white/70">
+                    Company
+                  </label>
+                  <input
+                    id="company"
+                    placeholder="Acme Corp"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    required
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                  />
+                </div>
+              </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Create free account"}
-            </Button>
-          </form>
+              <div className="space-y-1.5">
+                <label htmlFor="email" className="block text-sm font-medium text-white/70">
+                  Work email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="jane@acme.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                />
+              </div>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
-            Already have an account?{" "}
-            <Link href="/login" className="text-indigo-600 hover:underline">
-              Sign in
-            </Link>
+              <div className="space-y-1.5">
+                <label htmlFor="password" className="block text-sm font-medium text-white/70">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Min. 8 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
+                  required
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                />
+              </div>
+
+              {error && (
+                <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-4 py-2.5 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
+              >
+                {loading ? "Creating account…" : (
+                  <>Create free account <ArrowRight className="h-4 w-4" /></>
+                )}
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-white/35">
+              Already have an account?{" "}
+              <Link href="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                Sign in
+              </Link>
+            </p>
+          </div>
+
+          <p className="mt-4 text-center text-xs text-white/20">
+            By signing up you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-[#080c10]">
+        <div className="text-sm text-white/30">Loading…</div>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }
