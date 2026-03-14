@@ -19,5 +19,5 @@ export async function POST(request: NextRequest) {
       companyName: org.name,
       additionalContext,
     });
-  });
+  }, 5);
 }

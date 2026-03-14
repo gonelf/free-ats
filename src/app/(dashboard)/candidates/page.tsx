@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Users, Briefcase } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Candidates — Free ATS",
+  description: "Browse and manage your candidate talent pool.",
+};
 
 export default async function CandidatesPage() {
   const supabase = await createClient();

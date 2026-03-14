@@ -14,5 +14,5 @@ export async function POST(request: NextRequest) {
     const candidateSkills = `Skills: ${candidate.tags.join(", ")}\n${candidate.resumeText?.slice(0, 1500) || ""}`;
 
     return analyzeSkillsGap(candidateSkills, job.requirements || job.description);
-  });
+  }, 5);
 }

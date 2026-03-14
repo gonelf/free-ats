@@ -7,6 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Settings, MapPin, Plus } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const job = await db.job.findUnique({
+    where: { id },
+    select: { title: true, location: true },
+  });
+  if (!job) return { title: "Job — Free ATS" };
+  return {
+    title: `${job.title}${job.location ? ` · ${job.location}` : ""} — Free ATS`,
+  };
+}
 
 async function getJob(jobId: string, orgId: string) {
   return db.job.findFirst({

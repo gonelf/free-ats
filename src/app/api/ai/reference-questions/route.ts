@@ -14,5 +14,5 @@ export async function POST(request: NextRequest) {
     const background = `${candidate.firstName} ${candidate.lastName} - ${candidate.tags.join(", ")}`;
 
     return generateReferenceQuestions(job.title, background);
-  });
+  }, 3);
 }

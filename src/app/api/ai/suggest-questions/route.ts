@@ -18,5 +18,5 @@ export async function POST(request: NextRequest) {
     `.trim();
 
     return generateInterviewQuestions(job.title, background);
-  });
+  }, 5);
 }
