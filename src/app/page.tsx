@@ -21,7 +21,7 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Free ATS — Applicant Tracking System with AI Features",
+  title: "kitehr — Applicant Tracking System with AI Features",
   description:
     "The free ATS for modern hiring teams. Unlimited users, job posts, and candidates — forever free. Add AI-powered features like resume parsing and candidate scoring when you're ready.",
 };
@@ -71,8 +71,8 @@ export default async function HomePage() {
       <header className="border-b border-white/5 bg-[#080c10]/80 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto max-w-6xl px-6 flex h-16 items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Image src="/logo.svg" alt="Free ATS logo" width={32} height={32} className="rounded-lg" />
-            <span className="font-semibold text-white">Free ATS</span>
+            <Image src="/logo.svg" alt="kitehr logo" width={32} height={32} className="rounded-lg" />
+            <span className="font-semibold text-white">kitehr</span>
           </div>
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/pricing" className="text-sm text-white/50 hover:text-white transition-colors">
@@ -107,7 +107,7 @@ export default async function HomePage() {
               <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150" />
               <Image
                 src="/logo.svg"
-                alt="Free ATS"
+                alt="kitehr"
                 width={80}
                 height={80}
                 className="relative rounded-2xl"
@@ -312,7 +312,7 @@ export default async function HomePage() {
           </div>
           <div className="relative">
             <div className="flex justify-center mb-6">
-              <Image src="/logo.svg" alt="Free ATS" width={52} height={52} className="rounded-xl opacity-90" />
+              <Image src="/logo.svg" alt="kitehr" width={52} height={52} className="rounded-xl opacity-90" />
             </div>
             <h2 className="text-4xl font-bold mb-4">
               Start hiring smarter today
@@ -338,8 +338,8 @@ export default async function HomePage() {
       <footer className="border-t border-white/5 py-8">
         <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/25">
           <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Free ATS" width={24} height={24} className="rounded-md opacity-70" />
-            <span>Free ATS</span>
+            <Image src="/logo.svg" alt="kitehr" width={24} height={24} className="rounded-md opacity-70" />
+            <span>kitehr</span>
           </div>
           <div className="flex items-center gap-6">
             <Link href="/pricing" className="hover:text-white/60 transition-colors">

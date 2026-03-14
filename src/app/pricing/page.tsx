@@ -20,7 +20,7 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing — Free ATS",
+  title: "Pricing — kitehr",
   description:
     "Free forever for core ATS features. Upgrade to Pro for $49/mo to unlock the full AI suite: resume parsing, candidate scoring, email drafting, and more.",
 };
@@ -81,7 +81,7 @@ export default function PricingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
               <Briefcase className="h-4 w-4 text-white" />
             </div>
-            <span className="font-semibold text-gray-900">Free ATS</span>
+            <span className="font-semibold text-gray-900">kitehr</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">
@@ -237,7 +237,7 @@ export default function PricingPage() {
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600">
               <Briefcase className="h-3 w-3 text-white" />
             </div>
-            <span>Free ATS</span>
+            <span>kitehr</span>
           </div>
           <div className="flex items-center gap-6">
             <Link href="/" className="hover:text-gray-600">Home</Link>
