@@ -6,7 +6,7 @@ import { InviteDialog } from "@/components/team/InviteDialog";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Team — Free ATS",
+  title: "Team — KiteHR",
 };
 
 const roleLabel: Record<string, string> = {

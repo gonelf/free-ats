@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 
 export const metadata: Metadata = {
-  title: "Jobs — Free ATS",
+  title: "Jobs — KiteHR",
   description: "Manage your open job postings and track candidate applications.",
 };
 

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Free ATS — Applicant Tracking System",
+  title: "KiteHR — Applicant Tracking System",
   description:
     "A free applicant tracking system with optional AI-powered features for faster hiring.",
 };

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -13,22 +14,37 @@ import {
   FileText,
   Mail,
   BarChart3,
+  Infinity,
+  UserPlus,
+  Building2,
 } from "lucide-react";
+import { PublicNav, PublicFooter } from "@/components/public-layout";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Free ATS — Applicant Tracking System with AI Features",
+  title: "KiteHR — Applicant Tracking System with AI Features",
   description:
-    "The free ATS for modern hiring teams. Manage jobs, track candidates, and unlock AI-powered features like resume parsing, candidate scoring, and email drafting.",
+    "The free ATS for modern hiring teams. Unlimited users, job posts, and candidates — forever free. Add AI-powered features like resume parsing and candidate scoring when you're ready.",
 };
 
+const unlimitedItems = [
+  { icon: Users, label: "Unlimited Users", desc: "Invite your whole team" },
+  { icon: Briefcase, label: "Unlimited Job Posts", desc: "No posting limits, ever" },
+  { icon: UserPlus, label: "Unlimited Candidates", desc: "Track every applicant" },
+  { icon: FileText, label: "Unlimited Resumes", desc: "Store & search all files" },
+  { icon: GitBranch, label: "Unlimited Pipelines", desc: "Custom stages per role" },
+  { icon: Building2, label: "Unlimited Orgs", desc: "Manage multiple companies" },
+];
+
 const freeFeatures = [
-  "Unlimited jobs & candidates",
-  "Custom pipeline stages",
   "Kanban drag-and-drop board",
-  "Team collaboration",
-  "Resume uploads & notes",
+  "Custom pipeline stages",
+  "Team collaboration & roles",
+  "Resume uploads & storage",
+  "Candidate notes & tags",
   "Email templates",
+  "No credit card required",
+  "No time limits",
 ];
 
 const aiFeatures = [
@@ -51,116 +67,129 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Nav */}
-      <header className="border-b border-gray-100 bg-white/80 backdrop-blur sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-6 flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
-              <Briefcase className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-semibold text-gray-900">Free ATS</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm text-gray-600 hover:text-gray-900">
-              Pricing
-            </Link>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-            >
-              Get started free
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#080c10] text-white">
+      <PublicNav />
 
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pt-24 pb-20 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-sm text-indigo-700 mb-8">
-          <Sparkles className="h-3.5 w-3.5" />
-          Free forever. AI features from $49/mo.
+      <section className="relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full" />
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[400px] h-[300px] bg-green-500/8 blur-[80px] rounded-full" />
         </div>
-        <h1 className="text-5xl font-bold text-gray-900 tracking-tight mb-6 max-w-3xl mx-auto">
-          The ATS that&apos;s free — with AI when you need it
-        </h1>
-        <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto">
-          Track candidates, manage pipelines, and collaborate with your team at
-          zero cost. Add AI to supercharge every step of your hiring process.
-        </p>
-        <div className="flex items-center justify-center gap-4">
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-base font-semibold text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200"
-          >
-            Start for free
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-6 py-3 text-base font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            View pricing
-          </Link>
+        <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-28 text-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150" />
+              <Image
+                src="/logo.svg"
+                alt="KiteHR"
+                width={80}
+                height={80}
+                className="relative rounded-2xl"
+              />
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-8">
+            <Infinity className="h-3.5 w-3.5" />
+            Truly unlimited. Truly free.
+          </div>
+
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto leading-tight">
+            Hire without limits.{" "}
+            <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
+              Free, forever.
+            </span>
+          </h1>
+          <p className="text-xl text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Unlimited users, job posts, candidates, and resumes — no caps, no tricks, no credit card.
+            Add AI superpowers when you&apos;re ready.
+          </p>
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+            >
+              Start for free
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-semibold text-white/80 hover:bg-white/10 transition-colors"
+            >
+              View pricing
+            </Link>
+          </div>
+          <p className="mt-5 text-sm text-white/30">
+            No credit card required · Set up in minutes · No time limits
+          </p>
         </div>
-        <p className="mt-4 text-sm text-gray-400">
-          No credit card required. Set up in minutes.
-        </p>
       </section>
 
-      {/* Features grid */}
-      <section className="bg-gray-50 py-20">
+      {/* Unlimited Everything */}
+      <section className="py-24 border-t border-white/5">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Everything you need to hire, free
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-sm text-green-400 mb-5">
+              <Infinity className="h-3.5 w-3.5" />
+              No limits. No tiers. No gotchas.
+            </div>
+            <h2 className="text-4xl font-bold mb-4">
+              Unlimited everything,{" "}
+              <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
+                free
+              </span>
             </h2>
-            <p className="text-lg text-gray-500">
-              Core ATS features that would cost hundreds elsewhere — always free.
+            <p className="text-lg text-white/40 max-w-xl mx-auto">
+              Most ATS tools charge per user or per job post. We don&apos;t.
+              Everything below is included in the free plan — forever.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FeatureCard
-              icon={<Briefcase className="h-5 w-5 text-indigo-600" />}
-              title="Job Management"
-              description="Create unlimited job postings with descriptions, requirements, and salary ranges."
-            />
-            <FeatureCard
-              icon={<Users className="h-5 w-5 text-indigo-600" />}
-              title="Candidate Tracking"
-              description="Build your talent pool with detailed profiles, resumes, notes, and tags."
-            />
-            <FeatureCard
-              icon={<GitBranch className="h-5 w-5 text-indigo-600" />}
-              title="Kanban Pipeline"
-              description="Drag-and-drop candidates through custom stages from applied to hired."
-            />
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {unlimitedItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.label}
+                  className="group rounded-2xl border border-white/8 bg-white/3 p-6 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all"
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-500/10 mb-4 group-hover:bg-cyan-500/15 transition-colors">
+                    <Icon className="h-5 w-5 text-cyan-400" />
+                  </div>
+                  <div className="text-base font-semibold text-white mb-1">{item.label}</div>
+                  <div className="text-sm text-white/40">{item.desc}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Free vs Pro */}
-      <section className="py-20">
+      {/* Core Features */}
+      <section className="py-24 border-t border-white/5">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Free Features */}
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Free plan, no strings attached
+              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-xs text-green-400 mb-6">
+                FREE PLAN
+              </div>
+              <h2 className="text-3xl font-bold mb-4">
+                The full ATS experience,{" "}
+                <span className="text-white/40">at zero cost</span>
               </h2>
-              <p className="text-gray-500 mb-8">
-                The free tier isn&apos;t a trial. It&apos;s the full ATS —
-                unlimited jobs, unlimited candidates, team collaboration. Free forever.
+              <p className="text-white/40 mb-8 leading-relaxed">
+                This isn&apos;t a trial or a watered-down version. It&apos;s the complete ATS
+                — unlimited everything, team collaboration, and the tools you need to hire well.
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-3 mb-8">
                 {freeFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-gray-700">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
-                      <Check className="h-3 w-3 text-green-600" />
+                  <li key={f} className="flex items-center gap-3 text-white/70">
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15">
+                      <Check className="h-3 w-3 text-green-400" />
                     </div>
                     {f}
                   </li>
@@ -168,107 +197,154 @@ export default async function HomePage() {
               </ul>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 mt-8 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
+                className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors"
               >
                 Get started free
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="rounded-2xl border-2 border-indigo-100 bg-gray-50 p-8">
-              <div className="flex items-center gap-2 mb-6">
-                <Sparkles className="h-5 w-5 text-indigo-600" />
-                <span className="font-semibold text-gray-900">
-                  Upgrade to Pro for AI superpowers
-                </span>
+
+            {/* Feature Cards */}
+            <div className="space-y-4">
+              <DarkFeatureCard
+                icon={<Briefcase className="h-5 w-5 text-cyan-400" />}
+                title="Job Management"
+                description="Create unlimited job postings with descriptions, requirements, and salary ranges. No posting fees."
+                badge="Unlimited"
+              />
+              <DarkFeatureCard
+                icon={<Users className="h-5 w-5 text-cyan-400" />}
+                title="Team Collaboration"
+                description="Invite every recruiter, hiring manager, and stakeholder. No per-seat pricing."
+                badge="Unlimited users"
+              />
+              <DarkFeatureCard
+                icon={<GitBranch className="h-5 w-5 text-cyan-400" />}
+                title="Kanban Pipeline"
+                description="Drag-and-drop candidates through fully custom stages — from applied to hired."
+                badge="Custom stages"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Upgrade */}
+      <section className="py-24 border-t border-white/5">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="rounded-3xl border border-white/8 bg-gradient-to-br from-white/5 to-white/2 p-10 md:p-14 relative overflow-hidden">
+            {/* Glow */}
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-cyan-500/8 blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-green-500/6 blur-[80px] rounded-full pointer-events-none" />
+
+            <div className="relative grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-400 mb-6">
+                  <Sparkles className="h-3 w-3" />
+                  PRO — $49/MO
+                </div>
+                <h2 className="text-3xl font-bold mb-4">
+                  Supercharge hiring{" "}
+                  <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
+                    with AI
+                  </span>
+                </h2>
+                <p className="text-white/40 mb-8 leading-relaxed">
+                  When you&apos;re ready to save hours each week, unlock the full AI suite.
+                  Still unlimited users and jobs — now with intelligence on top.
+                </p>
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                >
+                  See all Pro features
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
-              <p className="text-sm text-gray-500 mb-6">
-                When you&apos;re ready to save hours per week, unlock the full AI suite for $49/mo.
-              </p>
-              <ul className="space-y-3">
-                {aiFeatures.map((f) => {
-                  const Icon = f.icon;
-                  return (
-                    <li key={f.text} className="flex items-center gap-3 text-sm text-gray-700">
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100">
-                        <Icon className="h-3 w-3 text-indigo-600" />
-                      </div>
-                      {f.text}
-                    </li>
-                  );
-                })}
-              </ul>
-              <Link
-                href="/pricing"
-                className="mt-6 block text-center rounded-xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
-              >
-                See all Pro features →
-              </Link>
+              <div>
+                <ul className="space-y-3">
+                  {aiFeatures.map((f) => {
+                    const Icon = f.icon;
+                    return (
+                      <li key={f.text} className="flex items-center gap-3 text-sm text-white/70">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10">
+                          <Icon className="h-4 w-4 text-cyan-400" />
+                        </div>
+                        {f.text}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-indigo-600 py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Start hiring smarter today
-          </h2>
-          <p className="text-indigo-200 mb-8">
-            Set up your ATS in minutes. No credit card, no time limits.
-          </p>
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3 text-base font-semibold text-indigo-600 hover:bg-indigo-50"
-          >
-            Create your free account
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+      <section className="py-24 border-t border-white/5">
+        <div className="relative mx-auto max-w-3xl px-6 text-center">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/8 blur-[80px] rounded-full" />
+          </div>
+          <div className="relative">
+            <div className="flex justify-center mb-6">
+              <Image src="/logo.svg" alt="KiteHR" width={52} height={52} className="rounded-xl opacity-90" />
+            </div>
+            <h2 className="text-4xl font-bold mb-4">
+              Start hiring smarter today
+            </h2>
+            <p className="text-white/40 mb-8 text-lg">
+              Unlimited everything. No credit card. No tricks.
+            </p>
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-9 py-4 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+            >
+              Create your free account
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <p className="mt-4 text-sm text-white/25">
+              Free forever · Unlimited users, jobs & candidates
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 py-8">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600">
-              <Briefcase className="h-3 w-3 text-white" />
-            </div>
-            <span>Free ATS</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link href="/pricing" className="hover:text-gray-600">
-              Pricing
-            </Link>
-            <Link href="/login" className="hover:text-gray-600">
-              Sign in
-            </Link>
-            <Link href="/signup" className="hover:text-gray-600">
-              Sign up
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }
 
-function FeatureCard({
+function DarkFeatureCard({
   icon,
   title,
   description,
+  badge,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
+  badge?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 mb-4">
-        {icon}
+    <div className="rounded-2xl border border-white/8 bg-white/3 p-5 hover:border-cyan-500/20 hover:bg-white/5 transition-all">
+      <div className="flex items-start gap-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-semibold text-white">{title}</h3>
+            {badge && (
+              <span className="rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-xs text-green-400">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-white/40">{description}</p>
+        </div>
       </div>
-      <h3 className="font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-sm text-gray-500">{description}</p>
     </div>
   );
 }
