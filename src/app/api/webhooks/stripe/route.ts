@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import Stripe from "stripe";
+import { MONTHLY_CREDITS } from "@/lib/ai/credits";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -29,11 +30,15 @@ export async function POST(request: NextRequest) {
         const orgId = session.metadata?.organizationId;
         if (!orgId) break;
 
+        const nextReset = new Date();
+        nextReset.setMonth(nextReset.getMonth() + 1);
         await db.organization.update({
           where: { id: orgId },
           data: {
             plan: "PRO",
             stripeSubscriptionId: session.subscription as string,
+            aiCreditsBalance: MONTHLY_CREDITS,
+            aiCreditsResetAt: nextReset,
           },
         });
         break;
@@ -52,6 +57,8 @@ export async function POST(request: NextRequest) {
           data: {
             plan: isActive ? "PRO" : "FREE",
             stripeSubscriptionId: isActive ? subscription.id : null,
+            // On downgrade, clear Pro credits and reset date (no more monthly top-ups)
+            ...(isActive ? {} : { aiCreditsBalance: 0, aiCreditsResetAt: null }),
           },
         });
         break;

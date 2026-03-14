@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { MONTHLY_CREDITS } from "@/lib/ai/credits";
+import { FREE_TRIAL_CREDITS, MONTHLY_CREDITS } from "@/lib/ai/credits";
 
 export async function GET() {
   try {
@@ -32,11 +32,12 @@ export async function GET() {
       },
     });
 
+    const isPro = org.plan === "PRO";
     return NextResponse.json({
       balance: org.aiCreditsBalance,
-      monthly: MONTHLY_CREDITS,
+      monthly: isPro ? MONTHLY_CREDITS : FREE_TRIAL_CREDITS,
       resetAt: org.aiCreditsResetAt,
-      isPro: org.plan === "PRO",
+      isPro,
     });
   } catch {
     return NextResponse.json({ error: "Failed to fetch credits" }, { status: 500 });

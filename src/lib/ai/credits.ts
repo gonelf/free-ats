@@ -4,10 +4,14 @@
  * Credits are an abstract usage unit calibrated so that 2,500 credits ≈ $25
  * of Gemini API spend (100 credits = ~$1 at Gemini Flash pricing).
  *
- * Monthly allowance per Pro workspace: 2,500 credits.
- * Credits reset on the same day each month.
+ * Free workspaces: 100 one-time trial credits (no reset).
+ * Pro workspaces:  2,500 credits, resets monthly.
  */
 
+/** One-time trial allowance for Free plan workspaces. */
+export const FREE_TRIAL_CREDITS = 100;
+
+/** Monthly allowance for Pro plan workspaces. */
 export const MONTHLY_CREDITS = 2500;
 
 /**

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { MONTHLY_CREDITS } from "@/lib/ai/credits";
+import { FREE_TRIAL_CREDITS, MONTHLY_CREDITS } from "@/lib/ai/credits";
 
 async function getOrCreateOrg(userId: string, metadata: Record<string, string>) {
   // Check if user is already a member of an org
@@ -84,7 +84,7 @@ export default async function DashboardLayout({
         orgName={org.name}
         isPro={org.plan === "PRO"}
         aiCreditsBalance={org.aiCreditsBalance}
-        aiCreditsMonthly={MONTHLY_CREDITS}
+        aiCreditsMonthly={org.plan === "PRO" ? MONTHLY_CREDITS : FREE_TRIAL_CREDITS}
         aiCreditsResetAt={org.aiCreditsResetAt}
       />
       <main className="flex-1 overflow-y-auto">

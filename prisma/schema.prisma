@@ -15,7 +15,7 @@ model Organization {
   plan                 Plan      @default(FREE)
   stripeCustomerId     String?   @unique
   stripeSubscriptionId String?   @unique
-  aiCreditsBalance     Int       @default(2500)
+  aiCreditsBalance     Int       @default(100)
   aiCreditsResetAt     DateTime?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt

@@ -111,13 +111,15 @@ export function Sidebar({
           })}
         </ul>
 
-        {/* AI Credits (Pro only) */}
-        {isPro && (
+        {/* AI Credits — shown for all plans */}
+        {aiCreditsBalance > 0 || isPro ? (
           <div className="mt-6 rounded-lg border border-gray-100 bg-gray-50 p-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5">
                 <Zap className={cn("h-3.5 w-3.5", creditsLow ? "text-red-500" : "text-indigo-500")} />
-                <span className="text-xs font-semibold text-gray-700">AI Credits</span>
+                <span className="text-xs font-semibold text-gray-700">
+                  {isPro ? "AI Credits" : "Trial Credits"}
+                </span>
               </div>
               <span className={cn("text-xs font-medium tabular-nums", creditsLow ? "text-red-600" : "text-gray-600")}>
                 {aiCreditsBalance.toLocaleString()} / {aiCreditsMonthly.toLocaleString()}
@@ -132,18 +134,23 @@ export function Sidebar({
                 style={{ width: `${creditsPercent}%` }}
               />
             </div>
-            {resetLabel && (
+            {isPro && resetLabel && (
               <p className="text-[11px] text-gray-400 mt-1.5">
                 Resets {resetLabel}
               </p>
             )}
+            {!isPro && (
+              <p className="text-[11px] text-gray-400 mt-1.5">
+                One-time trial
+              </p>
+            )}
             {creditsLow && (
               <p className="text-[11px] text-red-500 mt-1 font-medium">
-                Running low on credits
+                {isPro ? "Running low on credits" : "Almost out — upgrade for monthly credits"}
               </p>
             )}
           </div>
-        )}
+        ) : null}
 
         {!isPro && (
           <div className="mt-6 rounded-lg bg-indigo-50 p-4">
