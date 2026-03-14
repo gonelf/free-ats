@@ -2,14 +2,19 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  try {
+    let supabaseResponse = NextResponse.next({
+      request,
+    });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return supabaseResponse;
+    }
+
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -26,41 +31,45 @@ export async function middleware(request: NextRequest) {
           );
         },
       },
+    });
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { pathname } = request.nextUrl;
+
+    // Protected dashboard routes
+    const isDashboardRoute =
+      pathname.startsWith("/jobs") ||
+      pathname.startsWith("/candidates") ||
+      pathname.startsWith("/pipelines") ||
+      pathname.startsWith("/email-templates") ||
+      pathname.startsWith("/team") ||
+      pathname.startsWith("/settings") ||
+      pathname.startsWith("/upgrade") ||
+      pathname === "/dashboard";
+
+    if (isDashboardRoute && !user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("redirectTo", pathname);
+      return NextResponse.redirect(url);
     }
-  );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    // Redirect logged-in users away from auth pages
+    if ((pathname === "/login" || pathname === "/signup") && user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/jobs";
+      return NextResponse.redirect(url);
+    }
 
-  const { pathname } = request.nextUrl;
-
-  // Protected dashboard routes
-  const isDashboardRoute =
-    pathname.startsWith("/jobs") ||
-    pathname.startsWith("/candidates") ||
-    pathname.startsWith("/pipelines") ||
-    pathname.startsWith("/email-templates") ||
-    pathname.startsWith("/team") ||
-    pathname.startsWith("/settings") ||
-    pathname.startsWith("/upgrade") ||
-    pathname === "/dashboard";
-
-  if (isDashboardRoute && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(url);
+    return supabaseResponse;
+  } catch {
+    // If middleware fails for any reason, allow the request to proceed
+    // rather than returning a 500 error to the user
+    return NextResponse.next({ request });
   }
-
-  // Redirect logged-in users away from auth pages
-  if ((pathname === "/login" || pathname === "/signup") && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/jobs";
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
 }
 
 export const config = {
