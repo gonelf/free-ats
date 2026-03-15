@@ -12,6 +12,11 @@ async function getOrg(userId: string) {
   return membership?.organization ?? null;
 }
 
+async function isAppAdmin(email: string) {
+  const admin = await db.appAdmin.findUnique({ where: { email } });
+  return !!admin;
+}
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -26,7 +31,10 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const org = await getOrg(user.id);
+  const [org, isAdmin] = await Promise.all([
+    getOrg(user.id),
+    user.email ? isAppAdmin(user.email) : false,
+  ]);
 
   if (!org) {
     redirect("/setup");
@@ -40,6 +48,7 @@ export default async function DashboardLayout({
         aiCreditsBalance={org.aiCreditsBalance}
         aiCreditsMonthly={org.plan === "PRO" ? MONTHLY_CREDITS : FREE_TRIAL_CREDITS}
         aiCreditsResetAt={org.aiCreditsResetAt}
+        isAppAdmin={isAdmin}
       />
       <main className="flex-1 overflow-y-auto">
         <div className="p-8">{children}</div>

@@ -13,6 +13,7 @@ import {
   Sparkles,
   LogOut,
   Zap,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -31,12 +32,14 @@ const bottomItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+
 interface SidebarProps {
   orgName: string;
   isPro: boolean;
   aiCreditsBalance: number;
   aiCreditsMonthly: number;
   aiCreditsResetAt: Date | null;
+  isAppAdmin?: boolean;
 }
 
 export function Sidebar({
@@ -45,6 +48,7 @@ export function Sidebar({
   aiCreditsBalance,
   aiCreditsMonthly,
   aiCreditsResetAt,
+  isAppAdmin,
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -196,6 +200,17 @@ export function Sidebar({
               </li>
             );
           })}
+          {isAppAdmin && (
+            <li>
+              <Link
+                href="/admin"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+              >
+                <Shield className="h-4 w-4 shrink-0" />
+                Admin Panel
+              </Link>
+            </li>
+          )}
           <li>
             <button
               onClick={handleSignOut}

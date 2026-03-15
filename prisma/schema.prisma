@@ -199,3 +199,9 @@ model EmailTemplate {
 
   @@index([organizationId])
 }
+
+model AppAdmin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
