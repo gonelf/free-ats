@@ -18,6 +18,7 @@ interface Candidate {
   phone: string | null;
   linkedinUrl: string | null;
   resumeUrl: string | null;
+  resumeExpiresAt: Date | null;
   tags: string[];
   createdAt: Date;
   notes: Array<{ id: string; content: string; authorId: string; createdAt: Date }>;
@@ -114,9 +115,18 @@ export function CandidateDetailClient({
               )}
               {candidate.resumeUrl && (
                 <Button variant="outline" size="sm" asChild>
-                  <a href={candidate.resumeUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={`/api/candidates/${candidate.id}/resume`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <FileText className="h-3.5 w-3.5" />
                     Resume
+                    {candidate.resumeExpiresAt && (
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        (expires {formatDate(candidate.resumeExpiresAt)})
+                      </span>
+                    )}
                   </a>
                 </Button>
               )}

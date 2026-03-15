@@ -134,6 +134,7 @@ model Candidate {
   phone          String?
   resumeUrl      String?
   resumeText     String?      @db.Text
+  resumeExpiresAt DateTime?
   linkedinUrl    String?
   tags           String[]     @default([])
   createdAt      DateTime     @default(now())

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
+import { uploadResumeToR2, freeResumeExpiresAt } from "@/lib/r2";
 
 export async function submitApplication(jobId: string, formData: FormData) {
   try {
@@ -42,27 +42,20 @@ export async function submitApplication(jobId: string, formData: FormData) {
       return { error: "Job pipeline not configured" };
     }
 
-    let resumeUrl = null;
+    let resumeUrl: string | null = null;
+    let resumeExpiresAt: Date | null = null;
 
-    // 2. Handle resume upload if present
+    // 2. Handle resume upload to R2
     if (resumeFile && resumeFile.size > 0 && resumeFile.name !== "undefined") {
-      const supabase = await createClient();
-      const fileExt = resumeFile.name.split(".").pop();
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
-      const filePath = `${job.organizationId}/${fileName}`;
-
-      const { data, error: uploadError } = await supabase.storage
-        .from("resumes")
-        .upload(filePath, resumeFile);
-
-      if (uploadError) {
-        console.error("Upload error:", uploadError);
-        // We continue even if upload fails, but we won't have the resume URL
-      } else {
-        const { data: { publicUrl } } = supabase.storage
-          .from("resumes")
-          .getPublicUrl(filePath);
-        resumeUrl = publicUrl;
+      try {
+        resumeUrl = await uploadResumeToR2(resumeFile, job.organizationId);
+        // Free plan resumes expire in 10 days
+        if (job.organization.plan === "FREE") {
+          resumeExpiresAt = freeResumeExpiresAt();
+        }
+      } catch (uploadError) {
+        console.error("R2 upload error:", uploadError);
+        // Continue without resume rather than blocking the application
       }
     }
 
@@ -79,7 +72,7 @@ export async function submitApplication(jobId: string, formData: FormData) {
         lastName,
         phone,
         linkedinUrl,
-        resumeUrl: resumeUrl || undefined, // Only update if we have a new one
+        ...(resumeUrl && { resumeUrl, resumeExpiresAt }),
       },
       create: {
         organizationId: job.organizationId,
@@ -89,6 +82,7 @@ export async function submitApplication(jobId: string, formData: FormData) {
         phone,
         linkedinUrl,
         resumeUrl,
+        resumeExpiresAt,
       },
     });
 
@@ -101,7 +95,7 @@ export async function submitApplication(jobId: string, formData: FormData) {
         },
       },
       update: {
-        stageId: firstStage.id, // Move back to first stage if reapplying? Or keep as is?
+        stageId: firstStage.id,
       },
       create: {
         jobId: job.id,
