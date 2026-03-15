@@ -73,10 +73,35 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const org = await getOrCreateOrg(
-    user.id,
-    user.user_metadata as Record<string, string>
-  );
+  let org;
+  try {
+    org = await getOrCreateOrg(
+      user.id,
+      user.user_metadata as Record<string, string>
+    );
+  } catch (err) {
+    // Database may be unavailable or migrations pending — show a recoverable error page
+    console.error("[DashboardLayout] Failed to load organization:", err);
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="text-center max-w-md px-6">
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">
+            Something went wrong
+          </h1>
+          <p className="text-gray-500 mb-4">
+            We couldn&apos;t load your workspace. Please try refreshing the page.
+            If the problem persists, contact support.
+          </p>
+          <a
+            href="/"
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            Go back home
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
