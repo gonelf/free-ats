@@ -5,13 +5,13 @@ import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface AiGateProps {
-  isPro: boolean;
+  hasAiAccess: boolean;
   children: React.ReactNode;
   featureName?: string;
 }
 
-export function AiGate({ isPro, children, featureName = "AI feature" }: AiGateProps) {
-  if (isPro) {
+export function AiGate({ hasAiAccess, children, featureName = "AI feature" }: AiGateProps) {
+  if (hasAiAccess) {
     return <>{children}</>;
   }
 
@@ -46,7 +46,7 @@ export function AiGate({ isPro, children, featureName = "AI feature" }: AiGatePr
 }
 
 interface AiButtonProps {
-  isPro: boolean;
+  hasAiAccess: boolean;
   onClick: () => void;
   children: React.ReactNode;
   loading?: boolean;
@@ -54,13 +54,13 @@ interface AiButtonProps {
 }
 
 export function AiButton({
-  isPro,
+  hasAiAccess,
   onClick,
   children,
   loading,
   className,
 }: AiButtonProps) {
-  if (!isPro) {
+  if (!hasAiAccess) {
     return (
       <Link href="/upgrade">
         <Button variant="outline" size="sm" className={className}>

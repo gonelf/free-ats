@@ -32,14 +32,14 @@ interface Candidate {
 
 interface CandidateDetailClientProps {
   candidate: Candidate;
-  isPro: boolean;
+  hasAiAccess: boolean;
   currentUserId: string;
   jobs: Array<{ id: string; title: string }>;
 }
 
 export function CandidateDetailClient({
   candidate,
-  isPro,
+  hasAiAccess,
   currentUserId,
   jobs,
 }: CandidateDetailClientProps) {
@@ -142,7 +142,7 @@ export function CandidateDetailClient({
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-gray-900">AI Summary</h2>
             <AiButton
-              isPro={isPro}
+              hasAiAccess={hasAiAccess}
               onClick={handleGenerateSummary}
               loading={generatingSummary}
             >
@@ -153,7 +153,7 @@ export function CandidateDetailClient({
             <p className="text-sm text-gray-600 leading-relaxed">{summary}</p>
           ) : (
             <p className="text-sm text-gray-400 italic">
-              {isPro
+              {hasAiAccess
                 ? "Click Generate to create an AI summary of this candidate."
                 : "Upgrade to Pro to generate AI summaries."}
             </p>
@@ -277,7 +277,7 @@ export function CandidateDetailClient({
                       </span>
                     </div>
                   </div>
-                  {isPro && app.aiScore !== null && (
+                  {hasAiAccess && app.aiScore !== null && (
                     <div className="flex items-center gap-1 text-xs">
                       <Sparkles className="h-3 w-3 text-indigo-500" />
                       <span className="font-medium">{app.aiScore}</span>
