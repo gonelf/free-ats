@@ -1,5 +1,4 @@
 {
-  "releaseCommand": "npx prisma migrate deploy",
   "functions": {
     "src/app/api/ai/**": {
       "maxDuration": 60
