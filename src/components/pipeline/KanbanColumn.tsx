@@ -29,14 +29,14 @@ interface KanbanColumnProps {
   stage: Stage;
   applications: Application[];
   jobId: string;
-  isPro: boolean;
+  hasAiAccess: boolean;
 }
 
 export function KanbanColumn({
   stage,
   applications,
   jobId,
-  isPro,
+  hasAiAccess,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: stage.id });
 
@@ -70,7 +70,7 @@ export function KanbanColumn({
             <KanbanCard
               key={app.id}
               application={app}
-              isPro={isPro}
+              hasAiAccess={hasAiAccess}
             />
           ))}
         </SortableContext>

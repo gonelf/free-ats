@@ -38,14 +38,14 @@ interface KanbanBoardProps {
   stages: Stage[];
   applications: Application[];
   jobId: string;
-  isPro: boolean;
+  hasAiAccess: boolean;
 }
 
 export function KanbanBoard({
   stages,
   applications: initialApplications,
   jobId,
-  isPro,
+  hasAiAccess,
 }: KanbanBoardProps) {
   const [applications, setApplications] = useState(initialApplications);
   const [activeApp, setActiveApp] = useState<Application | null>(null);
@@ -132,7 +132,7 @@ export function KanbanBoard({
             stage={stage}
             applications={appsByStage[stage.id] || []}
             jobId={jobId}
-            isPro={isPro}
+            hasAiAccess={hasAiAccess}
           />
         ))}
       </div>
@@ -142,7 +142,7 @@ export function KanbanBoard({
           <KanbanCard
             application={activeApp}
             isDragging
-            isPro={isPro}
+            hasAiAccess={hasAiAccess}
           />
         )}
       </DragOverlay>

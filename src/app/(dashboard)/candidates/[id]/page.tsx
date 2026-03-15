@@ -22,7 +22,7 @@ export default async function CandidateDetailPage({
 
   const member = await db.member.findFirstOrThrow({
     where: { userId: user!.id },
-    include: { organization: { select: { id: true, plan: true } } },
+    include: { organization: { select: { id: true, plan: true, aiCreditsBalance: true } } },
   });
 
   const candidate = await db.candidate.findFirst({
@@ -42,7 +42,7 @@ export default async function CandidateDetailPage({
 
   if (!candidate) notFound();
 
-  const isPro = member.organization.plan === "PRO";
+  const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;
   const jobs = await db.job.findMany({
     where: { organizationId: member.organization.id, status: "OPEN" },
     select: { id: true, title: true },
@@ -63,7 +63,7 @@ export default async function CandidateDetailPage({
 
       <CandidateDetailClient
         candidate={candidate}
-        isPro={isPro}
+        hasAiAccess={hasAiAccess}
         currentUserId={user!.id}
         jobs={jobs}
       />

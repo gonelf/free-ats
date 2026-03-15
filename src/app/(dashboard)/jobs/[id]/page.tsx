@@ -71,13 +71,13 @@ export default async function JobDetailPage({
 
   const member = await db.member.findFirstOrThrow({
     where: { userId: user!.id },
-    include: { organization: { select: { id: true, plan: true } } },
+    include: { organization: { select: { id: true, plan: true, aiCreditsBalance: true } } },
   });
 
   const job = await getJob(id, member.organization.id);
   if (!job) notFound();
 
-  const isPro = member.organization.plan === "PRO";
+  const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;
 
   return (
     <div>
@@ -128,7 +128,7 @@ export default async function JobDetailPage({
         stages={job.pipeline.stages}
         applications={job.applications}
         jobId={job.id}
-        isPro={isPro}
+        hasAiAccess={hasAiAccess}
       />
     </div>
   );

@@ -9,7 +9,7 @@ import { AiButton } from "@/components/ai/AiGate";
 
 interface NewJobFormProps {
   action: (formData: FormData) => Promise<void>;
-  isPro: boolean;
+  hasAiAccess: boolean;
   defaultValues?: {
     title?: string;
     description?: string;
@@ -18,7 +18,7 @@ interface NewJobFormProps {
   };
 }
 
-export function NewJobForm({ action, isPro, defaultValues }: NewJobFormProps) {
+export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormProps) {
   const [title, setTitle] = useState(defaultValues?.title || "");
   const [description, setDescription] = useState(defaultValues?.description || "");
   const [requirements, setRequirements] = useState(defaultValues?.requirements || "");
@@ -81,7 +81,7 @@ export function NewJobForm({ action, isPro, defaultValues }: NewJobFormProps) {
               className="flex-1"
             />
             <AiButton
-              isPro={isPro}
+              hasAiAccess={hasAiAccess}
               onClick={generateDescription}
               loading={generatingDescription}
             >
@@ -126,7 +126,7 @@ export function NewJobForm({ action, isPro, defaultValues }: NewJobFormProps) {
           <div className="flex items-center justify-between">
             <Label htmlFor="description">Job description *</Label>
             <AiButton
-              isPro={isPro}
+              hasAiAccess={hasAiAccess}
               onClick={checkBias}
               loading={checkingBias}
             >

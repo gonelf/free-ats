@@ -22,7 +22,7 @@ interface Application {
 interface KanbanCardProps {
   application: Application;
   isDragging?: boolean;
-  isPro: boolean;
+  hasAiAccess: boolean;
 }
 
 function getScoreColor(score: number): string {
@@ -34,7 +34,7 @@ function getScoreColor(score: number): string {
 export function KanbanCard({
   application,
   isDragging,
-  isPro,
+  hasAiAccess,
 }: KanbanCardProps) {
   const {
     attributes,
@@ -99,7 +99,7 @@ export function KanbanCard({
         )}
       </div>
 
-      {isPro && application.aiScore !== null && (
+      {hasAiAccess && application.aiScore !== null && (
         <div
           className={cn(
             "shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",

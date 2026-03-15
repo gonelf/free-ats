@@ -9,19 +9,19 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { NewJobForm } from "@/components/jobs/NewJobForm";
 
-async function getOrgPlan(userId: string) {
+async function getOrgInfo(userId: string) {
   const member = await db.member.findFirstOrThrow({
     where: { userId },
-    include: { organization: { select: { plan: true } } },
+    include: { organization: { select: { plan: true, aiCreditsBalance: true } } },
   });
-  return member.organization.plan;
+  return member.organization;
 }
 
 export default async function NewJobPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const plan = await getOrgPlan(user!.id);
-  const isPro = plan === "PRO";
+  const org = await getOrgInfo(user!.id);
+  const hasAiAccess = org.plan === "PRO" || org.aiCreditsBalance > 0;
 
   return (
     <div className="max-w-3xl">
@@ -39,7 +39,7 @@ export default async function NewJobPage() {
 
       <h1 className="text-2xl font-bold text-gray-900 mb-8">Create Job</h1>
 
-      <NewJobForm action={createJob} isPro={isPro} />
+      <NewJobForm action={createJob} hasAiAccess={hasAiAccess} />
     </div>
   );
 }
