@@ -21,7 +21,7 @@ export default async function EmailTemplatesPage() {
   });
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Email Templates</h1>

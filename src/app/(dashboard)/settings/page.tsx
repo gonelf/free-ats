@@ -19,7 +19,7 @@ export default async function SettingsPage() {
   const isPro = org.plan === "PRO";
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-8">Settings</h1>
 
       <div className="space-y-4">

@@ -89,7 +89,7 @@ export function InviteDialog() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="colleague@company.com"
                 required
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -104,7 +104,7 @@ export function InviteDialog() {
                 id="invite-role"
                 value={role}
                 onChange={(e) => setRole(e.target.value as "MEMBER" | "ADMIN")}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="MEMBER">Member — can view and edit</option>
                 <option value="ADMIN">Admin — can manage settings</option>

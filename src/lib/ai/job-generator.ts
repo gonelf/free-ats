@@ -3,6 +3,12 @@ import { proModel, flashModel, generateJSON, generateText } from "./gemini";
 export interface GeneratedJobDescription {
   description: string;
   requirements: string;
+  skills: string[];
+  salaryRange: {
+    min: number;
+    max: number;
+    currency: string;
+  };
 }
 
 export async function generateJobDescription(
@@ -18,7 +24,9 @@ export async function generateJobDescription(
 
     Return JSON with:
     - description (string: 3-4 paragraphs about the role, team, and impact)
-    - requirements (string: bullet-point list of required and preferred qualifications)`
+    - requirements (string: bullet-point list of required and preferred qualifications)
+    - skills (array of strings: 5-10 key skills required for this role, e.g. "React", "TypeScript", "Node.js")
+    - salaryRange (object with min, max as annual numbers and currency as a string e.g. "USD", based on current market data for this title${context ? ` in ${context}` : ""})`
   );
 }
 

@@ -22,7 +22,10 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
   const [title, setTitle] = useState(defaultValues?.title || "");
   const [description, setDescription] = useState(defaultValues?.description || "");
   const [requirements, setRequirements] = useState(defaultValues?.requirements || "");
+  const [skills, setSkills] = useState("");
   const [location, setLocation] = useState(defaultValues?.location || "");
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [checkingBias, setCheckingBias] = useState(false);
   const [biasResult, setBiasResult] = useState<{ hasBias: boolean; issues: Array<{ text: string; suggestion: string; reason: string }>; score: number } | null>(null);
@@ -40,6 +43,13 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
         const data = await res.json();
         setDescription(data.description);
         setRequirements(data.requirements);
+        if (data.skills?.length) {
+          setSkills(data.skills.join(", "));
+        }
+        if (data.salaryRange) {
+          setSalaryMin(String(data.salaryRange.min));
+          setSalaryMax(String(data.salaryRange.max));
+        }
       }
     } finally {
       setGeneratingDescription(false);
@@ -109,6 +119,8 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
               name="salaryMin"
               type="number"
               placeholder="80000"
+              value={salaryMin}
+              onChange={(e) => setSalaryMin(e.target.value)}
             />
           </div>
           <div className="space-y-2 flex-1">
@@ -118,6 +130,8 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
               name="salaryMax"
               type="number"
               placeholder="120000"
+              value={salaryMax}
+              onChange={(e) => setSalaryMax(e.target.value)}
             />
           </div>
         </div>
@@ -173,6 +187,17 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
             value={requirements}
             onChange={(e) => setRequirements(e.target.value)}
             rows={6}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="skills">Skills</Label>
+          <Input
+            id="skills"
+            name="skills"
+            placeholder="e.g. React, TypeScript, Node.js"
+            value={skills}
+            onChange={(e) => setSkills(e.target.value)}
           />
         </div>
       </div>

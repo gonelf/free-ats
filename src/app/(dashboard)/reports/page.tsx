@@ -99,18 +99,18 @@ export default async function ReportsPage() {
   const avgDaysInPipeline =
     applications.length > 0
       ? Math.round(
-          applications.reduce(
-            (sum, a) =>
-              sum + (now - new Date(a.createdAt).getTime()) / (1000 * 60 * 60 * 24),
-            0
-          ) / applications.length
-        )
+        applications.reduce(
+          (sum, a) =>
+            sum + (now - new Date(a.createdAt).getTime()) / (1000 * 60 * 60 * 24),
+          0
+        ) / applications.length
+      )
       : 0;
 
   const maxStageCount = Math.max(...stageData.map((s) => s.count), 1);
 
   return (
-    <div className="max-w-4xl">
+    <div>
       <div className="flex items-center gap-3 mb-8">
         <BarChart3 className="h-6 w-6 text-gray-400" />
         <div>

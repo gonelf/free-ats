@@ -4,12 +4,12 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 
 // Fast model for high-volume, cost-sensitive tasks
 export const flashModel = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.5-flash",
 });
 
 // Higher quality model for complex generation tasks
 export const proModel = genAI.getGenerativeModel({
-  model: "gemini-2.0-pro-exp",
+  model: "gemini-2.5-flash",
 });
 
 export async function generateText(

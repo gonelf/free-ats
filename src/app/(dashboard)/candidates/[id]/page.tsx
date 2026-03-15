@@ -49,7 +49,7 @@ export default async function CandidateDetailPage({
   });
 
   return (
-    <div className="max-w-4xl">
+    <div>
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
         <Link href="/candidates" className="hover:text-gray-900">
           <ChevronLeft className="inline h-4 w-4" />

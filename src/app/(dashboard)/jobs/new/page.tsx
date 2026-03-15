@@ -24,7 +24,7 @@ export default async function NewJobPage() {
   const hasAiAccess = org.plan === "PRO" || org.aiCreditsBalance > 0;
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <div className="flex items-center gap-3 mb-8">
         <Link
           href="/jobs"

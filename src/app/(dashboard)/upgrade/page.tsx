@@ -46,7 +46,7 @@ export default function UpgradePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div>
       <div className="text-center mb-10">
         <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-indigo-600 mb-6">
           <Sparkles className="h-8 w-8 text-white" />

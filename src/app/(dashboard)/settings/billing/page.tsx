@@ -22,7 +22,7 @@ function BillingContent() {
     fetch("/api/credits")
       .then((r) => r.json())
       .then((d) => setCredits(d))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   async function openPortal() {
@@ -42,14 +42,14 @@ function BillingContent() {
   const creditsLow = creditsPercent <= 20;
   const resetLabel = credits?.resetAt
     ? new Date(credits.resetAt).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
     : null;
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Billing</h1>
       <p className="text-sm text-gray-500 mb-8">
         Manage your subscription and AI credit usage.
@@ -98,9 +98,8 @@ function BillingContent() {
 
           <div className="h-3 rounded-full bg-gray-100 overflow-hidden mb-3">
             <div
-              className={`h-full rounded-full transition-all ${
-                creditsLow ? "bg-red-500" : creditsPercent <= 50 ? "bg-amber-500" : "bg-indigo-500"
-              }`}
+              className={`h-full rounded-full transition-all ${creditsLow ? "bg-red-500" : creditsPercent <= 50 ? "bg-amber-500" : "bg-indigo-500"
+                }`}
               style={{ width: `${creditsPercent}%` }}
             />
           </div>

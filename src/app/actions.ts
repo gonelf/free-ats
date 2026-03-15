@@ -52,6 +52,7 @@ export async function createJob(formData: FormData) {
       location,
       salaryMin,
       salaryMax,
+      slug: slugify(title),
       pipelineId: pipeline.id,
     },
   });
@@ -71,7 +72,14 @@ export async function updateJob(jobId: string, formData: FormData) {
 
   await db.job.update({
     where: { id: jobId, organizationId: org.id },
-    data: { title, description, requirements, location, status },
+    data: { 
+      title, 
+      description, 
+      requirements, 
+      location, 
+      status,
+      slug: slugify(title)
+    },
   });
 
   revalidatePath(`/jobs/${jobId}`);

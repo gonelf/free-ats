@@ -221,7 +221,7 @@ export function CandidateDetailClient({
             <select
               value={selectedJobId}
               onChange={(e) => setSelectedJobId(e.target.value)}
-              className="w-full rounded-md border border-gray-200 px-3 py-1.5 text-sm mb-2"
+              className="w-full rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-900 mb-2"
             >
               <option value="">Select a job...</option>
               {unappliedJobs.map((j) => (

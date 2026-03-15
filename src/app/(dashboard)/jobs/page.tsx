@@ -3,10 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Briefcase, MapPin, Users } from "lucide-react";
+import { Plus, Briefcase, MapPin, Users, ExternalLink } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
+import { JobStatusDropdown } from "@/components/jobs/JobStatusDropdown";
 
 export const metadata: Metadata = {
   title: "Jobs — KiteHR",
@@ -95,17 +96,18 @@ export default async function JobsPage() {
       ) : (
         <div className="grid gap-4">
           {jobs.map((job) => (
-            <Link
+            <div
               key={job.id}
-              href={`/jobs/${job.id}`}
               className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-4 flex-1">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 shrink-0">
                   <Briefcase className="h-5 w-5 text-indigo-600" />
                 </div>
-                <div>
-                  <h2 className="font-semibold text-gray-900">{job.title}</h2>
+                <div className="flex-1">
+                  <Link href={`/jobs/${job.id}`} className="hover:underline">
+                    <h2 className="font-semibold text-gray-900 block">{job.title}</h2>
+                  </Link>
                   <div className="flex items-center gap-3 mt-1">
                     {job.location && (
                       <span className="flex items-center gap-1 text-xs text-gray-500">
@@ -123,10 +125,15 @@ export default async function JobsPage() {
                   </div>
                 </div>
               </div>
-              <Badge variant={statusVariant[job.status]}>
-                {job.status.charAt(0) + job.status.slice(1).toLowerCase()}
-              </Badge>
-            </Link>
+              <div className="ml-4 flex items-center justify-end gap-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900" asChild title="View Public Page">
+                  <a href={`/j/${job.id}`} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </Button>
+                <JobStatusDropdown jobId={job.id} initialStatus={job.status} />
+              </div>
+            </div>
           ))}
         </div>
       )}

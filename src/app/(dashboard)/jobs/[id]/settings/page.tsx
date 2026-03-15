@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -33,7 +33,7 @@ export default async function JobSettingsPage({
   if (!job) notFound();
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
         <Link href={`/jobs/${id}`} className="hover:text-gray-900">
           <ChevronLeft className="inline h-4 w-4" />
@@ -60,7 +60,7 @@ export default async function JobSettingsPage({
             <select
               name="status"
               defaultValue={job.status}
-              className="flex h-9 w-full rounded-md border border-gray-200 bg-white px-3 py-1 text-sm"
+              className="flex h-9 w-full rounded-md border border-gray-200 bg-white px-3 py-1 text-sm text-gray-900"
             >
               <option value="DRAFT">Draft</option>
               <option value="OPEN">Open</option>
@@ -87,6 +87,7 @@ export default async function JobSettingsPage({
             formAction={async (fd) => {
               "use server";
               await updateJob(id, fd);
+              redirect(`/jobs/${id}`);
             }}
           >
             Save Changes
