@@ -87,6 +87,7 @@ model Job {
 
   @@index([organizationId])
   @@index([pipelineId])
+  @@unique([organizationId, slug])
 }
 
 enum JobStatus {

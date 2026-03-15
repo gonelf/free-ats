@@ -1,7 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 import { uploadResumeToR2, freeResumeExpiresAt } from "@/lib/r2";
 
 export async function submitApplication(jobId: string, formData: FormData) {
@@ -9,15 +9,11 @@ export async function submitApplication(jobId: string, formData: FormData) {
     const firstName = formData.get("firstName") as string;
     const lastName = formData.get("lastName") as string;
     const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string | null;
-    const linkedinUrl = formData.get("linkedinUrl") as string | null;
+    const phone = formData.get("phone") as string;
+    const linkedinUrl = formData.get("linkedinUrl") as string;
     const resumeFile = formData.get("resume") as File | null;
 
-    if (!firstName || !lastName || !email) {
-      return { error: "Missing required fields" };
-    }
-
-    // 1. Get job and organization
+    // Get job to find its organization and pipeline
     const job = await db.job.findUnique({
       where: { id: jobId },
       include: {
@@ -26,10 +22,9 @@ export async function submitApplication(jobId: string, formData: FormData) {
           include: {
             stages: {
               orderBy: { order: "asc" },
-              take: 1,
-            },
-          },
-        },
+            }
+          }
+        }
       },
     });
 
@@ -39,17 +34,15 @@ export async function submitApplication(jobId: string, formData: FormData) {
 
     const firstStage = job.pipeline.stages[0];
     if (!firstStage) {
-      return { error: "Job pipeline not configured" };
+      return { error: "No hiring pipeline found for this job" };
     }
 
     let resumeUrl: string | null = null;
     let resumeExpiresAt: Date | null = null;
 
-    // 2. Handle resume upload to R2
     if (resumeFile && resumeFile.size > 0 && resumeFile.name !== "undefined") {
       try {
         resumeUrl = await uploadResumeToR2(resumeFile, job.organizationId);
-        // Free plan resumes expire in 10 days
         if (job.organization.plan === "FREE") {
           resumeExpiresAt = freeResumeExpiresAt();
         }
@@ -59,13 +52,13 @@ export async function submitApplication(jobId: string, formData: FormData) {
       }
     }
 
-    // 3. Create or update Candidate
+    // Upsert candidate within the organization
     const candidate = await db.candidate.upsert({
       where: {
         organizationId_email: {
           organizationId: job.organizationId,
-          email: email,
-        },
+          email,
+        }
       },
       update: {
         firstName,
@@ -83,31 +76,30 @@ export async function submitApplication(jobId: string, formData: FormData) {
         linkedinUrl,
         resumeUrl,
         resumeExpiresAt,
-      },
+      }
     });
 
-    // 4. Create Application
+    // Create application
     await db.application.upsert({
       where: {
         jobId_candidateId: {
-          jobId: job.id,
+          jobId,
           candidateId: candidate.id,
-        },
+        }
       },
-      update: {
-        stageId: firstStage.id,
-      },
+      update: {}, // Don't move if they apply twice for now
       create: {
-        jobId: job.id,
+        jobId,
         candidateId: candidate.id,
         stageId: firstStage.id,
-      },
+      }
     });
 
-    revalidatePath(`/j/${jobId}`);
+    revalidatePath(`/jobs/${jobId}`);
+
     return { success: true };
-  } catch (error) {
-    console.error("Application submission error:", error);
-    return { error: "Something went wrong. Please try again later." };
+  } catch (error: any) {
+    console.error("Error submitting application:", error);
+    return { error: "Something went wrong. Please try again." };
   }
 }
