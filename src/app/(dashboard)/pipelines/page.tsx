@@ -36,7 +36,7 @@ export default async function PipelinesPage() {
         <form action={createPipeline}>
           <input type="hidden" name="name" value="New Pipeline" />
           <Button type="submit" variant="outline" size="sm">
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4" aria-hidden="true" />
             New Pipeline
           </Button>
         </form>
@@ -50,7 +50,7 @@ export default async function PipelinesPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <GitBranch className="h-4 w-4 text-gray-400" />
+                <GitBranch className="h-4 w-4 text-gray-400" aria-hidden="true" />
                 <h2 className="font-semibold text-gray-900">{pipeline.name}</h2>
                 {pipeline.isDefault && (
                   <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs text-indigo-600 font-medium">
@@ -82,10 +82,17 @@ export default async function PipelinesPage() {
 
             <form className="flex gap-2">
               <input type="hidden" name="pipelineId" value={pipeline.id} />
+              <label
+                htmlFor={`stage-name-${pipeline.id}`}
+                className="sr-only"
+              >
+                New stage name for {pipeline.name}
+              </label>
               <input
+                id={`stage-name-${pipeline.id}`}
                 name="name"
                 placeholder="Add stage..."
-                className="flex h-8 flex-1 rounded-md border border-gray-200 px-3 py-1 text-sm"
+                className="flex h-8 flex-1 rounded-md border border-gray-200 px-3 py-1 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
               />
               <Button
                 formAction={async (fd) => {
