@@ -22,6 +22,28 @@ async function getUserOrg() {
   return { user, org: member.organization, member };
 }
 
+// Helper to generate unique slug for a job within an organization
+async function generateUniqueJobSlug(organizationId: string, title: string, excludeJobId?: string) {
+  const baseSlug = slugify(title);
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    const existing = await db.job.findFirst({
+      where: {
+        organizationId,
+        slug,
+        id: excludeJobId ? { not: excludeJobId } : undefined,
+      },
+    });
+    
+    if (!existing) return slug;
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
 // ============ JOBS ============
 
 export async function createJob(formData: FormData) {
@@ -52,7 +74,7 @@ export async function createJob(formData: FormData) {
       location,
       salaryMin,
       salaryMax,
-      slug: slugify(title),
+      slug: await generateUniqueJobSlug(org.id, title),
       pipelineId: pipeline.id,
     },
   });
@@ -70,6 +92,14 @@ export async function updateJob(jobId: string, formData: FormData) {
   const location = formData.get("location") as string;
   const status = formData.get("status") as "DRAFT" | "OPEN" | "CLOSED";
 
+  const existingJob = await db.job.findUniqueOrThrow({
+    where: { id: jobId, organizationId: org.id },
+  });
+
+  const slug = title !== existingJob.title 
+    ? await generateUniqueJobSlug(org.id, title, jobId)
+    : existingJob.slug || await generateUniqueJobSlug(org.id, title, jobId);
+
   await db.job.update({
     where: { id: jobId, organizationId: org.id },
     data: { 
@@ -78,7 +108,7 @@ export async function updateJob(jobId: string, formData: FormData) {
       requirements, 
       location, 
       status,
-      slug: slugify(title)
+      slug
     },
   });
 

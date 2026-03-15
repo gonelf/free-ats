@@ -10,11 +10,15 @@ import { ApplyForm } from "@/components/jobs/ApplyForm";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string; slug: string }>;
+  params: Promise<{ companySlug: string; jobSlug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const job = await db.job.findUnique({
-    where: { id },
+  const { companySlug, jobSlug } = await params;
+  
+  const job = await db.job.findFirst({
+    where: {
+      organization: { slug: companySlug },
+      slug: jobSlug,
+    },
     include: { organization: true },
   });
 
@@ -30,7 +34,7 @@ export async function generateMetadata({
       title,
       description,
       type: "article",
-      url: `/j/${job.id}/${job.slug}`,
+      url: `/${companySlug}/jobs/${jobSlug}`,
       siteName: "KiteHR",
     },
     twitter: {
@@ -44,16 +48,19 @@ export async function generateMetadata({
 export default async function PublicJobPage({
   params,
 }: {
-  params: Promise<{ id: string; slug: string }>;
+  params: Promise<{ companySlug: string; jobSlug: string }>;
 }) {
-  const { id, slug } = await params;
+  const { companySlug, jobSlug } = await params;
 
-  const job = await db.job.findUnique({
-    where: { id },
+  const job = await db.job.findFirst({
+    where: {
+      organization: { slug: companySlug },
+      slug: jobSlug,
+    },
     include: { organization: true },
   });
 
-  if (!job || job.slug !== slug) notFound();
+  if (!job) notFound();
 
   // If you only want to show OPEN jobs, uncomment this line:
   // if (job.status !== "OPEN") notFound();

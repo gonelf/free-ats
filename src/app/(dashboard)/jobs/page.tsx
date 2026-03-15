@@ -38,6 +38,7 @@ export default async function JobsPage() {
       where: { organizationId: orgId },
       include: {
         _count: { select: { applications: true } },
+        organization: { select: { slug: true } },
       },
       orderBy: { createdAt: "desc" },
     }),
@@ -127,7 +128,7 @@ export default async function JobsPage() {
               </div>
               <div className="ml-4 flex items-center justify-end gap-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900" asChild title="View Public Page">
-                  <a href={`/j/${job.id}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`/${job.organization.slug}/jobs/${job.slug}`} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </Button>

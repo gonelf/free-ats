@@ -5,7 +5,7 @@ import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { submitApplication } from "@/app/j/[id]/apply-actions";
+import { submitApplication } from "@/app/actions/apply";
 
 interface ApplyFormProps {
   jobId: string;
