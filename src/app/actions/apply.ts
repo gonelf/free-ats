@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { uploadResumeToR2, freeResumeExpiresAt } from "@/lib/r2";
 
 export async function submitApplication(jobId: string, formData: FormData) {
   try {
@@ -10,11 +11,12 @@ export async function submitApplication(jobId: string, formData: FormData) {
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
     const linkedinUrl = formData.get("linkedinUrl") as string;
-    
+    const resumeFile = formData.get("resume") as File | null;
+
     // Get job to find its organization and pipeline
     const job = await db.job.findUnique({
       where: { id: jobId },
-      include: { 
+      include: {
         organization: true,
         pipeline: {
           include: {
@@ -35,6 +37,21 @@ export async function submitApplication(jobId: string, formData: FormData) {
       return { error: "No hiring pipeline found for this job" };
     }
 
+    let resumeUrl: string | null = null;
+    let resumeExpiresAt: Date | null = null;
+
+    if (resumeFile && resumeFile.size > 0 && resumeFile.name !== "undefined") {
+      try {
+        resumeUrl = await uploadResumeToR2(resumeFile, job.organizationId);
+        if (job.organization.plan === "FREE") {
+          resumeExpiresAt = freeResumeExpiresAt();
+        }
+      } catch (uploadError) {
+        console.error("R2 upload error:", uploadError);
+        // Continue without resume rather than blocking the application
+      }
+    }
+
     // Upsert candidate within the organization
     const candidate = await db.candidate.upsert({
       where: {
@@ -48,6 +65,7 @@ export async function submitApplication(jobId: string, formData: FormData) {
         lastName,
         phone,
         linkedinUrl,
+        ...(resumeUrl && { resumeUrl, resumeExpiresAt }),
       },
       create: {
         organizationId: job.organizationId,
@@ -56,6 +74,8 @@ export async function submitApplication(jobId: string, formData: FormData) {
         email,
         phone,
         linkedinUrl,
+        resumeUrl,
+        resumeExpiresAt,
       }
     });
 
@@ -76,7 +96,7 @@ export async function submitApplication(jobId: string, formData: FormData) {
     });
 
     revalidatePath(`/jobs/${jobId}`);
-    
+
     return { success: true };
   } catch (error: any) {
     console.error("Error submitting application:", error);

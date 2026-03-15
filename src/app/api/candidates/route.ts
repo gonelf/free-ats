@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { uploadResumeToR2, freeResumeExpiresAt } from "@/lib/r2";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   const member = await db.member.findFirst({
     where: { userId: user.id },
-    select: { organizationId: true },
+    include: { organization: { select: { plan: true } } },
   });
   if (!member) return NextResponse.json({ error: "No org" }, { status: 403 });
 
@@ -22,6 +23,21 @@ export async function POST(request: NextRequest) {
   const phone = (formData.get("phone") as string) || null;
   const linkedinUrl = (formData.get("linkedinUrl") as string) || null;
   const jobId = formData.get("jobId") as string | null;
+  const resumeFile = formData.get("resume") as File | null;
+
+  let resumeUrl: string | null = null;
+  let resumeExpiresAt: Date | null = null;
+
+  if (resumeFile && resumeFile.size > 0) {
+    try {
+      resumeUrl = await uploadResumeToR2(resumeFile, member.organizationId);
+      if (member.organization.plan === "FREE") {
+        resumeExpiresAt = freeResumeExpiresAt();
+      }
+    } catch (err) {
+      console.error("R2 upload error:", err);
+    }
+  }
 
   const candidate = await db.candidate.create({
     data: {
@@ -31,6 +47,8 @@ export async function POST(request: NextRequest) {
       email,
       phone,
       linkedinUrl,
+      resumeUrl,
+      resumeExpiresAt,
     },
   });
 

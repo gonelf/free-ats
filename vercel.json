@@ -6,5 +6,11 @@
     "src/app/api/webhooks/**": {
       "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/cleanup-resumes",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }
