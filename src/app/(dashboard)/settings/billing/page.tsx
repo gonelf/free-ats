@@ -17,11 +17,12 @@ function BillingContent() {
   const [credits, setCredits] = useState<CreditsData | null>(null);
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
+  const sync = searchParams.get("sync");
   const router = useRouter();
   const refreshed = useRef(false);
 
   useEffect(() => {
-    if (!success) {
+    if (!success && !sync) {
       fetch("/api/credits")
         .then((r) => r.json())
         .then((d) => setCredits(d))
@@ -29,14 +30,13 @@ function BillingContent() {
       return;
     }
 
-    // After successful checkout, sync the subscription from Stripe (handles the case
-    // where the webhook hasn't fired yet, e.g. local dev), then refresh server components.
+    // Sync subscription state from Stripe (handles webhook delays in local dev for both
+    // post-checkout upgrades and post-portal cancellations), then refresh server components.
     let attempts = 0;
     const maxAttempts = 8;
     let timer: ReturnType<typeof setTimeout>;
 
     const syncAndPoll = async () => {
-      // Try to sync directly from Stripe first
       try {
         await fetch("/api/stripe/sync-subscription", { method: "POST" });
       } catch { /* ignore, fall through to credits poll */ }
@@ -46,7 +46,9 @@ function BillingContent() {
           .then((r) => r.json())
           .then((d: CreditsData) => {
             setCredits(d);
-            if (d.isPro) {
+            // For ?success: wait until isPro=true. For ?sync (cancel): refresh immediately.
+            const done = success ? d.isPro : true;
+            if (done) {
               if (!refreshed.current) {
                 refreshed.current = true;
                 router.refresh();
@@ -64,7 +66,7 @@ function BillingContent() {
 
     syncAndPoll();
     return () => clearTimeout(timer);
-  }, [success, router]);
+  }, [success, sync, router]);
 
   async function openPortal() {
     setLoading(true);

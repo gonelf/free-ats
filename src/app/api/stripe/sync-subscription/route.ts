@@ -40,6 +40,18 @@ export async function POST() {
   const activeSub = subscriptions.data[0];
 
   if (!activeSub) {
+    // No active subscription — downgrade to FREE if DB still shows PRO
+    if (org.plan === "PRO") {
+      await db.organization.update({
+        where: { id: org.id },
+        data: {
+          plan: "FREE",
+          stripeSubscriptionId: null,
+          aiCreditsBalance: 0,
+          aiCreditsResetAt: null,
+        },
+      });
+    }
     return NextResponse.json({ isPro: false });
   }
 
