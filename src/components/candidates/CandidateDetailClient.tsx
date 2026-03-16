@@ -427,6 +427,7 @@ export function CandidateDetailClient({
                   patchForm("skills", data.tags ?? []);
                 }
               }}
+              creditCost={2}
               className="text-[10px] h-6 px-2"
             >
               Auto-tag
@@ -784,6 +785,7 @@ export function CandidateDetailClient({
                           onClick={() => handleScoreApplication(app.id)}
                           loading={scoringAppId === app.id}
                           className="text-[10px] h-6 px-2"
+                          creditCost={5}
                         >
                           {appScores[app.id] ? "Re-score" : "Score"}
                         </AiButton>
@@ -912,6 +914,7 @@ export function CandidateDetailClient({
           hasAiAccess={hasAiAccess}
           onClick={handleParseResume}
           loading={parsingResume}
+          creditCost={10}
         >
           Parse Resume
         </AiButton>
