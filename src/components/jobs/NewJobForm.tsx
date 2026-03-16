@@ -94,6 +94,7 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
               hasAiAccess={hasAiAccess}
               onClick={generateDescription}
               loading={generatingDescription}
+              creditCost={8}
             >
               Generate Description
             </AiButton>
@@ -143,6 +144,7 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
               hasAiAccess={hasAiAccess}
               onClick={checkBias}
               loading={checkingBias}
+              creditCost={3}
             >
               Check for Bias
             </AiButton>

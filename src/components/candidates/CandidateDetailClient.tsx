@@ -196,6 +196,7 @@ export function CandidateDetailClient({
               hasAiAccess={hasAiAccess}
               onClick={handleGenerateSummary}
               loading={generatingSummary}
+              creditCost={5}
             >
               {summary ? "Regenerate" : "Generate Summary"}
             </AiButton>
@@ -348,6 +349,7 @@ export function CandidateDetailClient({
                           onClick={() => handleScoreApplication(app.id)}
                           loading={scoringAppId === app.id}
                           className="text-[10px] h-6 px-2"
+                          creditCost={5}
                         >
                           {appScores[app.id] ? "Re-score" : "Score"}
                         </AiButton>
