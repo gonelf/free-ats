@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
@@ -37,6 +38,9 @@ export function KanbanCard({
   isDragging,
   hasAiAccess,
 }: KanbanCardProps) {
+  const [score, setScore] = useState<number | null>(application.aiScore);
+  const [scoring, setScoring] = useState(false);
+
   const {
     attributes,
     listeners,
@@ -53,6 +57,26 @@ export function KanbanCard({
 
   const { candidate } = application;
   const isCurrentlyDragging = isDragging || isSortableDragging;
+
+  async function handleScore(e: React.MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (scoring || !hasAiAccess) return;
+    setScoring(true);
+    try {
+      const res = await fetch("/api/ai/score-candidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicationId: application.id }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setScore(data.score);
+      }
+    } finally {
+      setScoring(false);
+    }
+  }
 
   return (
     <div
@@ -76,18 +100,33 @@ export function KanbanCard({
           >
             {candidate.firstName} {candidate.lastName}
           </Link>
-          
-          {hasAiAccess && application.aiScore !== null && (
-            <div
+
+          {hasAiAccess && score !== null ? (
+            <button
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={handleScore}
+              disabled={scoring}
+              title="Re-score candidate"
               className={cn(
-                "shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
-                getScoreColor(application.aiScore)
+                "shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-opacity hover:opacity-75",
+                getScoreColor(score)
               )}
             >
               <Sparkles className="h-3 w-3" />
-              {application.aiScore}
-            </div>
-          )}
+              {scoring ? "…" : score}
+            </button>
+          ) : hasAiAccess ? (
+            <button
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={handleScore}
+              disabled={scoring}
+              title="Score this candidate against the job"
+              className="shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-50 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 disabled:opacity-50"
+            >
+              <Sparkles className="h-3 w-3" />
+              {scoring ? "Scoring…" : "Score"}
+            </button>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-1">
