@@ -38,14 +38,66 @@ export function ApplyForm({ jobId }: ApplyFormProps) {
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-        <div className="bg-green-100 p-3 rounded-full mb-4">
-          <CheckCircle2 className="h-8 w-8 text-green-600" />
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden animate-in fade-in zoom-in duration-500">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-12 flex flex-col items-center justify-center text-center border-b border-gray-100">
+          <div className="bg-white p-4 rounded-2xl shadow-sm mb-6 animate-in slide-in-from-bottom-4 duration-700 delay-200">
+            <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+          </div>
+          <h3 className="text-3xl font-extrabold text-gray-900 mb-3 animate-in fade-in slide-in-from-bottom-2 duration-700 delay-300">
+            Application Sent!
+          </h3>
+          <p className="text-gray-600 max-w-sm text-lg animate-in fade-in slide-in-from-bottom-2 duration-700 delay-400">
+            Thank you for applying. We&apos;ve received your application for this position.
+          </p>
         </div>
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Application Sent!</h3>
-        <p className="text-gray-600 max-w-sm">
-          Thank you for applying. We've received your application and will get back to you soon.
-        </p>
+        
+        <div className="p-8 bg-white space-y-8 animate-in fade-in duration-700 delay-500">
+          <div>
+            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">What happens next?</h4>
+            <div className="space-y-6">
+              {[
+                {
+                  title: "Review Process",
+                  desc: "Our hiring team will review your resume and qualifications.",
+                  icon: "1"
+                },
+                {
+                  title: "Initial Screening",
+                  desc: "If there's a match, we'll reach out for an initial conversation.",
+                  icon: "2"
+                },
+                {
+                  title: "Interview Rounds",
+                  desc: "Selected candidates will be invited for more detailed interviews.",
+                  icon: "3"
+                }
+              ].map((step, i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm border border-emerald-100">
+                    {step.icon}
+                  </div>
+                  <div>
+                    <h5 className="font-semibold text-gray-900">{step.title}</h5>
+                    <p className="text-sm text-gray-500">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-100">
+            <Button 
+              variant="outline" 
+              className="w-full h-12 text-base font-semibold border-2 hover:bg-gray-50 transition-all"
+              onClick={() => setSubmitted(false)}
+            >
+              Submit another application
+            </Button>
+            <p className="text-center text-xs text-gray-400 mt-6">
+              A confirmation email has been sent to your inbox.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

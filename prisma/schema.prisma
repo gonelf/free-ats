@@ -188,16 +188,22 @@ model AiSummary {
 }
 
 model EmailTemplate {
-  id             String       @id @default(cuid())
+  id             String            @id @default(cuid())
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   name           String
+  type           EmailTemplateType @default(CUSTOM)
   subject        String
-  body           String       @db.Text
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  body           String            @db.Text
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   @@index([organizationId])
+}
+
+enum EmailTemplateType {
+  CONFIRMATION
+  CUSTOM
 }
 
 model AppAdmin {

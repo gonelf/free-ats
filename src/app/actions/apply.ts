@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { uploadResumeToR2, freeResumeExpiresAt } from "@/lib/r2";
+import { sendEmail } from "@/lib/mail";
 
 export async function submitApplication(jobId: string, formData: FormData) {
   try {
@@ -96,7 +97,42 @@ export async function submitApplication(jobId: string, formData: FormData) {
     });
 
     revalidatePath(`/jobs/${jobId}`);
-
+ 
+    // Send confirmation email if template exists
+    try {
+      const template = await db.emailTemplate.findFirst({
+        where: {
+          organizationId: job.organizationId,
+          type: "CONFIRMATION",
+        },
+      });
+ 
+      if (template) {
+        const candidateName = `${firstName} ${lastName}`;
+        const companyName = job.organization.name;
+        const jobTitle = job.title;
+ 
+        let body = template.body
+          .replace(/{{candidateName}}/g, candidateName)
+          .replace(/{{companyName}}/g, companyName)
+          .replace(/{{jobTitle}}/g, jobTitle);
+ 
+        let subject = template.subject
+          .replace(/{{candidateName}}/g, candidateName)
+          .replace(/{{companyName}}/g, companyName)
+          .replace(/{{jobTitle}}/g, jobTitle);
+ 
+        await sendEmail({
+          to: email,
+          subject,
+          body,
+        });
+      }
+    } catch (emailError) {
+      console.error("Failed to send confirmation email:", emailError);
+      // Don't fail the whole submission if email fails
+    }
+ 
     return { success: true };
   } catch (error: any) {
     console.error("Error submitting application:", error);

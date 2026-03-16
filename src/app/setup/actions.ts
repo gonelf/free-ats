@@ -58,6 +58,29 @@ export async function createOrganization(formData: FormData) {
           },
         },
       },
+      emailTemplates: {
+        create: {
+          name: "Application Confirmation",
+          type: "CONFIRMATION",
+          subject: "Application Received: {{jobTitle}}",
+          body: `
+            <h1 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0 0 16px;">Application Received!</h1>
+            <p style="font-size: 16px; line-height: 24px; color: #4b5563; margin: 0 0 16px;">
+              Hi {{candidateName}},
+            </p>
+            <p style="font-size: 16px; line-height: 24px; color: #4b5563; margin: 0 0 16px;">
+              Thank you for applying for the <strong>{{jobTitle}}</strong> position at <strong>{{companyName}}</strong>. We've received your application and will review it shortly.
+            </p>
+            <p style="font-size: 16px; line-height: 24px; color: #4b5563; margin: 0 0 24px;">
+              If your qualifications match our requirements, we'll reach out to schedule an initial conversation.
+            </p>
+            <p style="font-size: 16px; line-height: 24px; color: #4b5563; margin: 0;">
+              Best regards,<br>
+              The {{companyName}} Team
+            </p>
+          `,
+        },
+      },
     },
   });
 

@@ -56,8 +56,20 @@ export default async function EmailTemplatesPage() {
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="font-medium text-gray-900">{t.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-gray-900">{t.name}</h3>
+                    {t.type === "CONFIRMATION" && (
+                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                        System
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500 mt-0.5">{t.subject}</p>
+                  {t.type === "CONFIRMATION" && (
+                    <p className="text-xs text-indigo-500 mt-1">
+                      Sent automatically when a candidate applies
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm">Edit</Button>
