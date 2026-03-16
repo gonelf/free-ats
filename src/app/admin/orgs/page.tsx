@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { Building2, Users, Briefcase, Sparkles, Crown } from "lucide-react";
 import { DeleteOrgButton } from "@/components/admin/DeleteOrgButton";
 import { ChangePlanButton } from "@/components/admin/ChangePlanButton";
+import { AddTrialCreditsButton } from "@/components/admin/AddTrialCreditsButton";
 
 export default async function AdminOrgsPage() {
   await requireAdmin();
@@ -80,6 +81,7 @@ export default async function AdminOrgsPage() {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">
+                    <AddTrialCreditsButton orgId={org.id} orgName={org.name} currentCredits={org.aiCreditsBalance} />
                     <ChangePlanButton orgId={org.id} currentPlan={org.plan} orgName={org.name} />
                     <DeleteOrgButton orgId={org.id} orgName={org.name} />
                   </div>
