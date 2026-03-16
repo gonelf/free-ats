@@ -85,8 +85,8 @@ export function AiButton({
       {loading ? "Generating..." : children}
       {creditCost !== undefined && !loading && (
         <span className="ml-1.5 flex items-center gap-0.5 border-l border-gray-200 pl-1.5">
-          <span className="text-[10px] font-semibold tabular-nums text-indigo-400">{creditCost}</span>
-          <span className="text-[9px] font-medium text-indigo-300">cr</span>
+          <span className="text-xs font-bold tabular-nums text-indigo-500">{creditCost}</span>
+          <span className="text-[10px] font-semibold text-indigo-400">cr</span>
         </span>
       )}
     </Button>
