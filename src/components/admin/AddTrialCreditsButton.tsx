@@ -53,8 +53,11 @@ export function AddTrialCreditsButton({ orgId, orgName, currentCredits }: AddTri
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-gray-900">Add Trial Credits</h2>
+            <div className="mb-5 flex items-start justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">Add Trial Credits</h2>
+                <p className="mt-0.5 text-sm text-gray-500 truncate max-w-[240px]">{orgName}</p>
+              </div>
               <button
                 onClick={() => setOpen(false)}
                 className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
@@ -62,10 +65,21 @@ export function AddTrialCreditsButton({ orgId, orgName, currentCredits }: AddTri
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <p className="mb-4 text-sm text-gray-500">
-              Adding credits to <span className="font-medium text-gray-700">{orgName}</span>.
-              Current balance: <span className="font-medium tabular-nums">{currentCredits.toLocaleString()}</span>
-            </p>
+
+            <div className="mb-5 flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">Current balance</p>
+                <p className="text-xl font-semibold tabular-nums text-gray-900">{currentCredits.toLocaleString()}</p>
+              </div>
+              <div className="text-gray-300 text-lg font-light">→</div>
+              <div className="flex-1 text-right">
+                <p className="text-xs text-gray-500">New balance</p>
+                <p className="text-xl font-semibold tabular-nums text-indigo-600">
+                  {(currentCredits + (parseInt(amount, 10) || 0)).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="credits-amount" className="mb-1.5 block text-sm font-medium text-gray-700">
