@@ -51,6 +51,7 @@ interface AiButtonProps {
   children: React.ReactNode;
   loading?: boolean;
   className?: string;
+  creditCost?: number;
 }
 
 export function AiButton({
@@ -59,6 +60,7 @@ export function AiButton({
   children,
   loading,
   className,
+  creditCost,
 }: AiButtonProps) {
   if (!hasAiAccess) {
     return (
@@ -81,6 +83,11 @@ export function AiButton({
     >
       <Sparkles className="h-3 w-3 mr-1 text-indigo-500" />
       {loading ? "Generating..." : children}
+      {creditCost !== undefined && !loading && (
+        <span className="ml-1.5 text-[10px] font-medium text-gray-400">
+          {creditCost}cr
+        </span>
+      )}
     </Button>
   );
 }
