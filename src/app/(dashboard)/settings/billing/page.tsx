@@ -14,6 +14,7 @@ interface CreditsData {
 
 function BillingContent() {
   const [loading, setLoading] = useState(false);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [credits, setCredits] = useState<CreditsData | null>(null);
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
@@ -58,6 +59,17 @@ function BillingContent() {
     syncAndPoll();
     return () => clearTimeout(timer);
   }, [success, router]);
+
+  async function handleUpgrade() {
+    setUpgradeLoading(true);
+    try {
+      const res = await fetch("/api/stripe/create-checkout", { method: "POST" });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } catch {
+      setUpgradeLoading(false);
+    }
+  }
 
   async function openPortal() {
     setLoading(true);
@@ -190,10 +202,14 @@ function BillingContent() {
             <Sparkles className="h-5 w-5 text-indigo-600" />
             <p className="font-medium text-indigo-900">AI Credits included with Pro</p>
           </div>
-          <p className="text-sm text-indigo-700">
+          <p className="text-sm text-indigo-700 mb-4">
             Upgrade to Pro for $49/mo to get 2,500 AI credits every month —
             enough for hundreds of resume parses, candidate scores, and email drafts.
           </p>
+          <Button onClick={handleUpgrade} disabled={upgradeLoading} className="w-full">
+            <Sparkles className="h-4 w-4" />
+            {upgradeLoading ? "Redirecting to checkout..." : "Upgrade Now"}
+          </Button>
         </div>
       )}
 
