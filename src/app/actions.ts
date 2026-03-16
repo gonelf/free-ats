@@ -167,6 +167,33 @@ export async function updateCandidate(candidateId: string, formData: FormData) {
   revalidatePath("/candidates");
 }
 
+export async function updateCandidateFromResume(
+  candidateId: string,
+  data: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    linkedinUrl?: string;
+  }
+) {
+  const { org } = await getUserOrg();
+
+  await db.candidate.update({
+    where: { id: candidateId, organizationId: org.id },
+    data: {
+      ...(data.firstName && { firstName: data.firstName }),
+      ...(data.lastName && { lastName: data.lastName }),
+      ...(data.email && { email: data.email }),
+      phone: data.phone || null,
+      linkedinUrl: data.linkedinUrl || null,
+    },
+  });
+
+  revalidatePath(`/candidates/${candidateId}`);
+  revalidatePath("/candidates");
+}
+
 export async function addNote(candidateId: string, content: string) {
   const { user, org } = await getUserOrg();
 

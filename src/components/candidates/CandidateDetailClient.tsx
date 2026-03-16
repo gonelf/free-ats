@@ -4,9 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { ExternalLink, FileText, Sparkles, Plus, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { AiButton } from "@/components/ai/AiGate";
-import { addNote, deleteNote, addCandidateToJob, moveApplicationStage } from "@/app/actions";
+import { addNote, deleteNote, addCandidateToJob, moveApplicationStage, updateCandidateFromResume } from "@/app/actions";
 import { formatDate, cn } from "@/lib/utils";
 
 interface ScoringResult {
@@ -64,6 +73,17 @@ export function CandidateDetailClient({
   const [selectedJobId, setSelectedJobId] = useState("");
   const [updatingStageId, setUpdatingStageId] = useState<string | null>(null);
   const [scoringAppId, setScoringAppId] = useState<string | null>(null);
+  const [parsingResume, setParsingResume] = useState(false);
+  const [parseDialogOpen, setParseDialogOpen] = useState(false);
+  const [parseError, setParseError] = useState("");
+  const [parsedFields, setParsedFields] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    linkedinUrl: "",
+  });
+  const [applyingParsed, setApplyingParsed] = useState(false);
   const [appScores, setAppScores] = useState<Record<string, ScoringResult>>(() => {
     const initial: Record<string, ScoringResult> = {};
     for (const app of candidate.applications) {
@@ -125,11 +145,108 @@ export function CandidateDetailClient({
     }
   }
 
+  async function handleParseResume() {
+    setParsingResume(true);
+    setParseError("");
+    try {
+      const res = await fetch("/api/ai/parse-resume-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateId: candidate.id }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        setParseError(err.error || "Failed to parse resume");
+        return;
+      }
+      const data = await res.json();
+      setParsedFields({
+        firstName: data.firstName || candidate.firstName,
+        lastName: data.lastName || candidate.lastName,
+        email: data.email || candidate.email,
+        phone: data.phone || candidate.phone || "",
+        linkedinUrl: data.linkedinUrl || candidate.linkedinUrl || "",
+      });
+      setParseDialogOpen(true);
+    } finally {
+      setParsingResume(false);
+    }
+  }
+
+  async function handleApplyParsed() {
+    setApplyingParsed(true);
+    try {
+      await updateCandidateFromResume(candidate.id, parsedFields);
+      setParseDialogOpen(false);
+    } finally {
+      setApplyingParsed(false);
+    }
+  }
+
   const unappliedJobs = jobs.filter(
     (j) => !candidate.applications.find((a) => a.job.id === j.id)
   );
 
   return (
+    <>
+    <Dialog open={parseDialogOpen} onOpenChange={setParseDialogOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Resume Parsed</DialogTitle>
+          <DialogDescription>
+            Review and edit the extracted information before applying it to the profile.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3 py-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-gray-500 mb-1 block">First Name</label>
+              <Input
+                value={parsedFields.firstName}
+                onChange={(e) => setParsedFields((p) => ({ ...p, firstName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-500 mb-1 block">Last Name</label>
+              <Input
+                value={parsedFields.lastName}
+                onChange={(e) => setParsedFields((p) => ({ ...p, lastName: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">Email</label>
+            <Input
+              value={parsedFields.email}
+              onChange={(e) => setParsedFields((p) => ({ ...p, email: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">Phone</label>
+            <Input
+              value={parsedFields.phone}
+              onChange={(e) => setParsedFields((p) => ({ ...p, phone: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">LinkedIn URL</label>
+            <Input
+              value={parsedFields.linkedinUrl}
+              onChange={(e) => setParsedFields((p) => ({ ...p, linkedinUrl: e.target.value }))}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setParseDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleApplyParsed} disabled={applyingParsed}>
+            {applyingParsed ? "Applying..." : "Apply to Profile"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
     <div className="grid grid-cols-3 gap-6">
       {/* Left column - main info */}
       <div className="col-span-2 space-y-6">
@@ -145,7 +262,7 @@ export function CandidateDetailClient({
                 <p className="text-gray-500 text-sm">{candidate.phone}</p>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap justify-end">
               {candidate.linkedinUrl && (
                 <Button variant="outline" size="sm" asChild>
                   <a href={candidate.linkedinUrl} target="_blank" rel="noopener noreferrer">
@@ -171,6 +288,15 @@ export function CandidateDetailClient({
                   </a>
                 </Button>
               )}
+              {candidate.resumeUrl && (
+                <AiButton
+                  hasAiAccess={hasAiAccess}
+                  onClick={handleParseResume}
+                  loading={parsingResume}
+                >
+                  Parse Resume
+                </AiButton>
+              )}
             </div>
           </div>
 
@@ -185,6 +311,9 @@ export function CandidateDetailClient({
                 </span>
               ))}
             </div>
+          )}
+          {parseError && (
+            <p className="mt-2 text-sm text-red-600">{parseError}</p>
           )}
         </div>
 
@@ -442,5 +571,6 @@ export function CandidateDetailClient({
         </div>
       </div>
     </div>
+    </>
   );
 }
