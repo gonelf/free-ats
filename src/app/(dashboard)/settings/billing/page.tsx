@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Check, Sparkles, ExternalLink, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface CreditsData {
   balance: number;
@@ -14,16 +14,62 @@ interface CreditsData {
 
 function BillingContent() {
   const [loading, setLoading] = useState(false);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [credits, setCredits] = useState<CreditsData | null>(null);
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
+  const router = useRouter();
+  const refreshed = useRef(false);
 
   useEffect(() => {
-    fetch("/api/credits")
-      .then((r) => r.json())
-      .then((d) => setCredits(d))
-      .catch(() => { });
-  }, []);
+    // Always sync with Stripe on page load so the UI reflects the real subscription state,
+    // regardless of how the user arrived (direct nav, post-checkout, post-portal cancel).
+    let attempts = 0;
+    const maxAttempts = 8;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const syncAndPoll = async () => {
+      let dbChanged = false;
+      try {
+        const res = await fetch("/api/stripe/sync-subscription", { method: "POST" });
+        const data = await res.json();
+        dbChanged = data.changed ?? false;
+      } catch { /* ignore */ }
+
+      const poll = () => {
+        fetch("/api/credits")
+          .then((r) => r.json())
+          .then((d: CreditsData) => {
+            setCredits(d);
+            // After ?success, keep polling until isPro flips true.
+            if (success && !d.isPro && attempts < maxAttempts) {
+              attempts++;
+              timer = setTimeout(poll, 1500);
+            } else if ((dbChanged || success) && !refreshed.current) {
+              refreshed.current = true;
+              router.refresh();
+            }
+          })
+          .catch(() => { });
+      };
+
+      poll();
+    };
+
+    syncAndPoll();
+    return () => clearTimeout(timer);
+  }, [success, router]);
+
+  async function handleUpgrade() {
+    setUpgradeLoading(true);
+    try {
+      const res = await fetch("/api/stripe/create-checkout", { method: "POST" });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } catch {
+      setUpgradeLoading(false);
+    }
+  }
 
   async function openPortal() {
     setLoading(true);
@@ -156,10 +202,14 @@ function BillingContent() {
             <Sparkles className="h-5 w-5 text-indigo-600" />
             <p className="font-medium text-indigo-900">AI Credits included with Pro</p>
           </div>
-          <p className="text-sm text-indigo-700">
+          <p className="text-sm text-indigo-700 mb-4">
             Upgrade to Pro for $49/mo to get 2,500 AI credits every month —
             enough for hundreds of resume parses, candidate scores, and email drafts.
           </p>
+          <Button onClick={handleUpgrade} disabled={upgradeLoading} className="w-full">
+            <Sparkles className="h-4 w-4" />
+            {upgradeLoading ? "Redirecting to checkout..." : "Upgrade Now"}
+          </Button>
         </div>
       )}
 
