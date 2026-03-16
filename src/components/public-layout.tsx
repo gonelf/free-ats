@@ -6,7 +6,7 @@ export function PublicNav() {
     <header className="border-b border-white/5 bg-[#080c10]/80 backdrop-blur sticky top-0 z-10">
       <div className="mx-auto max-w-6xl px-6 flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <Image src="/logo.svg" alt="KiteHR logo" width={32} height={32} className="rounded-lg" />
+          <Image src="/logo.png" alt="KiteHR logo" width={32} height={32} className="rounded-lg" />
           <span className="font-semibold text-white">KiteHR</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
@@ -35,7 +35,7 @@ export function PublicFooter() {
     <footer className="border-t border-white/5 py-8">
       <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/25">
         <div className="flex items-center gap-2">
-          <Image src="/logo.svg" alt="KiteHR" width={24} height={24} className="rounded-md opacity-70" />
+          <Image src="/logo.png" alt="KiteHR" width={24} height={24} className="rounded-md opacity-70" />
           <span>KiteHR</span>
         </div>
         <div className="flex items-center gap-6">

@@ -83,7 +83,7 @@ export default async function HomePage() {
             <div className="relative">
               <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150" />
               <Image
-                src="/logo.svg"
+                src="/logo.png"
                 alt="KiteHR"
                 width={80}
                 height={80}
@@ -289,7 +289,7 @@ export default async function HomePage() {
           </div>
           <div className="relative">
             <div className="flex justify-center mb-6">
-              <Image src="/logo.svg" alt="KiteHR" width={52} height={52} className="rounded-xl opacity-90" />
+              <Image src="/logo.png" alt="KiteHR" width={52} height={52} className="rounded-xl opacity-90" />
             </div>
             <h2 className="text-4xl font-bold mb-4">
               Start hiring smarter today

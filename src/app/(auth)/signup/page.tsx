@@ -62,7 +62,7 @@ function SignupForm() {
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 mb-10">
-          <Image src="/logo.svg" alt="KiteHR" width={36} height={36} className="rounded-xl" />
+          <Image src="/logo.png" alt="KiteHR" width={36} height={36} className="rounded-xl" />
           <span className="font-semibold text-lg text-white">KiteHR</span>
         </Link>
 
