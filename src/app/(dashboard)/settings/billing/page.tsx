@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Check, Sparkles, ExternalLink, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface CreditsData {
   balance: number;
@@ -17,13 +17,45 @@ function BillingContent() {
   const [credits, setCredits] = useState<CreditsData | null>(null);
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
+  const router = useRouter();
+  const refreshed = useRef(false);
 
   useEffect(() => {
-    fetch("/api/credits")
-      .then((r) => r.json())
-      .then((d) => setCredits(d))
-      .catch(() => { });
-  }, []);
+    if (!success) {
+      fetch("/api/credits")
+        .then((r) => r.json())
+        .then((d) => setCredits(d))
+        .catch(() => { });
+      return;
+    }
+
+    // After successful checkout, poll until the webhook has updated the plan to PRO,
+    // then refresh the server components (sidebar plan label, credits, upgrade banner).
+    let attempts = 0;
+    const maxAttempts = 10;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const poll = () => {
+      fetch("/api/credits")
+        .then((r) => r.json())
+        .then((d: CreditsData) => {
+          setCredits(d);
+          if (d.isPro) {
+            if (!refreshed.current) {
+              refreshed.current = true;
+              router.refresh();
+            }
+          } else if (attempts < maxAttempts) {
+            attempts++;
+            timer = setTimeout(poll, 1500);
+          }
+        })
+        .catch(() => { });
+    };
+
+    poll();
+    return () => clearTimeout(timer);
+  }, [success, router]);
 
   async function openPortal() {
     setLoading(true);
