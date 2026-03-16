@@ -15,11 +15,24 @@ import {
   Save,
   Trophy,
   Briefcase,
+  Mail,
+  GitBranch,
+  HelpCircle,
+  Copy,
+  CheckCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AiButton } from "@/components/ai/AiGate";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   addNote,
   deleteNote,
@@ -44,6 +57,15 @@ interface ScoringResult {
   strengths: string[];
   gaps: string[];
   recommendation: string;
+}
+
+type EmailType = "outreach" | "rejection" | "offer" | "interview_invite" | "follow_up";
+
+interface GapResult {
+  matched: string[];
+  missing: string[];
+  partial: string[];
+  developmentPlan: string;
 }
 
 interface Candidate {
@@ -154,6 +176,22 @@ export function CandidateDetailClient({
     return initial;
   });
 
+  // ── Email drafting ────────────────────────────────────────────────────────
+  const [emailAppId, setEmailAppId] = useState<string | null>(null);
+  const [emailType, setEmailType] = useState<EmailType>("outreach");
+  const [emailContext, setEmailContext] = useState("");
+  const [draftingEmail, setDraftingEmail] = useState(false);
+  const [emailResult, setEmailResult] = useState<{ subject: string; body: string } | null>(null);
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  // ── Skills gap ────────────────────────────────────────────────────────────
+  const [gapAppId, setGapAppId] = useState<string | null>(null);
+  const [appGaps, setAppGaps] = useState<Record<string, GapResult>>({});
+
+  // ── Reference questions ───────────────────────────────────────────────────
+  const [refQAppId, setRefQAppId] = useState<string | null>(null);
+  const [appRefQuestions, setAppRefQuestions] = useState<Record<string, string[]>>({});
+
   // ── Helpers ──────────────────────────────────────────────────────────────
 
   function patchForm<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -252,6 +290,70 @@ export function CandidateDetailClient({
       }
     } finally {
       setScoringAppId(null);
+    }
+  }
+
+  async function handleDraftEmail() {
+    if (!emailAppId) return;
+    setDraftingEmail(true);
+    setEmailResult(null);
+    try {
+      const app = candidate.applications.find((a) => a.id === emailAppId);
+      if (!app) return;
+      const res = await fetch("/api/ai/draft-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: emailType,
+          candidateId: candidate.id,
+          jobId: app.job.id,
+          additionalContext: emailContext || undefined,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEmailResult(data);
+      }
+    } finally {
+      setDraftingEmail(false);
+    }
+  }
+
+  async function handleSkillsGap(applicationId: string) {
+    setGapAppId(applicationId);
+    try {
+      const app = candidate.applications.find((a) => a.id === applicationId);
+      if (!app) return;
+      const res = await fetch("/api/ai/skills-gap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAppGaps((prev) => ({ ...prev, [applicationId]: data }));
+      }
+    } finally {
+      setGapAppId(null);
+    }
+  }
+
+  async function handleRefQuestions(applicationId: string) {
+    setRefQAppId(applicationId);
+    try {
+      const app = candidate.applications.find((a) => a.id === applicationId);
+      if (!app) return;
+      const res = await fetch("/api/ai/reference-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAppRefQuestions((prev) => ({ ...prev, [applicationId]: data }));
+      }
+    } finally {
+      setRefQAppId(null);
     }
   }
 
@@ -762,47 +864,85 @@ export function CandidateDetailClient({
                       View Kanban <ExternalLink className="h-2.5 w-2.5" />
                     </Link>
                   </div>
-                  {hasAiAccess && (
-                    <div className="flex flex-col items-end gap-1">
-                      {appScores[app.id] && (
-                        <div
-                          className={cn(
-                            "flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold",
-                            appScores[app.id].score >= 80
-                              ? "bg-green-50 text-green-700"
-                              : appScores[app.id].score >= 60
-                              ? "bg-yellow-50 text-yellow-700"
-                              : "bg-red-50 text-red-700"
-                          )}
-                        >
-                          <Sparkles className="h-3 w-3" />
-                          {appScores[app.id].score}
-                        </div>
+                  {appScores[app.id] && (
+                    <div
+                      className={cn(
+                        "flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold",
+                        appScores[app.id].score >= 80
+                          ? "bg-green-50 text-green-700"
+                          : appScores[app.id].score >= 60
+                          ? "bg-yellow-50 text-yellow-700"
+                          : "bg-red-50 text-red-700"
                       )}
-                      {profileComplete ? (
-                        <AiButton
-                          hasAiAccess={hasAiAccess}
-                          onClick={() => handleScoreApplication(app.id)}
-                          loading={scoringAppId === app.id}
-                          className="text-[10px] h-6 px-2"
-                          creditCost={5}
-                        >
-                          {appScores[app.id] ? "Re-score" : "Score"}
-                        </AiButton>
-                      ) : (
-                        <button
-                          disabled
-                          title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
-                          className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
-                        >
-                          <Sparkles className="h-3 w-3" />
-                          Score
-                        </button>
-                      )}
+                    >
+                      <Sparkles className="h-3 w-3" />
+                      {appScores[app.id].score}
                     </div>
                   )}
                 </div>
 
+                {/* AI action buttons */}
+                {hasAiAccess && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {profileComplete ? (
+                      <AiButton
+                        hasAiAccess={hasAiAccess}
+                        onClick={() => handleScoreApplication(app.id)}
+                        loading={scoringAppId === app.id}
+                        className="text-[10px] h-6 px-2"
+                        creditCost={5}
+                      >
+                        {appScores[app.id] ? "Re-score" : "Score"}
+                      </AiButton>
+                    ) : (
+                      <button
+                        disabled
+                        title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
+                        className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        Score
+                      </button>
+                    )}
+                    <AiButton
+                      hasAiAccess={hasAiAccess}
+                      onClick={() => handleSkillsGap(app.id)}
+                      loading={gapAppId === app.id}
+                      className="text-[10px] h-6 px-2"
+                      creditCost={5}
+                    >
+                      <GitBranch className="h-3 w-3 mr-1" />
+                      {appGaps[app.id] ? "Re-analyze" : "Gap Analysis"}
+                    </AiButton>
+                    <AiButton
+                      hasAiAccess={hasAiAccess}
+                      onClick={() => handleRefQuestions(app.id)}
+                      loading={refQAppId === app.id}
+                      className="text-[10px] h-6 px-2"
+                      creditCost={3}
+                    >
+                      <HelpCircle className="h-3 w-3 mr-1" />
+                      {appRefQuestions[app.id] ? "Refresh Questions" : "Ref Questions"}
+                    </AiButton>
+                    <AiButton
+                      hasAiAccess={hasAiAccess}
+                      onClick={() => {
+                        setEmailAppId(app.id);
+                        setEmailResult(null);
+                        setEmailContext("");
+                        setEmailType("outreach");
+                      }}
+                      loading={false}
+                      className="text-[10px] h-6 px-2"
+                      creditCost={5}
+                    >
+                      <Mail className="h-3 w-3 mr-1" />
+                      Draft Email
+                    </AiButton>
+                  </div>
+                )}
+
+                {/* Score results */}
                 {appScores[app.id] &&
                   (appScores[app.id].strengths.length > 0 ||
                     appScores[app.id].gaps.length > 0 ||
@@ -845,6 +985,70 @@ export function CandidateDetailClient({
                       )}
                     </div>
                   )}
+
+                {/* Gap analysis results */}
+                {appGaps[app.id] && (
+                  <div className="mb-2 space-y-2 rounded-lg bg-white border border-gray-100 p-2.5">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase">Skills Gap</p>
+                    {appGaps[app.id].matched.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-green-600 mb-1">Matched</p>
+                        <div className="flex flex-wrap gap-1">
+                          {appGaps[app.id].matched.map((s, i) => (
+                            <span key={i} className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] text-green-700">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {appGaps[app.id].partial.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-yellow-600 mb-1">Partial</p>
+                        <div className="flex flex-wrap gap-1">
+                          {appGaps[app.id].partial.map((s, i) => (
+                            <span key={i} className="rounded-full bg-yellow-50 px-2 py-0.5 text-[10px] text-yellow-700">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {appGaps[app.id].missing.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-red-500 mb-1">Missing</p>
+                        <div className="flex flex-wrap gap-1">
+                          {appGaps[app.id].missing.map((s, i) => (
+                            <span key={i} className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] text-red-600">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {appGaps[app.id].developmentPlan && (
+                      <p className="text-xs text-gray-600 italic leading-relaxed border-t border-gray-100 pt-2">
+                        {appGaps[app.id].developmentPlan}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Reference questions results */}
+                {appRefQuestions[app.id] && appRefQuestions[app.id].length > 0 && (
+                  <div className="mb-2 rounded-lg bg-white border border-gray-100 p-2.5">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">
+                      Reference Check Questions
+                    </p>
+                    <ol className="space-y-1.5 list-decimal list-inside">
+                      {appRefQuestions[app.id].map((q, i) => (
+                        <li key={i} className="text-xs text-gray-700 leading-relaxed">
+                          {q}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-gray-400 uppercase">Stage</label>
@@ -1031,6 +1235,104 @@ export function CandidateDetailClient({
           <div>{noResumePanel}</div>
         </div>
       )}
+
+      {/* ── Email draft dialog ───────────────────────────────────── */}
+      <Dialog
+        open={!!emailAppId}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEmailAppId(null);
+            setEmailResult(null);
+            setEmailContext("");
+          }
+        }}
+      >
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Draft Email</DialogTitle>
+            <DialogDescription>
+              Generate a professional email for {candidate.firstName}{" "}
+              {candidate.lastName} regarding{" "}
+              {candidate.applications.find((a) => a.id === emailAppId)?.job.title ?? "this role"}.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">Email Type</label>
+              <select
+                value={emailType}
+                onChange={(e) => setEmailType(e.target.value as EmailType)}
+                className="w-full rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="outreach">Outreach</option>
+                <option value="interview_invite">Interview Invite</option>
+                <option value="follow_up">Follow-up</option>
+                <option value="offer">Job Offer</option>
+                <option value="rejection">Rejection</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">
+                Additional Context <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <Textarea
+                value={emailContext}
+                onChange={(e) => setEmailContext(e.target.value)}
+                placeholder="e.g. Interview is on Friday at 2pm via Zoom…"
+                rows={2}
+                className="text-sm"
+              />
+            </div>
+
+            {emailResult && (
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-3">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Subject</p>
+                  <p className="text-sm font-medium text-gray-900">{emailResult.subject}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Body</p>
+                  <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">
+                    {emailResult.body}
+                  </pre>
+                </div>
+                <button
+                  onClick={() => {
+                    const full = `Subject: ${emailResult.subject}\n\n${emailResult.body}`;
+                    navigator.clipboard.writeText(full);
+                    setEmailCopied(true);
+                    setTimeout(() => setEmailCopied(false), 2000);
+                  }}
+                  className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                >
+                  {emailCopied ? (
+                    <>
+                      <CheckCheck className="h-3.5 w-3.5" /> Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" /> Copy to clipboard
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <AiButton
+              hasAiAccess={hasAiAccess}
+              onClick={handleDraftEmail}
+              loading={draftingEmail}
+              creditCost={5}
+            >
+              {emailResult ? "Regenerate" : "Generate Email"}
+            </AiButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
