@@ -9,6 +9,7 @@ export interface ParsedResume {
   linkedinUrl: string;
   summary: string;
   skills: string[];
+  achievements: string[];
   experience: Array<{
     title: string;
     company: string;
@@ -23,42 +24,38 @@ export interface ParsedResume {
   }>;
 }
 
-export async function parseResume(resumeText: string): Promise<ParsedResume> {
-  return generateJSON<ParsedResume>(
-    flashModel,
-    `Extract structured information from this resume text. Return a JSON object with these fields:
-    - firstName (string)
-    - lastName (string)
-    - email (string)
-    - phone (string)
-    - linkedinUrl (string, empty string if not found)
-    - summary (string, brief professional summary)
-    - skills (array of strings)
-    - experience (array of {title, company, startDate, endDate, description})
-    - education (array of {degree, institution, year})
-
-    Resume text:
-    ${resumeText}`
-  );
-}
-
-const PARSE_RESUME_PROMPT = `Extract structured information from this resume. Return a JSON object with these fields:
+const EXTRACTION_FIELDS = `
 - firstName (string)
 - lastName (string)
 - email (string)
 - phone (string)
 - linkedinUrl (string, empty string if not found)
-- summary (string, brief professional summary)
-- skills (array of strings)
+- summary (string, the candidate's own professional summary or objective from the resume)
+- skills (array of strings, technical and soft skills)
+- achievements (array of strings, each a notable accomplishment, award, or quantified result — e.g. "Reduced deploy time by 40%")
 - experience (array of {title, company, startDate, endDate, description})
-- education (array of {degree, institution, year})
+- education (array of {degree, institution, year})`;
 
-Respond with valid JSON only, no markdown, no explanation.`;
+export async function parseResume(resumeText: string): Promise<ParsedResume> {
+  return generateJSON<ParsedResume>(
+    flashModel,
+    `Extract structured information from this resume text. Return a JSON object with these fields:
+${EXTRACTION_FIELDS}
+
+Resume text:
+${resumeText}`
+  );
+}
 
 export async function parseResumeFromPdf(pdfBase64: string): Promise<ParsedResume> {
   const parts: Part[] = [
     { inlineData: { mimeType: "application/pdf", data: pdfBase64 } },
-    { text: PARSE_RESUME_PROMPT },
+    {
+      text: `Extract structured information from this resume. Return a JSON object with these fields:
+${EXTRACTION_FIELDS}
+
+Respond with valid JSON only, no markdown, no explanation.`,
+    },
   ];
   const result = await flashModel.generateContent(parts);
   const text = result.response.text().trim();

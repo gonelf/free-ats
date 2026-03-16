@@ -167,14 +167,24 @@ export async function updateCandidate(candidateId: string, formData: FormData) {
   revalidatePath("/candidates");
 }
 
-export async function updateCandidateFromResume(
+export async function saveCandidateProfile(
   candidateId: string,
   data: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    linkedinUrl?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    linkedinUrl: string;
+    summary: string;
+    workExperience: Array<{
+      title: string;
+      company: string;
+      startDate: string;
+      endDate: string;
+      description: string;
+    }>;
+    achievements: string[];
+    skills: string[];
   }
 ) {
   const { org } = await getUserOrg();
@@ -182,11 +192,15 @@ export async function updateCandidateFromResume(
   await db.candidate.update({
     where: { id: candidateId, organizationId: org.id },
     data: {
-      ...(data.firstName && { firstName: data.firstName }),
-      ...(data.lastName && { lastName: data.lastName }),
-      ...(data.email && { email: data.email }),
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
       phone: data.phone || null,
       linkedinUrl: data.linkedinUrl || null,
+      summary: data.summary || null,
+      workExperience: data.workExperience as object[],
+      achievements: data.achievements,
+      tags: data.skills,
     },
   });
 
