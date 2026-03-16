@@ -17,45 +17,40 @@ function BillingContent() {
   const [credits, setCredits] = useState<CreditsData | null>(null);
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
-  const sync = searchParams.get("sync");
   const router = useRouter();
   const refreshed = useRef(false);
 
   useEffect(() => {
-    if (!success && !sync) {
-      fetch("/api/credits")
-        .then((r) => r.json())
-        .then((d) => setCredits(d))
-        .catch(() => { });
-      return;
-    }
-
-    // Sync subscription state from Stripe (handles webhook delays in local dev for both
-    // post-checkout upgrades and post-portal cancellations), then refresh server components.
+    // Always sync with Stripe on page load so the UI reflects the real subscription state,
+    // regardless of how the user arrived (direct nav, post-checkout, post-portal cancel).
     let attempts = 0;
     const maxAttempts = 8;
     let timer: ReturnType<typeof setTimeout>;
 
     const syncAndPoll = async () => {
+      let prevIsPro: boolean | null = null;
       try {
-        await fetch("/api/stripe/sync-subscription", { method: "POST" });
-      } catch { /* ignore, fall through to credits poll */ }
+        const res = await fetch("/api/stripe/sync-subscription", { method: "POST" });
+        const data = await res.json();
+        prevIsPro = data.isPro ?? null;
+      } catch { /* ignore */ }
 
       const poll = () => {
         fetch("/api/credits")
           .then((r) => r.json())
           .then((d: CreditsData) => {
             setCredits(d);
-            // For ?success: wait until isPro=true. For ?sync (cancel): refresh immediately.
-            const done = success ? d.isPro : true;
-            if (done) {
-              if (!refreshed.current) {
+            // After ?success, keep polling until isPro flips true.
+            // Otherwise (plain load or ?sync), one fetch is enough — refresh if state changed.
+            if (success && !d.isPro && attempts < maxAttempts) {
+              attempts++;
+              timer = setTimeout(poll, 1500);
+            } else {
+              const stateChanged = prevIsPro !== null && prevIsPro !== d.isPro;
+              if ((success || stateChanged) && !refreshed.current) {
                 refreshed.current = true;
                 router.refresh();
               }
-            } else if (attempts < maxAttempts) {
-              attempts++;
-              timer = setTimeout(poll, 1500);
             }
           })
           .catch(() => { });
@@ -66,7 +61,7 @@ function BillingContent() {
 
     syncAndPoll();
     return () => clearTimeout(timer);
-  }, [success, sync, router]);
+  }, [success, router]);
 
   async function openPortal() {
     setLoading(true);
