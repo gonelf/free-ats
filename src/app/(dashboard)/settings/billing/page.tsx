@@ -28,11 +28,11 @@ function BillingContent() {
     let timer: ReturnType<typeof setTimeout>;
 
     const syncAndPoll = async () => {
-      let prevIsPro: boolean | null = null;
+      let dbChanged = false;
       try {
         const res = await fetch("/api/stripe/sync-subscription", { method: "POST" });
         const data = await res.json();
-        prevIsPro = data.isPro ?? null;
+        dbChanged = data.changed ?? false;
       } catch { /* ignore */ }
 
       const poll = () => {
@@ -41,16 +41,12 @@ function BillingContent() {
           .then((d: CreditsData) => {
             setCredits(d);
             // After ?success, keep polling until isPro flips true.
-            // Otherwise (plain load or ?sync), one fetch is enough — refresh if state changed.
             if (success && !d.isPro && attempts < maxAttempts) {
               attempts++;
               timer = setTimeout(poll, 1500);
-            } else {
-              const stateChanged = prevIsPro !== null && prevIsPro !== d.isPro;
-              if ((success || stateChanged) && !refreshed.current) {
-                refreshed.current = true;
-                router.refresh();
-              }
+            } else if ((dbChanged || success) && !refreshed.current) {
+              refreshed.current = true;
+              router.refresh();
             }
           })
           .catch(() => { });

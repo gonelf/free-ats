@@ -41,7 +41,8 @@ export async function POST() {
 
   if (!activeSub) {
     // No active subscription — downgrade to FREE if DB still shows PRO
-    if (org.plan === "PRO") {
+    const changed = org.plan === "PRO";
+    if (changed) {
       await db.organization.update({
         where: { id: org.id },
         data: {
@@ -52,11 +53,12 @@ export async function POST() {
         },
       });
     }
-    return NextResponse.json({ isPro: false });
+    return NextResponse.json({ isPro: false, changed });
   }
 
   // Sync to DB if not already PRO
-  if (org.plan !== "PRO") {
+  const changed = org.plan !== "PRO";
+  if (changed) {
     const nextReset = new Date();
     nextReset.setMonth(nextReset.getMonth() + 1);
     await db.organization.update({
@@ -70,5 +72,5 @@ export async function POST() {
     });
   }
 
-  return NextResponse.json({ isPro: true });
+  return NextResponse.json({ isPro: true, changed });
 }
