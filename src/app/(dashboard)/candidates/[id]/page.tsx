@@ -32,8 +32,19 @@ export default async function CandidateDetailPage({
       aiSummary: true,
       applications: {
         include: {
-          job: { select: { id: true, title: true, status: true } },
-          stage: { select: { name: true, color: true } },
+          job: {
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              pipeline: {
+                include: {
+                  stages: { orderBy: { order: "asc" } },
+                },
+              },
+            },
+          },
+          stage: { select: { id: true, name: true, color: true } },
         },
         orderBy: { createdAt: "desc" },
       },

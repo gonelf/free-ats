@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { AiButton } from "@/components/ai/AiGate";
-import { addNote, deleteNote, addCandidateToJob } from "@/app/actions";
+import { addNote, deleteNote, addCandidateToJob, moveApplicationStage } from "@/app/actions";
 import { formatDate } from "@/lib/utils";
 
 interface Candidate {
@@ -26,8 +26,15 @@ interface Candidate {
   applications: Array<{
     id: string;
     aiScore: number | null;
-    job: { id: string; title: string; status: string };
-    stage: { name: string; color: string };
+    job: {
+      id: string;
+      title: string;
+      status: string;
+      pipeline: {
+        stages: Array<{ id: string; name: string; color: string; order: number }>;
+      };
+    };
+    stage: { id: string; name: string; color: string };
   }>;
 }
 
@@ -49,6 +56,7 @@ export function CandidateDetailClient({
   const [summary, setSummary] = useState(candidate.aiSummary?.summary || "");
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState("");
+  const [updatingStageId, setUpdatingStageId] = useState<string | null>(null);
 
   async function handleAddNote() {
     if (!note.trim()) return;
@@ -262,37 +270,72 @@ export function CandidateDetailClient({
               Not applied to any jobs yet
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {candidate.applications.map((app) => (
                 <div
                   key={app.id}
-                  className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                  className="rounded-lg bg-gray-50 p-4"
                 >
-                  <div>
-                    <Link
-                      href={`/jobs/${app.job.id}`}
-                      className="text-xs font-medium text-gray-900 hover:text-indigo-600"
-                    >
-                      {app.job.title}
-                    </Link>
-                    <div
-                      className="flex items-center gap-1 mt-0.5"
-                    >
-                      <div
-                        className="h-1.5 w-1.5 rounded-full"
-                        style={{ backgroundColor: app.stage.color }}
-                      />
-                      <span className="text-xs text-gray-500">
-                        {app.stage.name}
-                      </span>
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <Link
+                        href={`/jobs/${app.job.id}`}
+                        className="text-sm font-semibold text-gray-900 hover:text-indigo-600 block"
+                      >
+                        {app.job.title}
+                      </Link>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Link
+                          href={`/jobs/${app.job.id}`}
+                          className="flex items-center gap-1 text-[10px] text-indigo-600 hover:text-indigo-700 font-medium uppercase tracking-wider"
+                        >
+                          View Kanban <ExternalLink className="h-2.5 w-2.5" />
+                        </Link>
+                      </div>
+                    </div>
+                    {hasAiAccess && app.aiScore !== null && (
+                      <div className="flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs">
+                        <Sparkles className="h-3 w-3 text-indigo-500" />
+                        <span className="font-semibold text-indigo-700">{app.aiScore}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase">Stage</label>
+                    <div className="relative">
+                      <select
+                        value={app.stage.id}
+                        disabled={updatingStageId === app.id}
+                        onChange={async (e) => {
+                          const newStageId = e.target.value;
+                          setUpdatingStageId(app.id);
+                          try {
+                            await moveApplicationStage(app.id, newStageId);
+                          } finally {
+                            setUpdatingStageId(null);
+                          }
+                        }}
+                        className="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                      >
+                        {app.job.pipeline.stages.map((stage) => (
+                          <option key={stage.id} value={stage.id}>
+                            {stage.name}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                        <div
+                          className="h-2 w-2 rounded-full mr-1"
+                          style={{
+                            backgroundColor:
+                              app.job.pipeline.stages.find((s) => s.id === app.stage.id)?.color ||
+                              "#ccc",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                  {hasAiAccess && app.aiScore !== null && (
-                    <div className="flex items-center gap-1 text-xs">
-                      <Sparkles className="h-3 w-3 text-indigo-500" />
-                      <span className="font-medium">{app.aiScore}</span>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>

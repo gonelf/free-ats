@@ -28,7 +28,7 @@ interface Application {
 interface KanbanColumnProps {
   stage: Stage;
   applications: Application[];
-  jobId: string;
+  jobId?: string;
   hasAiAccess: boolean;
 }
 
@@ -58,8 +58,10 @@ export function KanbanColumn({
       <div
         ref={setNodeRef}
         className={cn(
-          "flex flex-col gap-2 rounded-xl min-h-[200px] p-2 transition-colors",
-          isOver ? "bg-indigo-50 ring-2 ring-indigo-300 ring-inset" : "bg-gray-50"
+          "flex flex-col gap-3 rounded-2xl min-h-[500px] p-3 transition-all duration-200 border-2 border-transparent",
+          isOver 
+            ? "bg-indigo-50/50 border-indigo-200 ring-4 ring-indigo-50/30" 
+            : "bg-gray-50/50 border-gray-100"
         )}
       >
         <SortableContext
@@ -76,8 +78,8 @@ export function KanbanColumn({
         </SortableContext>
 
         {applications.length === 0 && (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-xs text-gray-400">Drop candidates here</p>
+          <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-6 bg-white/50">
+            <p className="text-xs font-medium text-gray-400">Drop candidates here</p>
           </div>
         )}
       </div>

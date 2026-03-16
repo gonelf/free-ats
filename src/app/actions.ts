@@ -231,13 +231,14 @@ export async function moveApplicationStage(
   });
 
   revalidatePath(`/jobs/${app.jobId}`);
+  revalidatePath(`/candidates/${app.candidateId}`);
 }
 
 // ============ PIPELINES ============
 
 export async function createPipeline(formData: FormData) {
   const { org } = await getUserOrg();
-  const name = formData.get("name") as string;
+  const name = formData.get("name") as string || "New Pipeline";
 
   const pipeline = await db.pipeline.create({
     data: {
@@ -253,6 +254,84 @@ export async function createPipeline(formData: FormData) {
       },
     },
   });
+
+  revalidatePath("/pipelines");
+  return pipeline;
+}
+
+export async function updatePipeline(pipelineId: string, name: string) {
+  const { org } = await getUserOrg();
+
+  await db.pipeline.update({
+    where: { id: pipelineId, organizationId: org.id },
+    data: { name },
+  });
+
+  revalidatePath("/pipelines");
+}
+
+export async function deletePipeline(pipelineId: string) {
+  const { org } = await getUserOrg();
+
+  // Check if any jobs use this pipeline
+  const jobsCount = await db.job.count({
+    where: { pipelineId, organizationId: org.id },
+  });
+
+  if (jobsCount > 0) {
+    throw new Error("Cannot delete pipeline that is being used by jobs.");
+  }
+
+  // Check if it's the default pipeline
+  const pipeline = await db.pipeline.findUniqueOrThrow({
+    where: { id: pipelineId, organizationId: org.id },
+  });
+
+  if (pipeline.isDefault) {
+    throw new Error("Cannot delete the default pipeline.");
+  }
+
+  await db.pipeline.delete({
+    where: { id: pipelineId, organizationId: org.id },
+  });
+
+  revalidatePath("/pipelines");
+}
+
+export async function setDefaultPipeline(pipelineId: string) {
+  const { org } = await getUserOrg();
+
+  // Transaction to unset current default and set new default
+  await db.$transaction([
+    db.pipeline.updateMany({
+      where: { organizationId: org.id, isDefault: true },
+      data: { isDefault: false },
+    }),
+    db.pipeline.update({
+      where: { id: pipelineId, organizationId: org.id },
+      data: { isDefault: true },
+    }),
+  ]);
+
+  revalidatePath("/pipelines");
+}
+
+export async function reorderStages(pipelineId: string, stageIds: string[]) {
+  const { org } = await getUserOrg();
+
+  // Verify pipeline belongs to org
+  await db.pipeline.findFirstOrThrow({
+    where: { id: pipelineId, organizationId: org.id },
+  });
+
+  await db.$transaction(
+    stageIds.map((id, index) =>
+      db.stage.update({
+        where: { id },
+        data: { order: index },
+      })
+    )
+  );
 
   revalidatePath("/pipelines");
 }

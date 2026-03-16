@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { FREE_TRIAL_CREDITS, MONTHLY_CREDITS } from "@/lib/ai/credits";
+import { FeedbackSystem } from "@/components/feedback/FeedbackSystem";
+import { getFeedbacks } from "@/app/actions/feedback";
 
 async function getOrg(userId: string) {
   const membership = await db.member.findFirst({
@@ -31,9 +33,10 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const [org, isAdmin] = await Promise.all([
+  const [org, isAdmin, initialFeedbacks] = await Promise.all([
     getOrg(user.id),
     user.email ? isAppAdmin(user.email) : false,
+    getFeedbacks(),
   ]);
 
   if (!org) {
@@ -50,8 +53,9 @@ export default async function DashboardLayout({
         aiCreditsResetAt={org.aiCreditsResetAt}
         isAppAdmin={isAdmin}
       />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto relative">
         <div className="p-8">{children}</div>
+        <FeedbackSystem initialFeedbacks={initialFeedbacks} currentUserId={user.id} />
       </main>
     </div>
   );

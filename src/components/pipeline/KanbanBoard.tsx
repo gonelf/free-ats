@@ -37,7 +37,7 @@ interface Application {
 interface KanbanBoardProps {
   stages: Stage[];
   applications: Application[];
-  jobId: string;
+  jobId?: string;
   hasAiAccess: boolean;
 }
 
@@ -125,7 +125,7 @@ export function KanbanBoard({
       onDragOver={onDragOver}
       onDragEnd={onDragEnd}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex gap-6 overflow-x-auto pb-8 items-start scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
         {stages.map((stage) => (
           <KanbanColumn
             key={stage.id}
@@ -135,15 +135,22 @@ export function KanbanBoard({
             hasAiAccess={hasAiAccess}
           />
         ))}
+        {/* Spacer to ensure last column isn't cut off */}
+        <div className="w-4 shrink-0" />
       </div>
 
-      <DragOverlay>
+      <DragOverlay dropAnimation={{
+        duration: 200,
+        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+      }}>
         {activeApp && (
-          <KanbanCard
-            application={activeApp}
-            isDragging
-            hasAiAccess={hasAiAccess}
-          />
+          <div className="rotate-2">
+            <KanbanCard
+              application={activeApp}
+              isDragging
+              hasAiAccess={hasAiAccess}
+            />
+          </div>
         )}
       </DragOverlay>
     </DndContext>

@@ -26,6 +26,7 @@ model Organization {
   pipelines      Pipeline[]
   emailTemplates EmailTemplate[]
   invitations    Invitation[]
+  feedbacks      Feedback[]
 }
 
 enum Plan {
@@ -64,6 +65,28 @@ model Invitation {
 
   @@index([organizationId])
   @@index([token])
+}
+
+model Feedback {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  userEmail      String
+  type           FeedbackType
+  title          String
+  description    String?      @db.Text
+  votes          Int          @default(0)
+  voterIds       String[]     @default([])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+}
+
+enum FeedbackType {
+  FEATURE
+  BUG
 }
 
 model Job {
