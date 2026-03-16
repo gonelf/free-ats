@@ -192,6 +192,12 @@ export function CandidateDetailClient({
   const [refQAppId, setRefQAppId] = useState<string | null>(null);
   const [appRefQuestions, setAppRefQuestions] = useState<Record<string, string[]>>({});
 
+  // ── Interview questions ───────────────────────────────────────────────────
+  const [interviewQAppId, setInterviewQAppId] = useState<string | null>(null);
+  const [appInterviewQuestions, setAppInterviewQuestions] = useState<
+    Record<string, { behavioral: string[]; technical: string[]; culture: string[] }>
+  >({});
+
   // ── Helpers ──────────────────────────────────────────────────────────────
 
   function patchForm<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -354,6 +360,25 @@ export function CandidateDetailClient({
       }
     } finally {
       setRefQAppId(null);
+    }
+  }
+
+  async function handleInterviewQuestions(applicationId: string) {
+    setInterviewQAppId(applicationId);
+    try {
+      const app = candidate.applications.find((a) => a.id === applicationId);
+      if (!app) return;
+      const res = await fetch("/api/ai/suggest-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAppInterviewQuestions((prev) => ({ ...prev, [applicationId]: data }));
+      }
+    } finally {
+      setInterviewQAppId(null);
     }
   }
 
@@ -921,8 +946,17 @@ export function CandidateDetailClient({
                       className="text-[10px] h-6 px-2"
                       creditCost={3}
                     >
+                      {appRefQuestions[app.id] ? "Refresh Ref Qs" : "Ref Questions"}
+                    </AiButton>
+                    <AiButton
+                      hasAiAccess={hasAiAccess}
+                      onClick={() => handleInterviewQuestions(app.id)}
+                      loading={interviewQAppId === app.id}
+                      className="text-[10px] h-6 px-2"
+                      creditCost={5}
+                    >
                       <HelpCircle className="h-3 w-3 mr-1" />
-                      {appRefQuestions[app.id] ? "Refresh Questions" : "Ref Questions"}
+                      {appInterviewQuestions[app.id] ? "Refresh Qs" : "Interview Qs"}
                     </AiButton>
                     <AiButton
                       hasAiAccess={hasAiAccess}
@@ -1030,6 +1064,43 @@ export function CandidateDetailClient({
                       <p className="text-xs text-gray-600 italic leading-relaxed border-t border-gray-100 pt-2">
                         {appGaps[app.id].developmentPlan}
                       </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Interview questions results */}
+                {appInterviewQuestions[app.id] && (
+                  <div className="mb-2 rounded-lg bg-white border border-gray-100 p-2.5 space-y-2.5">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase">Interview Questions</p>
+                    {appInterviewQuestions[app.id].behavioral?.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-indigo-600 mb-1">Behavioral</p>
+                        <ol className="space-y-1 list-decimal list-inside">
+                          {appInterviewQuestions[app.id].behavioral.map((q, i) => (
+                            <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    {appInterviewQuestions[app.id].technical?.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-indigo-600 mb-1">Technical</p>
+                        <ol className="space-y-1 list-decimal list-inside">
+                          {appInterviewQuestions[app.id].technical.map((q, i) => (
+                            <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    {appInterviewQuestions[app.id].culture?.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-indigo-600 mb-1">Culture Fit</p>
+                        <ol className="space-y-1 list-decimal list-inside">
+                          {appInterviewQuestions[app.id].culture.map((q, i) => (
+                            <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                          ))}
+                        </ol>
+                      </div>
                     )}
                   </div>
                 )}
