@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Plus, Mail } from "lucide-react";
+import { Plus, Mail, Edit2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import Link from "next/link";
+import { DeleteTemplateButton } from "@/components/email-templates/DeleteTemplateButton";
 
 export default async function EmailTemplatesPage() {
   const supabase = await createClient();
@@ -29,10 +31,12 @@ export default async function EmailTemplatesPage() {
             Reusable templates for candidate communications
           </p>
         </div>
-        <Button size="sm">
-          <Plus className="h-4 w-4" />
-          New Template
-        </Button>
+        <Link href="/email-templates/new">
+          <Button size="sm">
+            <Plus className="h-4 w-4" />
+            New Template
+          </Button>
+        </Link>
       </div>
 
       {templates.length === 0 ? (
@@ -42,17 +46,19 @@ export default async function EmailTemplatesPage() {
           <p className="text-sm text-gray-500 mt-1 mb-6">
             Create reusable email templates for outreach, rejections, and offers
           </p>
-          <Button>
-            <Plus className="h-4 w-4" />
-            Create Template
-          </Button>
+          <Link href="/email-templates/new">
+            <Button>
+              <Plus className="h-4 w-4" />
+              Create Template
+            </Button>
+          </Link>
         </div>
       ) : (
         <div className="space-y-3">
           {templates.map((t) => (
             <div
               key={t.id}
-              className="rounded-xl border border-gray-200 bg-white p-5"
+              className="rounded-xl border border-gray-200 bg-white p-5 hover:border-indigo-200 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -72,8 +78,14 @@ export default async function EmailTemplatesPage() {
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">Edit</Button>
-                  <Button variant="outline" size="sm">Use</Button>
+                  <Link href={`/email-templates/${t.id}/edit`}>
+                    <Button variant="outline" size="sm">
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  {t.type !== "CONFIRMATION" && (
+                    <DeleteTemplateButton id={t.id} name={t.name} />
+                  )}
                 </div>
               </div>
               <p className="mt-2 text-xs text-gray-400">

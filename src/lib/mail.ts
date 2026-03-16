@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@kitehr.xyz";
+const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@kitehr.co";
 
 interface SendEmailParams {
   to: string;
@@ -29,7 +29,7 @@ export async function sendEmail({ to, subject, body }: SendEmailParams) {
 
       <div style="margin-top: 32px; text-align: center; border-top: 1px solid #f3f4f6; pt: 24px;">
         <p style="color: #9ca3af; font-size: 14px; margin: 0;">
-          Powered by <a href="https://kitehr.xyz" style="color: #6366f1; text-decoration: none; font-weight: 600;">KiteHR</a>
+          Powered by <a href="https://kitehr.co" style="color: #6366f1; text-decoration: none; font-weight: 600;">KiteHR</a>
         </p>
       </div>
     </div>
