@@ -29,31 +29,40 @@ function BillingContent() {
       return;
     }
 
-    // After successful checkout, poll until the webhook has updated the plan to PRO,
-    // then refresh the server components (sidebar plan label, credits, upgrade banner).
+    // After successful checkout, sync the subscription from Stripe (handles the case
+    // where the webhook hasn't fired yet, e.g. local dev), then refresh server components.
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 8;
     let timer: ReturnType<typeof setTimeout>;
 
-    const poll = () => {
-      fetch("/api/credits")
-        .then((r) => r.json())
-        .then((d: CreditsData) => {
-          setCredits(d);
-          if (d.isPro) {
-            if (!refreshed.current) {
-              refreshed.current = true;
-              router.refresh();
+    const syncAndPoll = async () => {
+      // Try to sync directly from Stripe first
+      try {
+        await fetch("/api/stripe/sync-subscription", { method: "POST" });
+      } catch { /* ignore, fall through to credits poll */ }
+
+      const poll = () => {
+        fetch("/api/credits")
+          .then((r) => r.json())
+          .then((d: CreditsData) => {
+            setCredits(d);
+            if (d.isPro) {
+              if (!refreshed.current) {
+                refreshed.current = true;
+                router.refresh();
+              }
+            } else if (attempts < maxAttempts) {
+              attempts++;
+              timer = setTimeout(poll, 1500);
             }
-          } else if (attempts < maxAttempts) {
-            attempts++;
-            timer = setTimeout(poll, 1500);
-          }
-        })
-        .catch(() => { });
+          })
+          .catch(() => { });
+      };
+
+      poll();
     };
 
-    poll();
+    syncAndPoll();
     return () => clearTimeout(timer);
   }, [success, router]);
 
