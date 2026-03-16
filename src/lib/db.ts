@@ -6,9 +6,17 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// Vercel's Supabase integration sets POSTGRES_URL; manual setup uses DATABASE_URL.
 // Strip ?pgbouncer=true — it's a Prisma CLI hint only, not a valid pg startup param.
-// Passing it through causes PostgreSQL to reject the connection (auth failure / circuit breaker).
-const rawUrl = process.env.DATABASE_URL ?? "";
+const rawUrl =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  "";
+if (!rawUrl) {
+  throw new Error(
+    "No database URL found. Set DATABASE_URL (or POSTGRES_URL) in your environment."
+  );
+}
 const connectionString = rawUrl.replace(/[?&]pgbouncer=true/i, "").replace(/\?$/, "");
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool as any);
