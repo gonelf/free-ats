@@ -873,8 +873,9 @@ export function CandidateDetailClient({
         ) : (
           <div className="space-y-3">
             {candidate.applications.map((app) => (
-              <div key={app.id} className="rounded-lg bg-gray-50 p-3">
-                <div className="flex items-start justify-between mb-2">
+              <div key={app.id} className="rounded-lg bg-gray-50 p-3 space-y-3">
+                {/* Job header */}
+                <div className="flex items-start justify-between">
                   <div>
                     <Link
                       href={`/jobs/${app.job.id}`}
@@ -906,82 +907,202 @@ export function CandidateDetailClient({
                   )}
                 </div>
 
-                {/* AI action buttons */}
+                {/* AI feature sections */}
                 {hasAiAccess && (
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {profileComplete ? (
-                      <AiButton
-                        hasAiAccess={hasAiAccess}
-                        onClick={() => handleScoreApplication(app.id)}
-                        loading={scoringAppId === app.id}
-                        className="text-[10px] h-6 px-2"
-                        creditCost={5}
-                      >
-                        {appScores[app.id] ? "Re-score" : "Score"}
-                      </AiButton>
-                    ) : (
-                      <button
-                        disabled
-                        title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
-                        className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
-                      >
-                        <Sparkles className="h-3 w-3" />
-                        Score
-                      </button>
-                    )}
-                    <AiButton
-                      hasAiAccess={hasAiAccess}
-                      onClick={() => handleSkillsGap(app.id)}
-                      loading={gapAppId === app.id}
-                      className="text-[10px] h-6 px-2"
-                      creditCost={5}
-                    >
-                      <GitBranch className="h-3 w-3 mr-1" />
-                      {appGaps[app.id] ? "Re-analyze" : "Gap Analysis"}
-                    </AiButton>
-                    <AiButton
-                      hasAiAccess={hasAiAccess}
-                      onClick={() => handleRefQuestions(app.id)}
-                      loading={refQAppId === app.id}
-                      className="text-[10px] h-6 px-2"
-                      creditCost={3}
-                    >
-                      {appRefQuestions[app.id] ? "Refresh Ref Qs" : "Ref Questions"}
-                    </AiButton>
-                    <AiButton
-                      hasAiAccess={hasAiAccess}
-                      onClick={() => handleInterviewQuestions(app.id)}
-                      loading={interviewQAppId === app.id}
-                      className="text-[10px] h-6 px-2"
-                      creditCost={5}
-                    >
-                      <HelpCircle className="h-3 w-3 mr-1" />
-                      {appInterviewQuestions[app.id] ? "Refresh Qs" : "Interview Qs"}
-                    </AiButton>
-                    <AiButton
-                      hasAiAccess={hasAiAccess}
-                      onClick={() => {
-                        setEmailAppId(app.id);
-                        setEmailResult(null);
-                        setEmailContext("");
-                        setEmailType("outreach");
-                      }}
-                      loading={false}
-                      className="text-[10px] h-6 px-2"
-                      creditCost={5}
-                    >
-                      <Mail className="h-3 w-3 mr-1" />
-                      Draft Email
-                    </AiButton>
+                  <div className="space-y-2">
+
+                    {/* ── Gap Analysis ─────────────────────────────── */}
+                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <GitBranch className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                            <p className="text-xs font-semibold text-gray-800">Gap Analysis</p>
+                          </div>
+                          <p className="text-[11px] text-gray-500 leading-snug">
+                            Compare this candidate&apos;s skills against the job requirements to surface matched, partial, and missing competencies.
+                          </p>
+                        </div>
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => handleSkillsGap(app.id)}
+                          loading={gapAppId === app.id}
+                          className="text-[10px] h-6 px-2 shrink-0"
+                          creditCost={5}
+                        >
+                          {appGaps[app.id] ? "Re-analyze" : "Analyze"}
+                        </AiButton>
+                      </div>
+                      {appGaps[app.id] && (
+                        <div className="mt-2.5 space-y-2 border-t border-gray-100 pt-2.5">
+                          {appGaps[app.id].matched.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-green-600 mb-1">Matched</p>
+                              <div className="flex flex-wrap gap-1">
+                                {appGaps[app.id].matched.map((s, i) => (
+                                  <span key={i} className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] text-green-700">{s}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {appGaps[app.id].partial.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-yellow-600 mb-1">Partial</p>
+                              <div className="flex flex-wrap gap-1">
+                                {appGaps[app.id].partial.map((s, i) => (
+                                  <span key={i} className="rounded-full bg-yellow-50 px-2 py-0.5 text-[10px] text-yellow-700">{s}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {appGaps[app.id].missing.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-red-500 mb-1">Missing</p>
+                              <div className="flex flex-wrap gap-1">
+                                {appGaps[app.id].missing.map((s, i) => (
+                                  <span key={i} className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] text-red-600">{s}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {appGaps[app.id].developmentPlan && (
+                            <p className="text-xs text-gray-600 italic leading-relaxed border-t border-gray-100 pt-2">
+                              {appGaps[app.id].developmentPlan}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ── Interview Questions ───────────────────────── */}
+                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <HelpCircle className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                            <p className="text-xs font-semibold text-gray-800">Interview Questions</p>
+                          </div>
+                          <p className="text-[11px] text-gray-500 leading-snug">
+                            Generate tailored behavioral, technical, and culture-fit questions based on this candidate&apos;s background and the role.
+                          </p>
+                        </div>
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => handleInterviewQuestions(app.id)}
+                          loading={interviewQAppId === app.id}
+                          className="text-[10px] h-6 px-2 shrink-0"
+                          creditCost={5}
+                        >
+                          {appInterviewQuestions[app.id] ? "Refresh" : "Generate"}
+                        </AiButton>
+                      </div>
+                      {appInterviewQuestions[app.id] && (
+                        <div className="mt-2.5 space-y-2.5 border-t border-gray-100 pt-2.5">
+                          {appInterviewQuestions[app.id].behavioral?.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-indigo-600 mb-1">Behavioral</p>
+                              <ol className="space-y-1 list-decimal list-inside">
+                                {appInterviewQuestions[app.id].behavioral.map((q, i) => (
+                                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                                ))}
+                              </ol>
+                            </div>
+                          )}
+                          {appInterviewQuestions[app.id].technical?.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-indigo-600 mb-1">Technical</p>
+                              <ol className="space-y-1 list-decimal list-inside">
+                                {appInterviewQuestions[app.id].technical.map((q, i) => (
+                                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                                ))}
+                              </ol>
+                            </div>
+                          )}
+                          {appInterviewQuestions[app.id].culture?.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-indigo-600 mb-1">Culture Fit</p>
+                              <ol className="space-y-1 list-decimal list-inside">
+                                {appInterviewQuestions[app.id].culture.map((q, i) => (
+                                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                                ))}
+                              </ol>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ── Reference Questions ───────────────────────── */}
+                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <Briefcase className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                            <p className="text-xs font-semibold text-gray-800">Reference Check Questions</p>
+                          </div>
+                          <p className="text-[11px] text-gray-500 leading-snug">
+                            Generate targeted questions to ask this candidate&apos;s references, covering work style, accomplishments, and potential concerns.
+                          </p>
+                        </div>
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => handleRefQuestions(app.id)}
+                          loading={refQAppId === app.id}
+                          className="text-[10px] h-6 px-2 shrink-0"
+                          creditCost={3}
+                        >
+                          {appRefQuestions[app.id] ? "Refresh" : "Generate"}
+                        </AiButton>
+                      </div>
+                      {appRefQuestions[app.id] && appRefQuestions[app.id].length > 0 && (
+                        <div className="mt-2.5 border-t border-gray-100 pt-2.5">
+                          <ol className="space-y-1.5 list-decimal list-inside">
+                            {appRefQuestions[app.id].map((q, i) => (
+                              <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ── Draft Email ───────────────────────────────── */}
+                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <Mail className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                            <p className="text-xs font-semibold text-gray-800">Draft Email</p>
+                          </div>
+                          <p className="text-[11px] text-gray-500 leading-snug">
+                            Compose a professional outreach, interview invite, offer, follow-up, or rejection email tailored to this candidate.
+                          </p>
+                        </div>
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => {
+                            setEmailAppId(app.id);
+                            setEmailResult(null);
+                            setEmailContext("");
+                            setEmailType("outreach");
+                          }}
+                          loading={false}
+                          className="text-[10px] h-6 px-2 shrink-0"
+                          creditCost={5}
+                        >
+                          Compose
+                        </AiButton>
+                      </div>
+                    </div>
+
                   </div>
                 )}
 
-                {/* Score results */}
+                {/* Score results (shown outside sections since score badge is in header) */}
                 {appScores[app.id] &&
                   (appScores[app.id].strengths.length > 0 ||
                     appScores[app.id].gaps.length > 0 ||
                     appScores[app.id].recommendation) && (
-                    <div className="mb-2 space-y-2 rounded-lg bg-white border border-gray-100 p-2.5">
+                    <div className="space-y-2 rounded-lg bg-white border border-gray-100 p-2.5">
                       {appScores[app.id].recommendation && (
                         <p className="text-xs text-gray-600 italic leading-relaxed">
                           {appScores[app.id].recommendation}
@@ -989,9 +1110,7 @@ export function CandidateDetailClient({
                       )}
                       {appScores[app.id].strengths.length > 0 && (
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">
-                            Strengths
-                          </p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Strengths</p>
                           <ul className="space-y-0.5">
                             {appScores[app.id].strengths.map((s, i) => (
                               <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600">
@@ -1004,9 +1123,7 @@ export function CandidateDetailClient({
                       )}
                       {appScores[app.id].gaps.length > 0 && (
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">
-                            Gaps
-                          </p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Gaps</p>
                           <ul className="space-y-0.5">
                             {appScores[app.id].gaps.map((g, i) => (
                               <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600">
@@ -1020,107 +1137,35 @@ export function CandidateDetailClient({
                     </div>
                   )}
 
-                {/* Gap analysis results */}
-                {appGaps[app.id] && (
-                  <div className="mb-2 space-y-2 rounded-lg bg-white border border-gray-100 p-2.5">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase">Skills Gap</p>
-                    {appGaps[app.id].matched.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-green-600 mb-1">Matched</p>
-                        <div className="flex flex-wrap gap-1">
-                          {appGaps[app.id].matched.map((s, i) => (
-                            <span key={i} className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] text-green-700">
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {appGaps[app.id].partial.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-yellow-600 mb-1">Partial</p>
-                        <div className="flex flex-wrap gap-1">
-                          {appGaps[app.id].partial.map((s, i) => (
-                            <span key={i} className="rounded-full bg-yellow-50 px-2 py-0.5 text-[10px] text-yellow-700">
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {appGaps[app.id].missing.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-red-500 mb-1">Missing</p>
-                        <div className="flex flex-wrap gap-1">
-                          {appGaps[app.id].missing.map((s, i) => (
-                            <span key={i} className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] text-red-600">
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {appGaps[app.id].developmentPlan && (
-                      <p className="text-xs text-gray-600 italic leading-relaxed border-t border-gray-100 pt-2">
-                        {appGaps[app.id].developmentPlan}
-                      </p>
-                    )}
-                  </div>
-                )}
+                {/* Score button + Stage selector */}
+                <div className="space-y-2">
+                  {hasAiAccess && (
+                    <div>
+                      {profileComplete ? (
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => handleScoreApplication(app.id)}
+                          loading={scoringAppId === app.id}
+                          className="text-[10px] h-6 px-2"
+                          creditCost={5}
+                        >
+                          {appScores[app.id] ? "Re-score" : "Score"}
+                        </AiButton>
+                      ) : (
+                        <button
+                          disabled
+                          title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
+                          className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          Score
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
 
-                {/* Interview questions results */}
-                {appInterviewQuestions[app.id] && (
-                  <div className="mb-2 rounded-lg bg-white border border-gray-100 p-2.5 space-y-2.5">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase">Interview Questions</p>
-                    {appInterviewQuestions[app.id].behavioral?.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-indigo-600 mb-1">Behavioral</p>
-                        <ol className="space-y-1 list-decimal list-inside">
-                          {appInterviewQuestions[app.id].behavioral.map((q, i) => (
-                            <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                    {appInterviewQuestions[app.id].technical?.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-indigo-600 mb-1">Technical</p>
-                        <ol className="space-y-1 list-decimal list-inside">
-                          {appInterviewQuestions[app.id].technical.map((q, i) => (
-                            <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                    {appInterviewQuestions[app.id].culture?.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-indigo-600 mb-1">Culture Fit</p>
-                        <ol className="space-y-1 list-decimal list-inside">
-                          {appInterviewQuestions[app.id].culture.map((q, i) => (
-                            <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Reference questions results */}
-                {appRefQuestions[app.id] && appRefQuestions[app.id].length > 0 && (
-                  <div className="mb-2 rounded-lg bg-white border border-gray-100 p-2.5">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">
-                      Reference Check Questions
-                    </p>
-                    <ol className="space-y-1.5 list-decimal list-inside">
-                      {appRefQuestions[app.id].map((q, i) => (
-                        <li key={i} className="text-xs text-gray-700 leading-relaxed">
-                          {q}
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                )}
-
+                {/* Stage selector */}
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-gray-400 uppercase">Stage</label>
                   <div className="relative">
