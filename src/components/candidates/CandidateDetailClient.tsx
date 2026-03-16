@@ -2,13 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Briefcase, ExternalLink, FileText, Sparkles, Plus, Trash2 } from "lucide-react";
+import { ExternalLink, FileText, Sparkles, Plus, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { AiButton } from "@/components/ai/AiGate";
 import { addNote, deleteNote, addCandidateToJob, moveApplicationStage } from "@/app/actions";
-import { formatDate } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
+
+interface ScoringResult {
+  score: number;
+  strengths: string[];
+  gaps: string[];
+  recommendation: string;
+}
 
 interface Candidate {
   id: string;
@@ -57,6 +63,16 @@ export function CandidateDetailClient({
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState("");
   const [updatingStageId, setUpdatingStageId] = useState<string | null>(null);
+  const [scoringAppId, setScoringAppId] = useState<string | null>(null);
+  const [appScores, setAppScores] = useState<Record<string, ScoringResult>>(() => {
+    const initial: Record<string, ScoringResult> = {};
+    for (const app of candidate.applications) {
+      if (app.aiScore !== null) {
+        initial[app.id] = { score: app.aiScore, strengths: [], gaps: [], recommendation: "" };
+      }
+    }
+    return initial;
+  });
 
   async function handleAddNote() {
     if (!note.trim()) return;
@@ -90,6 +106,23 @@ export function CandidateDetailClient({
     if (!selectedJobId) return;
     await addCandidateToJob(candidate.id, selectedJobId);
     setSelectedJobId("");
+  }
+
+  async function handleScoreApplication(applicationId: string) {
+    setScoringAppId(applicationId);
+    try {
+      const res = await fetch("/api/ai/score-candidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicationId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAppScores((prev) => ({ ...prev, [applicationId]: data }));
+      }
+    } finally {
+      setScoringAppId(null);
+    }
   }
 
   const unappliedJobs = jobs.filter(
@@ -293,13 +326,68 @@ export function CandidateDetailClient({
                         </Link>
                       </div>
                     </div>
-                    {hasAiAccess && app.aiScore !== null && (
-                      <div className="flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs">
-                        <Sparkles className="h-3 w-3 text-indigo-500" />
-                        <span className="font-semibold text-indigo-700">{app.aiScore}</span>
+                    {hasAiAccess && (
+                      <div className="flex flex-col items-end gap-1">
+                        {appScores[app.id] ? (
+                          <div
+                            className={cn(
+                              "flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold",
+                              appScores[app.id].score >= 80
+                                ? "bg-green-50 text-green-700"
+                                : appScores[app.id].score >= 60
+                                ? "bg-yellow-50 text-yellow-700"
+                                : "bg-red-50 text-red-700"
+                            )}
+                          >
+                            <Sparkles className="h-3 w-3" />
+                            {appScores[app.id].score}
+                          </div>
+                        ) : null}
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => handleScoreApplication(app.id)}
+                          loading={scoringAppId === app.id}
+                          className="text-[10px] h-6 px-2"
+                        >
+                          {appScores[app.id] ? "Re-score" : "Score"}
+                        </AiButton>
                       </div>
                     )}
                   </div>
+
+                  {appScores[app.id] && (appScores[app.id].strengths.length > 0 || appScores[app.id].gaps.length > 0 || appScores[app.id].recommendation) && (
+                    <div className="mb-3 space-y-2 rounded-lg bg-white border border-gray-100 p-3">
+                      {appScores[app.id].recommendation && (
+                        <p className="text-xs text-gray-600 italic leading-relaxed">{appScores[app.id].recommendation}</p>
+                      )}
+                      {appScores[app.id].strengths.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Strengths</p>
+                          <ul className="space-y-0.5">
+                            {appScores[app.id].strengths.map((s, i) => (
+                              <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600">
+                                <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {appScores[app.id].gaps.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Gaps</p>
+                          <ul className="space-y-0.5">
+                            {appScores[app.id].gaps.map((g, i) => (
+                              <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600">
+                                <XCircle className="h-3 w-3 text-red-400 mt-0.5 shrink-0" />
+                                {g}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-gray-400 uppercase">Stage</label>
