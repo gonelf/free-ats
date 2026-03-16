@@ -320,6 +320,13 @@ export function CandidateDetailClient({
 
   const hasResume = !!candidate.resumeUrl;
 
+  // Profile completeness — based on saved DB values, not unsaved form state
+  const missingProfileFields: string[] = [];
+  if (!candidate.summary) missingProfileFields.push("summary");
+  if (!candidate.tags.length) missingProfileFields.push("skills");
+  if (!candidate.workExperience.length) missingProfileFields.push("work experience");
+  const profileComplete = missingProfileFields.length === 0;
+
   // ── Layout ────────────────────────────────────────────────────────────────
 
   const profilePanel = (
@@ -723,9 +730,16 @@ export function CandidateDetailClient({
 
       {/* ── Applications ─────────────────────────────────────────── */}
       <div className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-          Applications ({candidate.applications.length})
-        </h2>
+        <div className="flex items-start justify-between mb-3">
+          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+            Applications ({candidate.applications.length})
+          </h2>
+          {!profileComplete && candidate.applications.length > 0 && (
+            <p className="text-[10px] text-amber-600 bg-amber-50 rounded px-1.5 py-0.5 leading-tight max-w-[160px] text-right">
+              Save {missingProfileFields.join(", ")} to enable scoring
+            </p>
+          )}
+        </div>
         {candidate.applications.length === 0 ? (
           <p className="text-xs text-gray-400 italic">Not applied to any jobs yet</p>
         ) : (
@@ -764,14 +778,25 @@ export function CandidateDetailClient({
                           {appScores[app.id].score}
                         </div>
                       )}
-                      <AiButton
-                        hasAiAccess={hasAiAccess}
-                        onClick={() => handleScoreApplication(app.id)}
-                        loading={scoringAppId === app.id}
-                        className="text-[10px] h-6 px-2"
-                      >
-                        {appScores[app.id] ? "Re-score" : "Score"}
-                      </AiButton>
+                      {profileComplete ? (
+                        <AiButton
+                          hasAiAccess={hasAiAccess}
+                          onClick={() => handleScoreApplication(app.id)}
+                          loading={scoringAppId === app.id}
+                          className="text-[10px] h-6 px-2"
+                        >
+                          {appScores[app.id] ? "Re-score" : "Score"}
+                        </AiButton>
+                      ) : (
+                        <button
+                          disabled
+                          title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
+                          className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          Score
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
