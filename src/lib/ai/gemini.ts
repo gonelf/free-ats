@@ -28,7 +28,19 @@ export async function generateJSON<T>(
     `${prompt}\n\nRespond with valid JSON only, no markdown, no explanation.`
   );
   const text = result.response.text().trim();
-  // Strip markdown code fences if present
-  const cleaned = text.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
-  return JSON.parse(cleaned) as T;
+
+  // 1. Try to extract from a ```json ... ``` or ``` ... ``` code fence
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) {
+    return JSON.parse(fenceMatch[1].trim()) as T;
+  }
+
+  // 2. Try to extract the first {...} or [...] block (handles thinking-model preamble)
+  const objectMatch = text.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+  if (objectMatch) {
+    return JSON.parse(objectMatch[1]) as T;
+  }
+
+  // 3. Fall back to parsing the full text as-is
+  return JSON.parse(text) as T;
 }
