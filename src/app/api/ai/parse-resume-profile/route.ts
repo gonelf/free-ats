@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { withProPlanGuard } from "@/lib/ai/api-helpers";
-import { parseResume } from "@/lib/ai/resume-parser";
+import { parseResume, parseResumeFromPdf } from "@/lib/ai/resume-parser";
+import { getResumeBytes } from "@/lib/r2";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -18,15 +19,26 @@ export async function POST(request: NextRequest) {
 
   const candidate = await db.candidate.findFirst({
     where: { id: candidateId, organizationId: member.organizationId },
-    select: { resumeText: true },
+    select: { resumeUrl: true, resumeText: true, resumeExpiresAt: true },
   });
 
   if (!candidate) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
-  if (!candidate.resumeText) {
-    return NextResponse.json({ error: "No resume text available. Upload a resume first." }, { status: 400 });
+
+  if (!candidate.resumeUrl && !candidate.resumeText) {
+    return NextResponse.json({ error: "No resume uploaded for this candidate." }, { status: 400 });
+  }
+
+  if (candidate.resumeExpiresAt && candidate.resumeExpiresAt < new Date()) {
+    return NextResponse.json({ error: "Resume has expired. Upgrade to Pro to retain resumes." }, { status: 410 });
   }
 
   return withProPlanGuard(async () => {
-    return parseResume(candidate.resumeText!);
+    // Prefer stored text if available; otherwise fetch PDF from R2
+    if (candidate.resumeText) {
+      return parseResume(candidate.resumeText);
+    }
+    const pdfBuffer = await getResumeBytes(candidate.resumeUrl!);
+    const pdfBase64 = pdfBuffer.toString("base64");
+    return parseResumeFromPdf(pdfBase64);
   }, 10);
 }
