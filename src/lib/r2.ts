@@ -49,6 +49,17 @@ export function getResumeDownloadUrl(key: string): Promise<string> {
   });
 }
 
+/** Fetches the raw bytes of a resume from R2 */
+export async function getResumeBytes(key: string): Promise<Buffer> {
+  const response = await r2.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  const stream = response.Body as NodeJS.ReadableStream;
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+}
+
 /** Returns a Date 10 days from now — used for free plan resume expiry */
 export function freeResumeExpiresAt(): Date {
   const d = new Date();

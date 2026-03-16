@@ -2,10 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Briefcase, ExternalLink, FileText, ChevronLeft } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { ChevronLeft } from "lucide-react";
 import { CandidateDetailClient } from "@/components/candidates/CandidateDetailClient";
 
 export default async function CandidateDetailPage({
@@ -25,7 +22,7 @@ export default async function CandidateDetailPage({
     include: { organization: { select: { id: true, plan: true, aiCreditsBalance: true } } },
   });
 
-  const candidate = await db.candidate.findFirst({
+  const candidateRaw = await db.candidate.findFirst({
     where: { id, organizationId: member.organization.id },
     include: {
       notes: { orderBy: { createdAt: "desc" } },
@@ -51,7 +48,14 @@ export default async function CandidateDetailPage({
     },
   });
 
-  if (!candidate) notFound();
+  if (!candidateRaw) notFound();
+
+  // Cast Json field to typed array
+  type WorkExperience = { title: string; company: string; startDate: string; endDate: string; description: string };
+  const candidate = {
+    ...candidateRaw,
+    workExperience: (candidateRaw.workExperience as WorkExperience[] | null) ?? [],
+  };
 
   const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;
   const jobs = await db.job.findMany({
