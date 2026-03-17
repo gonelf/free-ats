@@ -4,7 +4,7 @@ import { generateReferenceQuestions } from "@/lib/ai/job-generator";
 import { db } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
-  const { candidateId, jobId } = await request.json();
+  const { candidateId, jobId, applicationId } = await request.json();
   return withProPlanGuard(async (orgId) => {
     const [candidate, job] = await Promise.all([
       db.candidate.findFirstOrThrow({ where: { id: candidateId, organizationId: orgId } }),
@@ -13,6 +13,15 @@ export async function POST(request: NextRequest) {
 
     const background = `${candidate.firstName} ${candidate.lastName} - ${candidate.tags.join(", ")}`;
 
-    return generateReferenceQuestions(job.title, background);
+    const result = await generateReferenceQuestions(job.title, background);
+
+    if (applicationId) {
+      await db.application.updateMany({
+        where: { id: applicationId, candidateId, jobId },
+        data: { aiReferenceQuestions: result },
+      });
+    }
+
+    return result;
   }, 3);
 }

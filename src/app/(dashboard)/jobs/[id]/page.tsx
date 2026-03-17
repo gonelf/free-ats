@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { KanbanBoard } from "@/components/pipeline/KanbanBoard";
+import { PipelineInsightsWidget } from "@/components/pipeline/PipelineInsightsWidget";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Settings, MapPin, Plus } from "lucide-react";
@@ -123,6 +124,8 @@ export default async function JobDetailPage({
           </Button>
         </div>
       </div>
+
+      <PipelineInsightsWidget jobId={job.id} hasAiAccess={hasAiAccess} />
 
       <KanbanBoard
         stages={job.pipeline.stages}
