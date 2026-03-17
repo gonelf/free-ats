@@ -56,6 +56,32 @@ const aiFeatures = [
   { icon: Sparkles, text: "Interview question generator" },
 ];
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "KiteHR",
+  "url": "https://kitehr.co",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Free forever plan with unlimited users, job posts, and candidates",
+  },
+  "description":
+    "A free applicant tracking system with optional AI-powered features for modern hiring teams. Unlimited users, job posts, and candidates — forever free.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "KiteHR",
+    "url": "https://kitehr.co",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://kitehr.co/logo.png",
+    },
+  },
+};
+
 export default async function HomePage() {
   const supabase = await createClient();
   const {
@@ -68,6 +94,10 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       <PublicNav />
 
       {/* Hero */}
