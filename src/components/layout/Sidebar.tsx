@@ -15,10 +15,13 @@ import {
   LogOut,
   Zap,
   Shield,
+  Menu,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const navItems = [
   { href: "/jobs", label: "Jobs", icon: Briefcase },
@@ -53,6 +56,7 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -69,12 +73,12 @@ export function Sidebar({
       })
     : null;
 
-  return (
-    <aside className="flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
+  const sidebarContent = (
+    <>
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-gray-200 px-6">
         <Image src="/logo.png" alt="KiteHR" width={32} height={32} className="rounded-lg" />
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1 min-w-0">
           <span className="text-sm font-semibold text-gray-900 truncate max-w-[140px]">
             {orgName}
           </span>
@@ -87,6 +91,14 @@ export function Sidebar({
             <span className="text-xs text-gray-400">Free Plan</span>
           )}
         </div>
+        {/* Mobile close button */}
+        <button
+          className="md:hidden ml-auto text-gray-400 hover:text-gray-600"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close menu"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -99,6 +111,7 @@ export function Sidebar({
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                     isActive
@@ -168,6 +181,7 @@ export function Sidebar({
             </p>
             <Link
               href="/upgrade"
+              onClick={() => setMobileOpen(false)}
               className="block w-full rounded-md bg-indigo-600 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-indigo-700"
             >
               Upgrade Now
@@ -186,6 +200,7 @@ export function Sidebar({
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                     isActive
@@ -203,6 +218,7 @@ export function Sidebar({
             <li>
               <Link
                 href="/admin"
+                onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
               >
                 <Shield className="h-4 w-4 shrink-0" />
@@ -221,6 +237,48 @@ export function Sidebar({
           </li>
         </ul>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile header bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex h-14 items-center gap-3 border-b border-gray-200 bg-white px-4">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="text-gray-500 hover:text-gray-700"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div className="flex items-center gap-2">
+          <Image src="/logo.png" alt="KiteHR" width={24} height={24} className="rounded-md" />
+          <span className="text-sm font-semibold text-gray-900 truncate max-w-[180px]">{orgName}</span>
+        </div>
+      </div>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/40"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile drawer */}
+      <aside
+        className={cn(
+          "md:hidden fixed top-0 left-0 z-50 flex h-full w-72 flex-col border-r border-gray-200 bg-white transition-transform duration-200",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex h-screen w-64 flex-col border-r border-gray-200 bg-white shrink-0">
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

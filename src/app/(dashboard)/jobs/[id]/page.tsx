@@ -82,7 +82,7 @@ export default async function JobDetailPage({
 
   return (
     <div>
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
         <div>
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <Link href="/jobs" className="hover:text-gray-900">
@@ -109,7 +109,7 @@ export default async function JobDetailPage({
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Button variant="outline" size="sm" asChild>
             <Link href={`/jobs/${id}/settings`}>
               <Settings className="h-4 w-4" />
