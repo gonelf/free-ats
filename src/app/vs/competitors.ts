@@ -225,6 +225,58 @@ export const competitors: Record<string, Competitor> = {
       },
     ],
   },
+  ashby: {
+    slug: "ashby",
+    name: "Ashby",
+    tagline: "KiteHR vs Ashby — Free ATS Alternative",
+    description:
+      "Ashby is a modern ATS popular with tech startups — but it comes with a steep price tag and per-seat pricing. KiteHR gives you the same recruiting power, free.",
+    metaTitle: "KiteHR vs Ashby — Free Ashby Alternative",
+    metaDescription:
+      "Compare KiteHR and Ashby. KiteHR is a free Ashby alternative with unlimited jobs, users, and candidates — plus optional AI for $49/mo flat.",
+    pricing: {
+      kitehr: "Free forever ($49/mo for AI features)",
+      competitor: "Starting at $300–$600+/mo (custom pricing, requires demo)",
+    },
+    features: [
+      { label: "Free plan", kitehr: true, competitor: false },
+      { label: "Unlimited users", kitehr: true, competitor: false },
+      { label: "Unlimited job posts", kitehr: true, competitor: false },
+      { label: "Unlimited candidates", kitehr: true, competitor: true },
+      { label: "Kanban pipeline", kitehr: true, competitor: true },
+      { label: "Custom pipeline stages", kitehr: true, competitor: true },
+      { label: "Team collaboration", kitehr: true, competitor: true },
+      { label: "Email templates", kitehr: true, competitor: true },
+      { label: "Resume storage", kitehr: true, competitor: true },
+      { label: "AI resume parsing", kitehr: "Pro ($49/mo)", competitor: "Higher-tier plans" },
+      { label: "AI job description writer", kitehr: "Pro ($49/mo)", competitor: false },
+      { label: "No credit card to start", kitehr: true, competitor: false },
+      { label: "Per-seat pricing", kitehr: false, competitor: true },
+      { label: "Sales call required to start", kitehr: false, competitor: true },
+    ],
+    winReasons: [
+      {
+        title: "No sales call required",
+        description:
+          "Ashby requires a demo before you can get started. KiteHR lets you sign up and start hiring in minutes — no sales process, no waiting.",
+      },
+      {
+        title: "Actually free",
+        description:
+          "Ashby has no meaningful free tier. KiteHR's core ATS is free forever with unlimited jobs, users, and candidates — no trial period.",
+      },
+      {
+        title: "Flat-rate AI, not per-seat",
+        description:
+          "Ashby's advanced features scale with your headcount. KiteHR Pro is $49/mo per workspace — one flat price regardless of team size.",
+      },
+      {
+        title: "Built for every team size",
+        description:
+          "Ashby is designed for growth-stage companies with complex hiring ops. KiteHR works for any team — from solo founders to scaling startups — with zero overhead.",
+      },
+    ],
+  },
 };
 
 export function getCompetitor(slug: string): Competitor | null {
