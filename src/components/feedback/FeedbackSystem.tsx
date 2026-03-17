@@ -74,10 +74,9 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
     <Dialog>
       <DialogTrigger asChild>
         <button
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-indigo-600 text-white px-2 py-4 rounded-l-xl shadow-lg hover:bg-indigo-700 transition-all flex flex-col items-center gap-2 group"
-          style={{ writingMode: "vertical-rl" }}
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-indigo-600 text-white px-3 py-2 rounded-l-xl shadow-lg hover:bg-indigo-700 transition-all group flex items-center gap-1.5"
         >
-          <MessageSquare className="h-5 w-5 rotate-90 group-hover:scale-110 transition-transform" />
+          <MessageSquare className="h-4 w-4 group-hover:scale-110 transition-transform" />
           <span className="font-semibold tracking-wider text-sm">REQUEST</span>
         </button>
       </DialogTrigger>
