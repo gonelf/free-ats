@@ -17,6 +17,7 @@ const competitors = [
   { href: "/vs/workable", label: "vs Workable" },
   { href: "/vs/lever", label: "vs Lever" },
   { href: "/vs/recruitee", label: "vs Recruitee" },
+  { href: "/vs/ashby", label: "vs Ashby" },
 ];
 
 export function PublicNav() {
