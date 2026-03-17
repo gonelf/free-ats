@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Check, X, Minus, ArrowRight, Sparkles } from "lucide-react";
+import { Check, X, ArrowRight, Sparkles, Calculator } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
 import { getCompetitor, getAllCompetitorSlugs } from "../competitors";
+import { CostCalculator } from "@/components/CostCalculator";
 import type { Metadata } from "next";
 
 type Props = {
@@ -27,6 +28,9 @@ export default async function CompetitorPage({ params }: Props) {
   const { competitor: slug } = await params;
   const data = getCompetitor(slug);
   if (!data) return notFound();
+
+  // BambooHR uses per-employee pricing, so show the employees slider
+  const showEmployees = data.pricingCalculator.perEmployeeCost > 0;
 
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
@@ -67,7 +71,7 @@ export default async function CompetitorPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Pricing comparison */}
+      {/* Pricing overview */}
       <section className="py-16 border-t border-white/5">
         <div className="mx-auto max-w-4xl px-6">
           <h2 className="text-2xl font-bold text-center mb-8">Pricing</h2>
@@ -81,6 +85,29 @@ export default async function CompetitorPage({ params }: Props) {
               <p className="text-white/60">{data.pricing.competitor}</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Cost calculator */}
+      <section className="py-16 border-t border-white/5">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-4">
+              <Calculator className="h-3.5 w-3.5" />
+              Cost calculator
+            </div>
+            <h2 className="text-2xl font-bold mb-3">
+              See exactly what you&apos;d save
+            </h2>
+            <p className="text-white/40 text-sm max-w-lg mx-auto">
+              Adjust your team size and open roles to see a real cost comparison between KiteHR and {data.name}.
+            </p>
+          </div>
+          <CostCalculator
+            competitorName={data.name}
+            config={data.pricingCalculator}
+            showEmployees={showEmployees}
+          />
         </div>
       </section>
 

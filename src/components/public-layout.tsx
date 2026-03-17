@@ -18,6 +18,21 @@ const competitors = [
   { href: "/vs/lever", label: "vs Lever" },
   { href: "/vs/recruitee", label: "vs Recruitee" },
   { href: "/vs/ashby", label: "vs Ashby" },
+  { href: "/vs/bamboohr", label: "vs BambooHR" },
+  { href: "/vs/breezyhr", label: "vs Breezy HR" },
+  { href: "/vs/jazzhr", label: "vs JazzHR" },
+  { href: "/vs/smartrecruiters", label: "vs SmartRecruiters" },
+];
+
+const alternatives = [
+  { href: "/alternatives/free-workable-alternative", label: "Free Workable Alternative" },
+  { href: "/alternatives/free-greenhouse-alternative", label: "Free Greenhouse Alternative" },
+  { href: "/alternatives/free-bamboohr-alternative", label: "Free BambooHR Alternative" },
+  { href: "/alternatives/cheapest-ats-for-startups", label: "Cheapest ATS for Startups" },
+  { href: "/alternatives/best-ats-for-nonprofits", label: "Best ATS for Nonprofits" },
+  { href: "/alternatives/ats-no-per-seat-pricing", label: "ATS Without Per-Seat Pricing" },
+  { href: "/alternatives/free-recruiting-software", label: "Free Recruiting Software" },
+  { href: "/alternatives/ats-for-small-teams", label: "ATS for Small Teams" },
 ];
 
 export function PublicNav() {
@@ -144,6 +159,19 @@ export function PublicFooter() {
               <li><Link href="/signup" className="text-sm text-white/40 hover:text-white/70 transition-colors">Sign up free</Link></li>
             </ul>
           </div>
+        </div>
+        {/* Alternatives — full-width row for SEO link equity */}
+        <div className="border-t border-white/5 pt-8 mb-8">
+          <p className="text-xs font-semibold uppercase tracking-wider text-white/25 mb-3">Alternatives</p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+            {alternatives.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="text-sm text-white/40 hover:text-white/70 transition-colors">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="border-t border-white/5 pt-6 flex items-center gap-2">
           <Image src="/logo.png" alt="KiteHR" width={20} height={20} className="rounded-md opacity-50" />
