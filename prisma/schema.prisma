@@ -7,17 +7,23 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ClaimedStatus {
+  UNCLAIMED
+  CLAIMED
+}
+
 model Organization {
-  id                   String    @id @default(cuid())
+  id                   String        @id @default(cuid())
   name                 String
-  slug                 String    @unique
-  plan                 Plan      @default(FREE)
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  aiCreditsBalance     Int       @default(100)
+  slug                 String        @unique
+  plan                 Plan          @default(FREE)
+  claimedStatus        ClaimedStatus @default(CLAIMED)
+  stripeCustomerId     String?       @unique
+  stripeSubscriptionId String?       @unique
+  aiCreditsBalance     Int           @default(100)
   aiCreditsResetAt     DateTime?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 
   members        Member[]
   jobs           Job[]
