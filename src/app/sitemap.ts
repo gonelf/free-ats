@@ -1,5 +1,9 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
+import { getAllCompetitorSlugs } from "./vs/competitors";
+import { getAllFeatureSlugs } from "./features/features-data";
+import { getAllSegmentSlugs } from "./for/segments-data";
+import { getAllBlogSlugs } from "./blog/posts";
 
 const BASE_URL = "https://kitehr.co";
 
@@ -18,6 +22,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${BASE_URL}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/about`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/faq`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: `${BASE_URL}/signup`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -30,6 +52,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
   ];
+
+  const vsRoutes: MetadataRoute.Sitemap = getAllCompetitorSlugs().map((slug) => ({
+    url: `${BASE_URL}/vs/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  const featureRoutes: MetadataRoute.Sitemap = getAllFeatureSlugs().map((slug) => ({
+    url: `${BASE_URL}/features/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const forRoutes: MetadataRoute.Sitemap = getAllSegmentSlugs().map((slug) => ({
+    url: `${BASE_URL}/for/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const blogRoutes: MetadataRoute.Sitemap = getAllBlogSlugs().map((slug) => ({
+    url: `${BASE_URL}/blog/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
   const jobs = await db.job.findMany({
     where: {
@@ -54,5 +104,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
-  return [...staticRoutes, ...jobRoutes];
+  return [...staticRoutes, ...vsRoutes, ...featureRoutes, ...forRoutes, ...blogRoutes, ...jobRoutes];
 }

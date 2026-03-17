@@ -10,8 +10,14 @@ export function PublicNav() {
           <span className="font-semibold text-white">KiteHR</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
+          <Link href="/features/hiring-pipeline" className="text-sm text-white/50 hover:text-white transition-colors">
+            Features
+          </Link>
           <Link href="/pricing" className="text-sm text-white/50 hover:text-white transition-colors">
             Pricing
+          </Link>
+          <Link href="/blog" className="text-sm text-white/50 hover:text-white transition-colors">
+            Blog
           </Link>
         </nav>
         <div className="flex items-center gap-3">
@@ -39,7 +45,11 @@ export function PublicFooter() {
           <span>KiteHR</span>
         </div>
         <div className="flex items-center gap-6">
+          <Link href="/features/hiring-pipeline" className="hover:text-white/60 transition-colors">Features</Link>
           <Link href="/pricing" className="hover:text-white/60 transition-colors">Pricing</Link>
+          <Link href="/blog" className="hover:text-white/60 transition-colors">Blog</Link>
+          <Link href="/about" className="hover:text-white/60 transition-colors">About</Link>
+          <Link href="/faq" className="hover:text-white/60 transition-colors">FAQ</Link>
           <Link href="/login" className="hover:text-white/60 transition-colors">Sign in</Link>
           <Link href="/signup" className="hover:text-white/60 transition-colors">Sign up</Link>
         </div>
