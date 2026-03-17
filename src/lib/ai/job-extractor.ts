@@ -9,6 +9,7 @@ export interface ExtractedJob {
   salaryMax: number | null;
   companyName: string;
   contactEmail: string | null;
+  extraDetails: string | null;
 }
 
 export async function extractJobFromText(text: string): Promise<ExtractedJob> {
@@ -27,6 +28,7 @@ Return JSON with:
 - salaryMin (number or null: annual minimum salary in local currency — null if not mentioned)
 - salaryMax (number or null: annual maximum salary in local currency — null if not mentioned)
 - companyName (string: the name of the hiring company)
-- contactEmail (string or null: any email address found in the text for applications/contact — null if not found)`
+- contactEmail (string or null: any email address found in the text for applications/contact — null if not found)
+- extraDetails (string or null: free-form markdown text capturing any additional rich context from the source that would help candidates understand the opportunity. Include sections as appropriate from what's available — for example: company background, mission/vision, team composition, culture, interview process, what to expect, perks/benefits, founders' note, or any other relevant details not captured above. Use markdown headers (##), bullet points, and formatting for readability. Return null if no meaningful additional context is available.)`
   );
 }

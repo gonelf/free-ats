@@ -107,6 +107,7 @@ model Job {
   salaryMax      Int?
   status         JobStatus    @default(DRAFT)
   slug           String?
+  extraDetails   String?      @db.Text
   pipelineId     String
   pipeline       Pipeline     @relation(fields: [pipelineId], references: [id])
   createdAt      DateTime     @default(now())
