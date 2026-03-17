@@ -54,7 +54,7 @@ export default async function DashboardLayout({
         isAppAdmin={isAdmin}
       />
       <main className="flex-1 overflow-y-auto relative">
-        <div className="p-8">{children}</div>
+        <div className="pt-14 md:pt-0 p-4 md:p-8">{children}</div>
         <FeedbackSystem initialFeedbacks={initialFeedbacks} currentUserId={user.id} />
       </main>
     </div>
