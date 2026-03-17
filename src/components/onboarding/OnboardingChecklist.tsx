@@ -56,9 +56,9 @@ export function OnboardingChecklist({
     },
     {
       id: "upgrade",
-      label: "Upgrade to Pro for AI features",
-      description: "Unlock resume parsing, candidate scoring, and more.",
-      href: "/upgrade",
+      label: "Try an AI feature",
+      description: "Score a candidate, parse a resume, or generate a job description with AI.",
+      href: "/candidates",
       done: isPro,
       icon: <Sparkles className="h-4 w-4" />,
     },
