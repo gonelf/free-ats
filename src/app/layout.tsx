@@ -16,6 +16,29 @@ export const metadata: Metadata = {
   title: "KiteHR — Applicant Tracking System",
   description:
     "A free applicant tracking system with optional AI-powered features for faster hiring.",
+  openGraph: {
+    title: "KiteHR — Applicant Tracking System",
+    description:
+      "A free applicant tracking system with optional AI-powered features for faster hiring.",
+    url: "https://kitehr.co",
+    siteName: "KiteHR",
+    images: [
+      {
+        url: "https://kitehr.co/KiteHR.png",
+        width: 1080,
+        height: 1080,
+        alt: "KiteHR — Hire without limits. Free, forever.",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KiteHR — Applicant Tracking System",
+    description:
+      "A free applicant tracking system with optional AI-powered features for faster hiring.",
+    images: ["https://kitehr.co/KiteHR.png"],
+  },
 };
 
 export default function RootLayout({
