@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { MessageSquare, ThumbsUp, Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { MessageSquare, ThumbsUp, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +19,7 @@ interface FeedbackSystemProps {
 export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSystemProps) {
   const [feedbacks, setFeedbacks] = React.useState<Feedback[]>(initialFeedbacks);
   const [isPending, setIsPending] = React.useTransition();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const features = feedbacks.filter((f) => f.type === "FEATURE");
   const bugs = feedbacks.filter((f) => f.type === "BUG");
@@ -54,10 +48,8 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
 
     setIsPending(async () => {
       await createFeedback(formData);
-      // For simplicity, we just add it to the local state after the action succeeds
-      // In a real app, you might want a more robust sync or use useActionState
       const newFeedback: any = {
-        id: Math.random().toString(), // Temp ID
+        id: Math.random().toString(),
         title,
         type,
         description,
@@ -71,25 +63,51 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-indigo-600 text-white px-3 py-2 rounded-l-xl shadow-lg hover:bg-indigo-700 transition-all group flex items-center gap-1.5"
-        >
-          <MessageSquare className="h-4 w-4 group-hover:scale-110 transition-transform" />
-          <span className="font-semibold tracking-wider text-sm">REQUEST</span>
-        </button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col p-0 overflow-hidden">
-        <DialogHeader className="p-6 border-b">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2 text-gray-900">
-            <MessageSquare className="h-6 w-6 text-indigo-600" />
-            Feedback & Requests
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      {/* Fixed vertical tab trigger on the right edge */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className={cn(
+          "fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-indigo-600 text-white px-3 py-2 rounded-l-xl shadow-lg hover:bg-indigo-700 transition-all group flex items-center gap-1.5",
+          isOpen && "hidden"
+        )}
+      >
+        <MessageSquare className="h-4 w-4 group-hover:scale-110 transition-transform" />
+        <span className="font-semibold tracking-wider text-sm">REQUEST</span>
+      </button>
 
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Fixed right side panel */}
+      <div
+        className={cn(
+          "fixed top-0 right-0 h-screen w-[420px] z-50 bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        {/* Header */}
+        <div className="p-6 border-b flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-6 w-6 text-indigo-600" />
+            <h2 className="text-2xl font-bold text-gray-900">Feedback & Requests</h2>
+          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Tabs */}
         <TabsPrimitive.Root defaultValue="FEATURE" className="flex-1 flex flex-col overflow-hidden">
-          <TabsPrimitive.List className="flex border-b bg-gray-50/50">
+          <TabsPrimitive.List className="flex border-b bg-gray-50/50 shrink-0">
             <TabsPrimitive.Trigger
               value="FEATURE"
               className="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-600 transition-all font-semibold"
@@ -108,7 +126,8 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
           <TabsContent value="BUG" title="Bug Reports" items={bugs} onUpvote={handleUpvote} currentUserId={currentUserId} />
         </TabsPrimitive.Root>
 
-        <div className="p-6 border-t bg-gray-50">
+        {/* Submit form */}
+        <div className="p-6 border-t bg-gray-50 shrink-0">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
@@ -130,8 +149,8 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
             <Textarea name="description" placeholder="More details (optional)..." className="bg-white" />
           </form>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </>
   );
 }
 
