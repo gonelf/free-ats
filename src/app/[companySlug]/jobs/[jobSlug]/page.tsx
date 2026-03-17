@@ -30,11 +30,14 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: {
+      canonical: `https://kitehr.co/${companySlug}/jobs/${jobSlug}`,
+    },
     openGraph: {
       title,
       description,
       type: "article",
-      url: `/${companySlug}/jobs/${jobSlug}`,
+      url: `https://kitehr.co/${companySlug}/jobs/${jobSlug}`,
       siteName: "KiteHR",
     },
     twitter: {

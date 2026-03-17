@@ -14,9 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kitehr.co"),
   title: "KiteHR — Applicant Tracking System",
   description:
     "A free applicant tracking system with optional AI-powered features for faster hiring.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "KiteHR — Applicant Tracking System",
     description:
