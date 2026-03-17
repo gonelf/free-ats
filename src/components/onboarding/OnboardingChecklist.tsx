@@ -17,14 +17,14 @@ interface OnboardingChecklistProps {
   hasJob: boolean;
   hasCandidate: boolean;
   hasPipelineMove: boolean;
-  isPro: boolean;
+  hasUsedAi: boolean;
 }
 
 export function OnboardingChecklist({
   hasJob,
   hasCandidate,
   hasPipelineMove,
-  isPro,
+  hasUsedAi,
 }: OnboardingChecklistProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -56,10 +56,10 @@ export function OnboardingChecklist({
     },
     {
       id: "upgrade",
-      label: "Upgrade to Pro for AI features",
-      description: "Unlock resume parsing, candidate scoring, and more.",
-      href: "/upgrade",
-      done: isPro,
+      label: "Try an AI feature",
+      description: "Score a candidate, parse a resume, or generate a job description with AI.",
+      href: "/candidates",
+      done: hasUsedAi,
       icon: <Sparkles className="h-4 w-4" />,
     },
   ];
