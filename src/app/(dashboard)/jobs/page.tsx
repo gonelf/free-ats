@@ -33,7 +33,7 @@ export default async function JobsPage() {
 
   const orgId = member.organizationId;
 
-  const [jobs, candidateCount, applicationCount, org] = await Promise.all([
+  const [jobs, candidateCount, applicationCount, aiSummaryCount, aiScoredCount] = await Promise.all([
     db.job.findMany({
       where: { organizationId: orgId },
       include: {
@@ -44,9 +44,9 @@ export default async function JobsPage() {
     }),
     db.candidate.count({ where: { organizationId: orgId } }),
     db.application.count({ where: { job: { organizationId: orgId } } }),
-    db.organization.findUnique({
-      where: { id: orgId },
-      select: { plan: true },
+    db.aiSummary.count({ where: { candidate: { organizationId: orgId } } }),
+    db.application.count({
+      where: { job: { organizationId: orgId }, aiScore: { not: null } },
     }),
   ]);
 
@@ -54,7 +54,7 @@ export default async function JobsPage() {
   const hasCandidate = candidateCount > 0;
   // "hasPipelineMove" means at least one application has been updated (moved) after creation
   const hasPipelineMove = applicationCount > 0;
-  const isPro = org?.plan === "PRO";
+  const hasUsedAi = aiSummaryCount > 0 || aiScoredCount > 0;
 
   return (
     <div>
@@ -62,7 +62,7 @@ export default async function JobsPage() {
         hasJob={hasJob}
         hasCandidate={hasCandidate}
         hasPipelineMove={hasPipelineMove}
-        isPro={isPro}
+        hasUsedAi={hasUsedAi}
       />
 
       <div className="flex items-center justify-between mb-6 md:mb-8">

@@ -17,14 +17,14 @@ interface OnboardingChecklistProps {
   hasJob: boolean;
   hasCandidate: boolean;
   hasPipelineMove: boolean;
-  isPro: boolean;
+  hasUsedAi: boolean;
 }
 
 export function OnboardingChecklist({
   hasJob,
   hasCandidate,
   hasPipelineMove,
-  isPro,
+  hasUsedAi,
 }: OnboardingChecklistProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -59,7 +59,7 @@ export function OnboardingChecklist({
       label: "Try an AI feature",
       description: "Score a candidate, parse a resume, or generate a job description with AI.",
       href: "/candidates",
-      done: isPro,
+      done: hasUsedAi,
       icon: <Sparkles className="h-4 w-4" />,
     },
   ];
