@@ -87,6 +87,9 @@ interface Candidate {
   applications: Array<{
     id: string;
     aiScore: number | null;
+    aiGapAnalysis: unknown;
+    aiInterviewQuestions: unknown;
+    aiReferenceQuestions: string[];
     job: {
       id: string;
       title: string;
@@ -186,17 +189,36 @@ export function CandidateDetailClient({
 
   // ── Skills gap ────────────────────────────────────────────────────────────
   const [gapAppId, setGapAppId] = useState<string | null>(null);
-  const [appGaps, setAppGaps] = useState<Record<string, GapResult>>({});
+  const [appGaps, setAppGaps] = useState<Record<string, GapResult>>(() => {
+    const initial: Record<string, GapResult> = {};
+    for (const app of candidate.applications) {
+      if (app.aiGapAnalysis) initial[app.id] = app.aiGapAnalysis as GapResult;
+    }
+    return initial;
+  });
 
   // ── Reference questions ───────────────────────────────────────────────────
   const [refQAppId, setRefQAppId] = useState<string | null>(null);
-  const [appRefQuestions, setAppRefQuestions] = useState<Record<string, string[]>>({});
+  const [appRefQuestions, setAppRefQuestions] = useState<Record<string, string[]>>(() => {
+    const initial: Record<string, string[]> = {};
+    for (const app of candidate.applications) {
+      if (app.aiReferenceQuestions.length) initial[app.id] = app.aiReferenceQuestions;
+    }
+    return initial;
+  });
 
   // ── Interview questions ───────────────────────────────────────────────────
   const [interviewQAppId, setInterviewQAppId] = useState<string | null>(null);
   const [appInterviewQuestions, setAppInterviewQuestions] = useState<
     Record<string, { behavioral: string[]; technical: string[]; culture: string[] }>
-  >({});
+  >(() => {
+    const initial: Record<string, { behavioral: string[]; technical: string[]; culture: string[] }> = {};
+    for (const app of candidate.applications) {
+      if (app.aiInterviewQuestions)
+        initial[app.id] = app.aiInterviewQuestions as { behavioral: string[]; technical: string[]; culture: string[] };
+    }
+    return initial;
+  });
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -333,7 +355,7 @@ export function CandidateDetailClient({
       const res = await fetch("/api/ai/skills-gap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id }),
+        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id, applicationId }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -352,7 +374,7 @@ export function CandidateDetailClient({
       const res = await fetch("/api/ai/reference-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id }),
+        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id, applicationId }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -371,7 +393,7 @@ export function CandidateDetailClient({
       const res = await fetch("/api/ai/suggest-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id }),
+        body: JSON.stringify({ candidateId: candidate.id, jobId: app.job.id, applicationId }),
       });
       if (res.ok) {
         const data = await res.json();
