@@ -68,9 +68,10 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-indigo-600 text-white px-3 py-2 rounded-l-xl shadow-lg hover:bg-indigo-700 transition-all group flex items-center gap-1.5",
+          "fixed right-0 top-1/2 z-40 bg-indigo-600 text-white px-3 py-2 rounded-l-xl shadow-lg hover:bg-indigo-700 transition-all group flex items-center gap-1.5",
           isOpen && "hidden"
         )}
+        style={{ writingMode: "vertical-rl", transform: "translateY(-50%) rotate(180deg)" }}
       >
         <MessageSquare className="h-4 w-4 group-hover:scale-110 transition-transform" />
         <span className="font-semibold tracking-wider text-sm">REQUEST</span>
