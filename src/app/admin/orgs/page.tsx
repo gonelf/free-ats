@@ -34,6 +34,7 @@ export default async function AdminOrgsPage() {
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="px-6 py-3 text-left font-medium text-gray-500">Organization</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500">Plan</th>
+              <th className="px-6 py-3 text-left font-medium text-gray-500">Claimed</th>
               <th className="px-6 py-3 text-center font-medium text-gray-500">Members</th>
               <th className="px-6 py-3 text-center font-medium text-gray-500">Jobs</th>
               <th className="px-6 py-3 text-center font-medium text-gray-500">Candidates</th>
@@ -65,6 +66,17 @@ export default async function AdminOrgsPage() {
                   ) : (
                     <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
                       Free
+                    </span>
+                  )}
+                </td>
+                <td className="px-6 py-4">
+                  {org.claimedStatus === "UNCLAIMED" ? (
+                    <span className="inline-flex rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-700">
+                      Unclaimed
+                    </span>
+                  ) : (
+                    <span className="inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                      Claimed
                     </span>
                   )}
                 </td>

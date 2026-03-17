@@ -11,6 +11,7 @@ import {
   FileText,
   LogOut,
   Shield,
+  Import,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/admin/users", label: "Users", icon: Users, exact: false },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, exact: false },
   { href: "/admin/candidates", label: "Candidates & Resumes", icon: UserCheck, exact: false },
+  { href: "/admin/non-ats-jobs", label: "Non-ATS Import", icon: Import, exact: false },
 ];
 
 interface AdminSidebarProps {
