@@ -27,6 +27,18 @@ export default async function CandidateDetailPage({
     include: {
       notes: { orderBy: { createdAt: "desc" } },
       aiSummary: true,
+      communications: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          type: true,
+          subject: true,
+          body: true,
+          authorId: true,
+          createdAt: true,
+          job: { select: { id: true, title: true } },
+        },
+      },
       applications: {
         include: {
           job: {
@@ -84,6 +96,7 @@ export default async function CandidateDetailPage({
         hasAiAccess={hasAiAccess}
         currentUserId={user!.id}
         jobs={jobs}
+        communications={candidate.communications}
       />
     </div>
   );

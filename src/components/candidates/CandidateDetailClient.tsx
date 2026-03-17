@@ -20,6 +20,9 @@ import {
   HelpCircle,
   Copy,
   CheckCheck,
+  ChevronDown,
+  ChevronRight,
+  BookMarked,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,12 +105,31 @@ interface Candidate {
   }>;
 }
 
+interface Communication {
+  id: string;
+  type: string;
+  subject: string;
+  body: string;
+  authorId: string;
+  createdAt: Date;
+  job: { id: string; title: string } | null;
+}
+
 interface CandidateDetailClientProps {
   candidate: Candidate;
   hasAiAccess: boolean;
   currentUserId: string;
   jobs: Array<{ id: string; title: string }>;
+  communications: Communication[];
 }
+
+const typeLabels: Record<string, { label: string; color: string }> = {
+  OUTREACH:         { label: "Outreach",        color: "bg-blue-50 text-blue-700" },
+  INTERVIEW_INVITE: { label: "Interview Invite", color: "bg-indigo-50 text-indigo-700" },
+  FOLLOW_UP:        { label: "Follow-up",        color: "bg-gray-100 text-gray-600" },
+  OFFER:            { label: "Offer",            color: "bg-green-50 text-green-700" },
+  REJECTION:        { label: "Rejection",        color: "bg-red-50 text-red-700" },
+};
 
 // ─── Empty experience helper ─────────────────────────────────────────────────
 
@@ -126,6 +148,7 @@ export function CandidateDetailClient({
   hasAiAccess,
   currentUserId,
   jobs,
+  communications: initialCommunications,
 }: CandidateDetailClientProps) {
   // ── Profile form state ───────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -179,13 +202,19 @@ export function CandidateDetailClient({
     return initial;
   });
 
-  // ── Email drafting ────────────────────────────────────────────────────────
-  const [emailAppId, setEmailAppId] = useState<string | null>(null);
+  // ── Communications ────────────────────────────────────────────────────────
+  const [communications, setCommunications] = useState<Communication[]>(initialCommunications);
+  const [expandedCommId, setExpandedCommId] = useState<string | null>(null);
+
+  // ── Compose modal ─────────────────────────────────────────────────────────
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [composeJobId, setComposeJobId] = useState("");
   const [emailType, setEmailType] = useState<EmailType>("outreach");
   const [emailContext, setEmailContext] = useState("");
   const [draftingEmail, setDraftingEmail] = useState(false);
-  const [emailResult, setEmailResult] = useState<{ subject: string; body: string } | null>(null);
+  const [emailResult, setEmailResult] = useState<{ subject: string; body: string; communicationId: string } | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   // ── Skills gap ────────────────────────────────────────────────────────────
   const [gapAppId, setGapAppId] = useState<string | null>(null);
@@ -322,19 +351,16 @@ export function CandidateDetailClient({
   }
 
   async function handleDraftEmail() {
-    if (!emailAppId) return;
     setDraftingEmail(true);
     setEmailResult(null);
     try {
-      const app = candidate.applications.find((a) => a.id === emailAppId);
-      if (!app) return;
       const res = await fetch("/api/ai/draft-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: emailType,
           candidateId: candidate.id,
-          jobId: app.job.id,
+          jobId: composeJobId || undefined,
           additionalContext: emailContext || undefined,
         }),
       });
@@ -344,6 +370,46 @@ export function CandidateDetailClient({
       }
     } finally {
       setDraftingEmail(false);
+    }
+  }
+
+  function handleLogAndClose() {
+    if (emailResult?.communicationId) {
+      const job = candidate.applications.find((a) => a.job.id === composeJobId)?.job ?? null;
+      setCommunications((prev) => [
+        {
+          id: emailResult.communicationId,
+          type: emailType.toUpperCase(),
+          subject: emailResult.subject,
+          body: emailResult.body,
+          authorId: currentUserId,
+          createdAt: new Date(),
+          job: job ? { id: job.id, title: job.title } : null,
+        },
+        ...prev,
+      ]);
+    }
+    setComposeOpen(false);
+    setEmailResult(null);
+    setEmailContext("");
+  }
+
+  async function handleSaveAsTemplate() {
+    if (!emailResult?.communicationId) return;
+    setSavingTemplate(true);
+    try {
+      await fetch(`/api/communications/${emailResult.communicationId}/save-as-template`, {
+        method: "POST",
+      });
+    } finally {
+      setSavingTemplate(false);
+    }
+  }
+
+  async function handleDeleteCommunication(id: string) {
+    const res = await fetch(`/api/communications/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setCommunications((prev) => prev.filter((c) => c.id !== id));
     }
   }
 
@@ -1087,35 +1153,6 @@ export function CandidateDetailClient({
                       )}
                     </div>
 
-                    {/* ── Draft Email ───────────────────────────────── */}
-                    <div className="rounded-lg border border-gray-200 bg-white p-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5 mb-0.5">
-                            <Mail className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                            <p className="text-xs font-semibold text-gray-800">Draft Email</p>
-                          </div>
-                          <p className="text-[11px] text-gray-500 leading-snug">
-                            Compose a professional outreach, interview invite, offer, follow-up, or rejection email tailored to this candidate.
-                          </p>
-                        </div>
-                        <AiButton
-                          hasAiAccess={hasAiAccess}
-                          onClick={() => {
-                            setEmailAppId(app.id);
-                            setEmailResult(null);
-                            setEmailContext("");
-                            setEmailType("outreach");
-                          }}
-                          loading={false}
-                          className="text-[10px] h-6 px-2 shrink-0"
-                          creditCost={5}
-                        >
-                          Compose
-                        </AiButton>
-                      </div>
-                    </div>
-
                   </div>
                 )}
 
@@ -1224,6 +1261,99 @@ export function CandidateDetailClient({
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Communications ───────────────────────────────────────── */}
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+            Communications ({communications.length})
+          </h2>
+          {hasAiAccess && (
+            <AiButton
+              hasAiAccess={hasAiAccess}
+              onClick={() => {
+                setComposeOpen(true);
+                setEmailResult(null);
+                setEmailContext("");
+                setEmailType("outreach");
+                setComposeJobId(candidate.applications[0]?.job.id ?? "");
+              }}
+              loading={false}
+              creditCost={5}
+              className="text-[10px] h-6 px-2 gap-1"
+            >
+              <Mail className="h-3 w-3" />
+              Compose
+            </AiButton>
+          )}
+        </div>
+        {communications.length === 0 ? (
+          <p className="text-xs text-gray-400 italic">No communications logged yet</p>
+        ) : (
+          <div className="space-y-2">
+            {communications.map((comm) => {
+              const tl = typeLabels[comm.type] ?? { label: comm.type, color: "bg-gray-100 text-gray-600" };
+              const isExpanded = expandedCommId === comm.id;
+              return (
+                <div key={comm.id} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                        <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold", tl.color)}>
+                          {tl.label}
+                        </span>
+                        {comm.job && (
+                          <span className="text-[10px] text-gray-500">{comm.job.title}</span>
+                        )}
+                      </div>
+                      <p className="text-xs font-medium text-gray-800 leading-snug truncate">{comm.subject}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">{formatDate(comm.createdAt)}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => setExpandedCommId(isExpanded ? null : comm.id)}
+                        className="text-gray-300 hover:text-gray-600 transition-colors"
+                        title={isExpanded ? "Collapse" : "Expand"}
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        ) : (
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => {
+                          fetch(`/api/communications/${comm.id}/save-as-template`, { method: "POST" });
+                        }}
+                        className="text-gray-300 hover:text-indigo-500 transition-colors"
+                        title="Save as Template"
+                      >
+                        <BookMarked className="h-3.5 w-3.5" />
+                      </button>
+                      {comm.authorId === currentUserId && (
+                        <button
+                          onClick={() => handleDeleteCommunication(comm.id)}
+                          className="text-gray-300 hover:text-red-500 transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {isExpanded && (
+                    <div className="mt-2 border-t border-gray-200 pt-2">
+                      <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
+                        {comm.body}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -1374,12 +1504,12 @@ export function CandidateDetailClient({
         </div>
       )}
 
-      {/* ── Email draft dialog ───────────────────────────────────── */}
+      {/* ── Compose Email dialog ─────────────────────────────────── */}
       <Dialog
-        open={!!emailAppId}
+        open={composeOpen}
         onOpenChange={(open) => {
           if (!open) {
-            setEmailAppId(null);
+            setComposeOpen(false);
             setEmailResult(null);
             setEmailContext("");
           }
@@ -1387,15 +1517,31 @@ export function CandidateDetailClient({
       >
         <DialogContent className="max-w-xl">
           <DialogHeader>
-            <DialogTitle>Draft Email</DialogTitle>
+            <DialogTitle>Compose Email</DialogTitle>
             <DialogDescription>
-              Generate a professional email for {candidate.firstName}{" "}
-              {candidate.lastName} regarding{" "}
-              {candidate.applications.find((a) => a.id === emailAppId)?.job.title ?? "this role"}.
+              Generate a professional email for {candidate.firstName} {candidate.lastName}.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3">
+            {candidate.applications.length > 0 && (
+              <div>
+                <label className="text-xs font-medium text-gray-600 mb-1 block">Job (optional)</label>
+                <select
+                  value={composeJobId}
+                  onChange={(e) => setComposeJobId(e.target.value)}
+                  className="w-full rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="">No specific job</option>
+                  {candidate.applications.map((app) => (
+                    <option key={app.job.id} value={app.job.id}>
+                      {app.job.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div>
               <label className="text-xs font-medium text-gray-600 mb-1 block">Email Type</label>
               <select
@@ -1436,30 +1582,41 @@ export function CandidateDetailClient({
                     {emailResult.body}
                   </pre>
                 </div>
-                <button
-                  onClick={() => {
-                    const full = `Subject: ${emailResult.subject}\n\n${emailResult.body}`;
-                    navigator.clipboard.writeText(full);
-                    setEmailCopied(true);
-                    setTimeout(() => setEmailCopied(false), 2000);
-                  }}
-                  className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
-                >
-                  {emailCopied ? (
-                    <>
-                      <CheckCheck className="h-3.5 w-3.5" /> Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" /> Copy to clipboard
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <button
+                    onClick={() => {
+                      const full = `Subject: ${emailResult.subject}\n\n${emailResult.body}`;
+                      navigator.clipboard.writeText(full);
+                      setEmailCopied(true);
+                      setTimeout(() => setEmailCopied(false), 2000);
+                    }}
+                    className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                  >
+                    {emailCopied ? (
+                      <><CheckCheck className="h-3.5 w-3.5" /> Copied!</>
+                    ) : (
+                      <><Copy className="h-3.5 w-3.5" /> Copy</>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleSaveAsTemplate}
+                    disabled={savingTemplate}
+                    className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-indigo-600 font-medium disabled:opacity-50"
+                  >
+                    <BookMarked className="h-3.5 w-3.5" />
+                    {savingTemplate ? "Saving…" : "Save as Template"}
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2">
+            {emailResult && (
+              <Button variant="outline" size="sm" onClick={handleLogAndClose}>
+                Log & Close
+              </Button>
+            )}
             <AiButton
               hasAiAccess={hasAiAccess}
               onClick={handleDraftEmail}

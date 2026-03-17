@@ -26,6 +26,7 @@ model Organization {
   emailTemplates EmailTemplate[]
   invitations    Invitation[]
   feedbacks      Feedback[]
+  communications Communication[]
 }
 
 enum Plan {
@@ -105,7 +106,8 @@ model Job {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  applications Application[]
+  applications   Application[]
+  communications Communication[]
 
   @@index([organizationId])
   @@index([pipelineId])
@@ -166,9 +168,10 @@ model Candidate {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  applications Application[]
-  notes        Note[]
-  aiSummary    AiSummary?
+  applications   Application[]
+  notes          Note[]
+  aiSummary      AiSummary?
+  communications Communication[]
 
   @@unique([organizationId, email])
   @@index([organizationId])
@@ -238,4 +241,30 @@ model AppAdmin {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+enum EmailType {
+  OUTREACH
+  INTERVIEW_INVITE
+  FOLLOW_UP
+  OFFER
+  REJECTION
+}
+
+model Communication {
+  id             String       @id @default(cuid())
+  candidateId    String
+  candidate      Candidate    @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  jobId          String?
+  job            Job?         @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  type           EmailType
+  subject        String
+  body           String       @db.Text
+  authorId       String
+  createdAt      DateTime     @default(now())
+
+  @@index([candidateId])
+  @@index([organizationId])
 }

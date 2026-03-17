@@ -58,7 +58,7 @@ async function consumeCredits(
 }
 
 export async function withProPlanGuard<T>(
-  handler: (orgId: string) => Promise<T>,
+  handler: (orgId: string, userId: string) => Promise<T>,
   creditCost: number = 1
 ): Promise<NextResponse> {
   try {
@@ -102,7 +102,7 @@ export async function withProPlanGuard<T>(
       );
     }
 
-    const result = await handler(member.organizationId);
+    const result = await handler(member.organizationId, user.id);
     return NextResponse.json({
       ...(result as object),
       _credits: { used: creditCost, remaining: credits.remaining },
