@@ -6,6 +6,7 @@ import { MapPin, Building, Briefcase, Calendar, FileText } from "lucide-react";
 import type { Metadata } from "next";
 import { formatDate } from "@/lib/utils";
 import { ApplyForm } from "@/components/jobs/ApplyForm";
+import ReactMarkdown from "react-markdown";
 
 export async function generateMetadata({
   params,
@@ -201,6 +202,14 @@ export default async function PublicJobPage({
                     {job.requirements}
                   </div>
                 </>
+              )}
+
+              {job.extraDetails && (
+                <div className="mt-12 pt-12 border-t border-gray-100">
+                  <div className="prose prose-lg prose-indigo max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900">
+                    <ReactMarkdown>{job.extraDetails}</ReactMarkdown>
+                  </div>
+                </div>
               )}
 
               <div className="mt-20 pt-10 border-t border-gray-100 flex flex-col items-center text-center">

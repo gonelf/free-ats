@@ -22,7 +22,7 @@ async function fetchUrlText(url: string): Promise<string | null> {
       .replace(/<[^>]+>/g, " ")
       .replace(/\s{2,}/g, " ")
       .trim()
-      .slice(0, 8000); // Keep within reasonable AI prompt size
+      .slice(0, 20000); // Keep within reasonable AI prompt size
   } catch {
     return null;
   }
@@ -117,6 +117,7 @@ export async function POST(req: NextRequest) {
       salaryMax: extracted.salaryMax,
       slug: jobSlugBase,
       status: "OPEN",
+      extraDetails: extracted.extraDetails || null,
     },
   });
 
