@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 
 export function InviteDialog() {
   const [open, setOpen] = useState(false);
@@ -37,6 +38,7 @@ export function InviteDialog() {
       if (!res.ok) {
         setError(data.error || "Failed to send invitation");
       } else {
+        analytics.teamMemberInvited({ role });
         setSuccess(true);
         setEmail("");
         setTimeout(() => {
