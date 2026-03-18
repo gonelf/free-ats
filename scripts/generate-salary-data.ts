@@ -46,7 +46,7 @@ if (!rawUrl) {
 }
 const connectionString = rawUrl.replace(/[?&]pgbouncer=true/i, "").replace(/\?$/, "");
 const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool as Parameters<typeof PrismaPg>[0]);
+const adapter = new PrismaPg(pool as any);
 const db = new PrismaClient({ adapter });
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
