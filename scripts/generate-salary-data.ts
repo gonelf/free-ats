@@ -121,19 +121,24 @@ function sleep(ms: number) {
 async function seedCity(city: SalaryCity, roles: SalaryRole[]) {
   console.log(`\n🏙  Seeding ${city.name} (${roles.length} roles)...`);
 
-  // Find which roles are already seeded for this city
-  const existing = await db.salaryEntry.findMany({
-    where: { citySlug: city.slug },
-    select: { roleSlug: true },
-  });
-  const existingSlugs = new Set(existing.map((e) => e.roleSlug));
-  const missingRoles = roles.filter((r) => !existingSlugs.has(r.slug));
+  // In dry-run mode skip the DB check entirely — the table may not exist yet.
+  let missingRoles = roles;
+  if (!dryRun) {
+    const existing = await db.salaryEntry.findMany({
+      where: { citySlug: city.slug },
+      select: { roleSlug: true },
+    });
+    const existingSlugs = new Set(existing.map((e) => e.roleSlug));
+    missingRoles = roles.filter((r) => !existingSlugs.has(r.slug));
 
-  if (missingRoles.length === 0) {
-    console.log(`  ✓ All ${roles.length} roles already seeded — skipping`);
-    return;
+    if (missingRoles.length === 0) {
+      console.log(`  ✓ All ${roles.length} roles already seeded — skipping`);
+      return;
+    }
+    console.log(`  ${existing.length} existing, ${missingRoles.length} to generate`);
+  } else {
+    console.log(`  [DRY RUN] Will generate ${missingRoles.length} roles`);
   }
-  console.log(`  ${existing.length} existing, ${missingRoles.length} to generate`);
 
   // Process in batches
   for (let i = 0; i < missingRoles.length; i += BATCH_SIZE) {
