@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { analytics } from "@/lib/analytics";
 import { ArrowRight, AlertCircle, Check } from "lucide-react";
 import { Suspense } from "react";
 
@@ -43,12 +44,15 @@ function SignupForm() {
     if (error) {
       setError(error.message);
       setLoading(false);
-    } else if (invitationToken) {
-      router.push(`/invitations/accept?token=${encodeURIComponent(invitationToken)}`);
-      router.refresh();
     } else {
-      router.push("/jobs");
-      router.refresh();
+      analytics.signedUp({ has_invitation: !!invitationToken });
+      if (invitationToken) {
+        router.push(`/invitations/accept?token=${encodeURIComponent(invitationToken)}`);
+        router.refresh();
+      } else {
+        router.push("/jobs");
+        router.refresh();
+      }
     }
   }
 
