@@ -148,21 +148,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Leaf pages — only published entries (publishedAt IS NOT NULL)
-  const publishedSalaryEntries = await db.salaryEntry.findMany({
-    where: { publishedAt: { not: null } },
-    select: { citySlug: true, roleSlug: true, publishedAt: true },
-    orderBy: { publishedAt: "desc" },
-  });
-
-  const salaryLeafRoutes: MetadataRoute.Sitemap = publishedSalaryEntries.map((entry) => {
-    const city = SALARY_CITIES.find((c) => c.slug === entry.citySlug);
-    return {
-      url: `${BASE_URL}/salaries/${entry.citySlug}/${entry.roleSlug}`,
-      lastModified: entry.publishedAt ?? new Date(),
-      changeFrequency: "monthly" as const,
-      priority: city?.tier === 1 ? 0.80 : city?.tier === 2 ? 0.70 : 0.60,
-    };
-  });
+  // Wrapped in try/catch: the SalaryEntry table may not exist yet if the
+  // migration hasn't been applied, and we must not crash the build.
+  let salaryLeafRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const publishedSalaryEntries = await db.salaryEntry.findMany({
+      where: { publishedAt: { not: null } },
+      select: { citySlug: true, roleSlug: true, publishedAt: true },
+      orderBy: { publishedAt: "desc" },
+    });
+    salaryLeafRoutes = publishedSalaryEntries.map((entry) => {
+      const city = SALARY_CITIES.find((c) => c.slug === entry.citySlug);
+      return {
+        url: `${BASE_URL}/salaries/${entry.citySlug}/${entry.roleSlug}`,
+        lastModified: entry.publishedAt ?? new Date(),
+        changeFrequency: "monthly" as const,
+        priority: city?.tier === 1 ? 0.80 : city?.tier === 2 ? 0.70 : 0.60,
+      };
+    });
+  } catch {
+    // Table not yet migrated — leaf pages will be added to the sitemap
+    // on the first successful build after `prisma migrate deploy` runs.
+  }
 
   const jobs = await db.job.findMany({
     where: {
