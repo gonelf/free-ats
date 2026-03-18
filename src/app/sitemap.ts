@@ -4,6 +4,10 @@ import { getAllCompetitorSlugs } from "./vs/competitors";
 import { getAllFeatureSlugs } from "./features/features-data";
 import { getAllSegmentSlugs } from "./for/segments-data";
 import { getAllBlogSlugs } from "./blog/posts";
+import { getAllJobDescriptionSlugs } from "./job-descriptions/job-descriptions-data";
+import { getAllInterviewQuestionsSlugs } from "./interview-questions/interview-questions-data";
+import { getAllHowToHireSlugs } from "./how-to-hire/how-to-hire-data";
+import { getAllHrEmailTemplateSlugs } from "./hr-email-templates/hr-email-templates-data";
 
 const BASE_URL = "https://kitehr.co";
 
@@ -81,6 +85,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  const jobDescriptionIndexRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/job-descriptions`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+  ];
+  const jobDescriptionRoutes: MetadataRoute.Sitemap = getAllJobDescriptionSlugs().map((slug) => ({
+    url: `${BASE_URL}/job-descriptions/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  const interviewQuestionsIndexRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/interview-questions`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+  ];
+  const interviewQuestionsRoutes: MetadataRoute.Sitemap = getAllInterviewQuestionsSlugs().map((slug) => ({
+    url: `${BASE_URL}/interview-questions/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  const howToHireIndexRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/how-to-hire`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+  ];
+  const howToHireRoutes: MetadataRoute.Sitemap = getAllHowToHireSlugs().map((slug) => ({
+    url: `${BASE_URL}/how-to-hire/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  const hrEmailTemplatesIndexRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/hr-email-templates`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+  ];
+  const hrEmailTemplatesRoutes: MetadataRoute.Sitemap = getAllHrEmailTemplateSlugs().map((slug) => ({
+    url: `${BASE_URL}/hr-email-templates/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  }));
+
   const jobs = await db.job.findMany({
     where: {
       status: "OPEN",
@@ -104,5 +148,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
-  return [...staticRoutes, ...vsRoutes, ...featureRoutes, ...forRoutes, ...blogRoutes, ...jobRoutes];
+  return [
+    ...staticRoutes,
+    ...vsRoutes,
+    ...featureRoutes,
+    ...forRoutes,
+    ...blogRoutes,
+    ...jobDescriptionIndexRoute,
+    ...jobDescriptionRoutes,
+    ...interviewQuestionsIndexRoute,
+    ...interviewQuestionsRoutes,
+    ...howToHireIndexRoute,
+    ...howToHireRoutes,
+    ...hrEmailTemplatesIndexRoute,
+    ...hrEmailTemplatesRoutes,
+    ...jobRoutes,
+  ];
 }
