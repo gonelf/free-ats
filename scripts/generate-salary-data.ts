@@ -25,6 +25,8 @@
 
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   SALARY_CITIES,
@@ -36,7 +38,16 @@ import {
   type SalaryRole,
 } from "../src/app/salaries/salary-data";
 
-const db = new PrismaClient();
+// Mirror src/lib/db.ts — wasm Prisma requires the pg adapter
+const rawUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
+if (!rawUrl) {
+  console.error("No database URL found. Set DATABASE_URL in your .env file.");
+  process.exit(1);
+}
+const connectionString = rawUrl.replace(/[?&]pgbouncer=true/i, "").replace(/\?$/, "");
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool as any);
+const db = new PrismaClient({ adapter });
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
