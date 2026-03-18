@@ -303,6 +303,241 @@ export const blogPosts: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "what-is-an-applicant-tracking-system",
+    title:
+      "What Is an Applicant Tracking System? A Plain-English Guide for Small Businesses",
+    description:
+      "A jargon-free explanation of what an ATS is, how it works, what features to expect, and when your small business actually needs one.",
+    publishedAt: "2026-03-18",
+    readingTime: "9 min read",
+    category: "Guides",
+    content: [
+      {
+        type: "p",
+        content:
+          "If you've ever lost a candidate's resume in your inbox, accidentally emailed the wrong person, or realized mid-interview that you had no idea which stage three other candidates were at — you already understand the problem an ATS solves. You just may not have known there was a name for the solution.",
+      },
+      {
+        type: "h2",
+        content: "What Is an ATS? (Simple definition, no jargon)",
+      },
+      {
+        type: "p",
+        content:
+          "An applicant tracking system — ATS for short — is software that manages your hiring process from start to finish. It's the single place where your job postings live, applications come in, candidates get organized, your team collaborates, and offers go out.",
+      },
+      {
+        type: "p",
+        content:
+          "The name sounds more complicated than the reality. Think of it as a CRM, but for job candidates instead of customers. Instead of tracking sales leads through a pipeline, you're tracking applicants through your hiring stages: Applied → Phone Screen → Interview → Offer → Hired.",
+      },
+      {
+        type: "p",
+        content:
+          "Before ATS software became accessible to small businesses, hiring was managed through a patchwork of tools: job boards for posting, email for receiving applications, spreadsheets for tracking, and calendar apps for scheduling. An ATS replaces all of that with one system that's designed specifically for hiring.",
+      },
+      {
+        type: "h2",
+        content: "How an ATS Actually Works: The Candidate Journey",
+      },
+      {
+        type: "p",
+        content:
+          "Here's what happens from the moment you post a job to the moment you make a hire, inside an ATS:",
+      },
+      {
+        type: "ol",
+        content: [
+          "You create a job posting inside the ATS. The system generates a public-facing application page with a link you can share anywhere — LinkedIn, Indeed, your website, or a direct link in an email.",
+          "Candidates apply through that link. Their information — name, contact details, resume, cover letter, answers to any screening questions — flows directly into the ATS.",
+          "Every applicant appears in a visual pipeline. Most ATS tools use a kanban-style board: columns represent stages (Applied, Screened, Interviewed, Offer), and candidate cards move across as they progress.",
+          "Your team reviews, rates, and leaves notes on each candidate inside the system. No more hunting through email threads to find out what your co-founder thought of someone.",
+          "You communicate with candidates from inside the ATS, or it logs emails you send from your regular email client so there's a full history in one place.",
+          "When you're ready to hire, you move the candidate to an Offer or Hired stage, and the ATS keeps the record of when and why.",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "The result: every person involved in your hiring — whether it's just you, or a team of five — always knows exactly where every candidate stands.",
+      },
+      {
+        type: "h2",
+        content: "What Features Does a Typical ATS Include?",
+      },
+      {
+        type: "p",
+        content:
+          "ATS tools vary widely in complexity, but most include some version of these core features:",
+      },
+      {
+        type: "ul",
+        content: [
+          "Job posting management: Create, publish, and close job postings. Better tools let you post to multiple job boards from one place.",
+          "Application collection: A branded careers page or shareable application link that funnels candidates into your system.",
+          "Candidate pipeline: A visual board showing where every candidate is in your process.",
+          "Team collaboration: Multiple users can view, rate, and comment on candidates. Hiring is rarely a solo decision.",
+          "Resume storage and search: Uploaded resumes are stored and searchable, so you can find past applicants when a new role opens up.",
+          "Email and communication: Message candidates directly, or log communications automatically.",
+          "Basic reporting: How many people applied, how long your process takes, where candidates drop off.",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "More advanced (and usually paid) tiers layer on features like AI resume screening, candidate scoring, structured interview kits, offer letter generation, and onboarding workflows. But for most small businesses, the core features above are all you need to get dramatically more organized.",
+      },
+      {
+        type: "h2",
+        content: "Who Uses an ATS? (Not Just Enterprise Companies)",
+      },
+      {
+        type: "p",
+        content:
+          "ATS software was originally built for large companies managing thousands of applications. The early systems were expensive, complex, and required dedicated HR staff to operate. That's why small business owners often assume an ATS \"isn't for them.\"",
+      },
+      {
+        type: "p",
+        content:
+          "That's no longer true. The market has shifted dramatically. Today, ATS tools exist specifically for:",
+      },
+      {
+        type: "ul",
+        content: [
+          "Startups hiring their first 5–20 employees",
+          "Small businesses with no dedicated HR department",
+          "Recruiting agencies managing multiple client pipelines",
+          "Non-profits with no budget for enterprise software",
+          "Founders who are doing their own hiring",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "In fact, small teams often benefit more from an ATS than large enterprises do. When you have a small team and limited time, the chaos of disorganized hiring is proportionally more painful. An ATS gives you enterprise-level organization without enterprise-level complexity or cost.",
+      },
+      {
+        type: "h2",
+        content: "Free ATS vs. Paid ATS: What's the Real Difference?",
+      },
+      {
+        type: "p",
+        content:
+          "There are genuinely free ATS tools on the market — not just free trials, but permanently free products with no credit card required. The difference between free and paid typically comes down to AI-powered features, not core functionality.",
+      },
+      {
+        type: "p",
+        content:
+          "A good free ATS will give you unlimited job postings, unlimited candidates, unlimited users, and a visual pipeline. That's enough to run a professional hiring process for most small businesses.",
+      },
+      {
+        type: "p",
+        content:
+          "Paid tiers typically add things like:",
+      },
+      {
+        type: "ul",
+        content: [
+          "AI resume screening that automatically scores candidates against your job requirements",
+          "Candidate ranking so you know who to prioritize reviewing first",
+          "AI-generated job descriptions that save hours of writing",
+          "Smart email drafting for outreach, rejections, and offers",
+          "Salary benchmarking to make competitive offers",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "If you're hiring occasionally — a few roles per year — a free ATS will likely cover everything you need. If you're scaling fast or want AI to help you screen and prioritize, a paid tier makes sense. For a detailed comparison of what's free versus what costs money, see our guide to free ATS software.",
+      },
+      {
+        type: "h2",
+        content: "When Is the Right Time to Get an ATS?",
+      },
+      {
+        type: "p",
+        content:
+          "Most small businesses wait too long. They add an ATS only after they've already lost candidates, made a bad hire due to a disorganized process, or felt overwhelmed managing applications in their inbox.",
+      },
+      {
+        type: "p",
+        content:
+          "A better rule of thumb: get an ATS before you post your first job. Here's why that makes sense:",
+      },
+      {
+        type: "ul",
+        content: [
+          "Setup takes minutes, not days. Modern ATS tools are designed to be usable from day one.",
+          "The habits you build on your first hire carry forward to your tenth. Starting organized is easier than getting organized after the fact.",
+          "Even one job posting can attract dozens of applicants. Losing even one strong candidate to inbox chaos is a costly mistake.",
+          "It's free. If the tool costs nothing, the only question is whether it makes your process better — and it will.",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "If you're already hiring without an ATS and tracking candidates in spreadsheets, the signs that it's time to switch are obvious: you've lost emails, you're not sure who reviewed which candidate, your team is using different tracking methods, or you're spending more time managing information than actually evaluating people.",
+      },
+      {
+        type: "h2",
+        content: "What About ATS and Job Board Integrations?",
+      },
+      {
+        type: "p",
+        content:
+          "One practical question small businesses often have: do I still need to post on LinkedIn, Indeed, and other job boards if I have an ATS?",
+      },
+      {
+        type: "p",
+        content:
+          "Yes — and a good ATS makes that easier, not harder. Your ATS generates a link for each job posting. You paste that link when posting on job boards. Applications from every source funnel into your ATS automatically. You get full visibility into where your best candidates are coming from, without managing separate inboxes for each channel.",
+      },
+      {
+        type: "p",
+        content:
+          "Some ATS tools also integrate directly with major job boards so you can post to multiple boards in one click. This is a time-saver when you're hiring across several roles at once.",
+      },
+      {
+        type: "h2",
+        content: "How to Get Started",
+      },
+      {
+        type: "p",
+        content:
+          "Getting started with an ATS is straightforward. Here's the typical path:",
+      },
+      {
+        type: "ol",
+        content: [
+          "Sign up for a free account — no credit card required for tools like KiteHR.",
+          "Create your first job posting. Give it a title, description, and any screening questions you want candidates to answer.",
+          "Copy the application link and share it wherever you're sourcing candidates.",
+          "As applications come in, review them in your pipeline, leave notes, and move candidates forward.",
+          "Invite your hiring team so they can review candidates and add their own feedback.",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "The learning curve is minimal. If you've used a spreadsheet to track candidates before, you'll find an ATS immediately intuitive — it's just a purpose-built version of what you were already trying to do. For tips on writing the job descriptions you'll post through your ATS, browse our job description templates library. And if you're still deciding between tools, our guide to choosing the right ATS walks through the key questions.",
+      },
+      {
+        type: "h2",
+        content: "The Bottom Line",
+      },
+      {
+        type: "p",
+        content:
+          "An applicant tracking system is not enterprise software dressed up for small businesses. It's a tool that solves a real, specific problem: the chaos that comes from managing hiring through email and spreadsheets. If you're hiring even one person, the right ATS will make the process faster, more organized, and less likely to result in a good candidate falling through the cracks.",
+      },
+      {
+        type: "p",
+        content:
+          "The best part: you don't have to pay to find out if it works. Start free, get organized, and upgrade only if and when you need the AI features. There's no reason to wait.",
+      },
+    ],
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | null {
