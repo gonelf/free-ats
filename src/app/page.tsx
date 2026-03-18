@@ -56,30 +56,37 @@ const aiFeatures = [
   { icon: Sparkles, text: "Interview question generator" },
 ];
 
-const organizationJsonLd = {
+const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "KiteHR",
-  "url": "https://kitehr.co",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
+  "description":
+    "Free applicant tracking system for modern hiring teams. Unlimited users, job posts, and candidates with AI-powered resume parsing and candidate scoring.",
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD",
-    "description": "Free forever plan with unlimited users, job posts, and candidates",
   },
+  "url": "https://kitehr.co",
+  "screenshot": "https://kitehr.co/og-image.png",
+  "featureList":
+    "Applicant Tracking, Resume Parsing, Candidate Scoring, Kanban Pipeline, Job Description Generator, Email Templates",
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "KiteHR",
+  "url": "https://kitehr.co",
+  "logo": "https://kitehr.co/logo.png",
   "description":
-    "A free applicant tracking system with optional AI-powered features for modern hiring teams. Unlimited users, job posts, and candidates — forever free.",
-  "publisher": {
-    "@type": "Organization",
-    "name": "KiteHR",
-    "url": "https://kitehr.co",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://kitehr.co/logo.png",
-    },
-  },
+    "KiteHR provides a free applicant tracking system with AI features for modern hiring teams.",
+  "sameAs": [
+    "https://www.linkedin.com/company/kitehr",
+    "https://twitter.com/kitehr",
+  ],
 };
 
 export default async function HomePage() {
@@ -94,6 +101,10 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
