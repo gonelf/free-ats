@@ -250,6 +250,36 @@ model AppAdmin {
   createdAt DateTime @default(now())
 }
 
+model SalaryEntry {
+  citySlug           String
+  roleSlug           String
+  cityName           String
+  stateName          String
+  country            String   @default("US")
+  roleName           String
+  category           String
+  localSalaryLow     Int
+  localSalaryMedian  Int
+  localSalaryHigh    Int
+  remoteSalaryLow    Int
+  remoteSalaryMedian Int
+  remoteSalaryHigh   Int
+  savingsPercent     Int
+  annualSavings      Int
+  currency           String   @default("USD")
+  dataYear           Int      @default(2025)
+  demandLevel        String   @default("medium")
+  publishedAt        DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@id([citySlug, roleSlug])
+  @@index([citySlug])
+  @@index([roleSlug])
+  @@index([publishedAt])
+  @@index([category])
+}
+
 enum EmailType {
   OUTREACH
   INTERVIEW_INVITE

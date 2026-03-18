@@ -8,6 +8,7 @@ import { getAllJobDescriptionSlugs } from "./job-descriptions/job-descriptions-d
 import { getAllInterviewQuestionsSlugs } from "./interview-questions/interview-questions-data";
 import { getAllHowToHireSlugs } from "./how-to-hire/how-to-hire-data";
 import { getAllHrEmailTemplateSlugs } from "./hr-email-templates/hr-email-templates-data";
+import { SALARY_CITIES, getAllRoleSlugs } from "./salaries/salary-data";
 
 const BASE_URL = "https://kitehr.co";
 
@@ -125,6 +126,44 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
+  // ── Salary directory ───────────────────────────────────────────
+  // Index + all city hubs (always present regardless of publishedAt)
+  const salaryIndexRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/salaries`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
+  ];
+
+  const salaryCityRoutes: MetadataRoute.Sitemap = SALARY_CITIES.map((city) => ({
+    url: `${BASE_URL}/salaries/${city.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: city.tier === 1 ? 0.85 : city.tier === 2 ? 0.75 : 0.65,
+  }));
+
+  // Role hub pages
+  const salaryRoleRoutes: MetadataRoute.Sitemap = getAllRoleSlugs().map((slug) => ({
+    url: `${BASE_URL}/salaries/roles/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  // Leaf pages — only published entries (publishedAt IS NOT NULL)
+  const publishedSalaryEntries = await db.salaryEntry.findMany({
+    where: { publishedAt: { not: null } },
+    select: { citySlug: true, roleSlug: true, publishedAt: true },
+    orderBy: { publishedAt: "desc" },
+  });
+
+  const salaryLeafRoutes: MetadataRoute.Sitemap = publishedSalaryEntries.map((entry) => {
+    const city = SALARY_CITIES.find((c) => c.slug === entry.citySlug);
+    return {
+      url: `${BASE_URL}/salaries/${entry.citySlug}/${entry.roleSlug}`,
+      lastModified: entry.publishedAt ?? new Date(),
+      changeFrequency: "monthly" as const,
+      priority: city?.tier === 1 ? 0.80 : city?.tier === 2 ? 0.70 : 0.60,
+    };
+  });
+
   const jobs = await db.job.findMany({
     where: {
       status: "OPEN",
@@ -163,5 +202,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...hrEmailTemplatesIndexRoute,
     ...hrEmailTemplatesRoutes,
     ...jobRoutes,
+    ...salaryIndexRoute,
+    ...salaryCityRoutes,
+    ...salaryRoleRoutes,
+    ...salaryLeafRoutes,
   ];
 }
