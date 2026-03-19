@@ -249,6 +249,11 @@ export function CandidateDetailClient({
     return initial;
   });
 
+  // ── Right panel tab ───────────────────────────────────────────────────────
+  const [rightTab, setRightTab] = useState<"resume" | "ai" | "notes" | "comms">(
+    candidate.resumeUrl ? "resume" : "ai"
+  );
+
   // ── Helpers ──────────────────────────────────────────────────────────────
 
   function patchForm<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -880,46 +885,23 @@ export function CandidateDetailClient({
           </Button>
         </div>
       </div>
+    </div>
+  );
 
-      {/* ── AI Assessment ────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-            AI Assessment
-          </h2>
-          <AiButton
-            hasAiAccess={hasAiAccess}
-            onClick={handleGenerateAiSummary}
-            loading={generatingAiSummary}
-          >
-            {aiSummary ? "Regenerate" : "Generate"}
-          </AiButton>
-        </div>
-        {aiSummary ? (
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{aiSummary}</p>
-        ) : (
-          <p className="text-xs text-gray-400 italic">
-            {hasAiAccess
-              ? "Generate an AI assessment of this candidate."
-              : "Upgrade to Pro to generate AI assessments."}
-          </p>
-        )}
-      </div>
+  // ── Tab content: Notes ────────────────────────────────────────────────────
 
-      {/* ── Notes ────────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-        <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Notes</h2>
-        <div className="space-y-2 mb-4">
-          <Textarea
-            placeholder="Add a note about this candidate…"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={3}
-          />
-          <Button size="sm" onClick={handleAddNote} disabled={!note.trim() || addingNote}>
-            {addingNote ? "Adding…" : "Add Note"}
-          </Button>
-        </div>
+  const notesContent = (
+    <div className="space-y-2 mb-4">
+      <Textarea
+        placeholder="Add a note about this candidate…"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        rows={3}
+      />
+      <Button size="sm" onClick={handleAddNote} disabled={!note.trim() || addingNote}>
+        {addingNote ? "Adding…" : "Add Note"}
+      </Button>
+      <div className="mt-2">
         {candidate.notes.length > 0 ? (
           <div className="space-y-3">
             {candidate.notes.map((n) => (
@@ -943,9 +925,41 @@ export function CandidateDetailClient({
           <p className="text-xs text-gray-400 italic">No notes yet</p>
         )}
       </div>
+    </div>
+  );
 
-      {/* ── Applications ─────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+  // ── Tab content: AI helpers ───────────────────────────────────────────────
+
+  const aiContent = (
+    <div className="space-y-4">
+      {/* AI Assessment */}
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            AI Assessment
+          </h2>
+          <AiButton
+            hasAiAccess={hasAiAccess}
+            onClick={handleGenerateAiSummary}
+            loading={generatingAiSummary}
+            creditCost={5}
+          >
+            {aiSummary ? "Regenerate" : "Generate"}
+          </AiButton>
+        </div>
+        {aiSummary ? (
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{aiSummary}</p>
+        ) : (
+          <p className="text-xs text-gray-400 italic">
+            {hasAiAccess
+              ? "Generate an AI assessment of this candidate."
+              : "Upgrade to Pro to generate AI assessments."}
+          </p>
+        )}
+      </div>
+
+      {/* Applications */}
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
         <div className="flex items-start justify-between mb-3">
           <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
             Applications ({candidate.applications.length})
@@ -999,7 +1013,7 @@ export function CandidateDetailClient({
                 {hasAiAccess && (
                   <div className="space-y-2">
 
-                    {/* ── Gap Analysis ─────────────────────────────── */}
+                    {/* Gap Analysis */}
                     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -1062,7 +1076,7 @@ export function CandidateDetailClient({
                       )}
                     </div>
 
-                    {/* ── Interview Questions ───────────────────────── */}
+                    {/* Interview Questions */}
                     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -1120,7 +1134,7 @@ export function CandidateDetailClient({
                       )}
                     </div>
 
-                    {/* ── Reference Questions ───────────────────────── */}
+                    {/* Reference Questions */}
                     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -1152,11 +1166,10 @@ export function CandidateDetailClient({
                         </div>
                       )}
                     </div>
-
                   </div>
                 )}
 
-                {/* Score results (shown outside sections since score badge is in header) */}
+                {/* Score results */}
                 {appScores[app.id] &&
                   (appScores[app.id].strengths.length > 0 ||
                     appScores[app.id].gaps.length > 0 ||
@@ -1196,33 +1209,31 @@ export function CandidateDetailClient({
                     </div>
                   )}
 
-                {/* Score button + Stage selector */}
-                <div className="space-y-2">
-                  {hasAiAccess && (
-                    <div>
-                      {profileComplete ? (
-                        <AiButton
-                          hasAiAccess={hasAiAccess}
-                          onClick={() => handleScoreApplication(app.id)}
-                          loading={scoringAppId === app.id}
-                          className="text-[10px] h-6 px-2"
-                          creditCost={5}
-                        >
-                          {appScores[app.id] ? "Re-score" : "Score"}
-                        </AiButton>
-                      ) : (
-                        <button
-                          disabled
-                          title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
-                          className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
-                        >
-                          <Sparkles className="h-3 w-3" />
-                          Score
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                {/* Score button */}
+                {hasAiAccess && (
+                  <div>
+                    {profileComplete ? (
+                      <AiButton
+                        hasAiAccess={hasAiAccess}
+                        onClick={() => handleScoreApplication(app.id)}
+                        loading={scoringAppId === app.id}
+                        className="text-[10px] h-6 px-2"
+                        creditCost={5}
+                      >
+                        {appScores[app.id] ? "Re-score" : "Score"}
+                      </AiButton>
+                    ) : (
+                      <button
+                        disabled
+                        title={`Profile incomplete — save ${missingProfileFields.join(", ")} first`}
+                        className="flex items-center gap-1 rounded-md border border-gray-200 px-2 h-6 text-[10px] text-gray-300 cursor-not-allowed"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        Score
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {/* Stage selector */}
                 <div className="space-y-1">
@@ -1265,145 +1276,196 @@ export function CandidateDetailClient({
         )}
       </div>
 
-      {/* ── Communications ───────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-            Communications ({communications.length})
-          </h2>
-          {hasAiAccess && (
-            <AiButton
-              hasAiAccess={hasAiAccess}
-              onClick={() => {
-                setComposeOpen(true);
-                setEmailResult(null);
-                setEmailContext("");
-                setEmailType("outreach");
-                setComposeJobId(candidate.applications[0]?.job.id ?? "");
-              }}
-              loading={false}
-              creditCost={5}
-              className="text-[10px] h-6 px-2 gap-1"
-            >
-              <Mail className="h-3 w-3" />
-              Compose
-            </AiButton>
-          )}
-        </div>
-        {communications.length === 0 ? (
-          <p className="text-xs text-gray-400 italic">No communications logged yet</p>
-        ) : (
-          <div className="space-y-2">
-            {communications.map((comm) => {
-              const tl = typeLabels[comm.type] ?? { label: comm.type, color: "bg-gray-100 text-gray-600" };
-              const isExpanded = expandedCommId === comm.id;
-              return (
-                <div key={comm.id} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                        <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold", tl.color)}>
-                          {tl.label}
-                        </span>
-                        {comm.job && (
-                          <span className="text-[10px] text-gray-500">{comm.job.title}</span>
-                        )}
-                      </div>
-                      <p className="text-xs font-medium text-gray-800 dark:text-gray-200 leading-snug truncate">{comm.subject}</p>
-                      <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{formatDate(comm.createdAt)}</p>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        onClick={() => setExpandedCommId(isExpanded ? null : comm.id)}
-                        className="text-gray-300 hover:text-gray-600 transition-colors"
-                        title={isExpanded ? "Collapse" : "Expand"}
-                      >
-                        {isExpanded ? (
-                          <ChevronDown className="h-3.5 w-3.5" />
-                        ) : (
-                          <ChevronRight className="h-3.5 w-3.5" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => {
-                          fetch(`/api/communications/${comm.id}/save-as-template`, { method: "POST" });
-                        }}
-                        className="text-gray-300 hover:text-indigo-500 transition-colors"
-                        title="Save as Template"
-                      >
-                        <BookMarked className="h-3.5 w-3.5" />
-                      </button>
-                      {comm.authorId === currentUserId && (
-                        <button
-                          onClick={() => handleDeleteCommunication(comm.id)}
-                          className="text-gray-300 hover:text-red-500 transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  {isExpanded && (
-                    <div className="mt-2 border-t border-gray-200 dark:border-gray-700 pt-2">
-                      <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">
-                        {comm.body}
-                      </pre>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
     </div>
   );
 
-  const resumePanel = (
-    <div className="sticky top-4 flex flex-col gap-3" style={{ height: "calc(100vh - 80px)" }}>
-      {/* Actions row */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {candidate.linkedinUrl && (
-          <Button variant="outline" size="sm" asChild>
-            <a href={candidate.linkedinUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="h-3.5 w-3.5" />
-              LinkedIn
-            </a>
-          </Button>
-        )}
-        <Button variant="outline" size="sm" asChild>
-          <a
-            href={`/api/candidates/${candidate.id}/resume`}
-            target="_blank"
-            rel="noopener noreferrer"
+  // ── Tab content: Communications ───────────────────────────────────────────
+
+  const commsContent = (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        {hasAiAccess && (
+          <AiButton
+            hasAiAccess={hasAiAccess}
+            onClick={() => {
+              setComposeOpen(true);
+              setEmailResult(null);
+              setEmailContext("");
+              setEmailType("outreach");
+              setComposeJobId(candidate.applications[0]?.job.id ?? "");
+            }}
+            loading={false}
+            creditCost={5}
+            className="text-[10px] h-6 px-2 gap-1 ml-auto"
           >
-            <FileText className="h-3.5 w-3.5" />
-            Download
-          </a>
-        </Button>
-        <AiButton
-          hasAiAccess={hasAiAccess}
-          onClick={handleParseResume}
-          loading={parsingResume}
-          creditCost={10}
-        >
-          Parse Resume
-        </AiButton>
+            <Mail className="h-3 w-3" />
+            Compose
+          </AiButton>
+        )}
+      </div>
+      {communications.length === 0 ? (
+        <p className="text-xs text-gray-400 italic">No communications logged yet</p>
+      ) : (
+        <div className="space-y-2">
+          {communications.map((comm) => {
+            const tl = typeLabels[comm.type] ?? { label: comm.type, color: "bg-gray-100 text-gray-600" };
+            const isExpanded = expandedCommId === comm.id;
+            return (
+              <div key={comm.id} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                      <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold", tl.color)}>
+                        {tl.label}
+                      </span>
+                      {comm.job && (
+                        <span className="text-[10px] text-gray-500">{comm.job.title}</span>
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-gray-800 leading-snug truncate">{comm.subject}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{formatDate(comm.createdAt)}</p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => setExpandedCommId(isExpanded ? null : comm.id)}
+                      className="text-gray-300 hover:text-gray-600 transition-colors"
+                      title={isExpanded ? "Collapse" : "Expand"}
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        fetch(`/api/communications/${comm.id}/save-as-template`, { method: "POST" });
+                      }}
+                      className="text-gray-300 hover:text-indigo-500 transition-colors"
+                      title="Save as Template"
+                    >
+                      <BookMarked className="h-3.5 w-3.5" />
+                    </button>
+                    {comm.authorId === currentUserId && (
+                      <button
+                        onClick={() => handleDeleteCommunication(comm.id)}
+                        className="text-gray-300 hover:text-red-500 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {isExpanded && (
+                  <div className="mt-2 border-t border-gray-200 pt-2">
+                    <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
+                      {comm.body}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
+  // ── Tabbed right panel ────────────────────────────────────────────────────
+
+  const tabs: { key: typeof rightTab; label: string }[] = [
+    ...(hasResume ? [{ key: "resume" as const, label: "Resume" }] : []),
+    { key: "ai", label: "AI" },
+    { key: "notes", label: "Notes" },
+    { key: "comms", label: "Comms" },
+  ];
+
+  const tabbedPanel = (
+    <div className="sticky top-4 flex flex-col gap-3" style={{ height: "calc(100vh - 80px)" }}>
+      {/* Tab bar */}
+      <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 gap-0.5">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setRightTab(t.key)}
+            className={cn(
+              "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+              rightTab === t.key
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {/* PDF iframe */}
-      <div className="flex-1 min-h-0 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-800">
-        <iframe
-          src={`/api/candidates/${candidate.id}/resume`}
-          className="w-full h-full"
-          title="Resume preview"
-        />
-      </div>
+      {/* Resume tab */}
+      {rightTab === "resume" && hasResume && (
+        <>
+          <div className="flex items-center gap-2 flex-wrap">
+            {candidate.linkedinUrl && (
+              <Button variant="outline" size="sm" asChild>
+                <a href={candidate.linkedinUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  LinkedIn
+                </a>
+              </Button>
+            )}
+            <Button variant="outline" size="sm" asChild>
+              <a
+                href={`/api/candidates/${candidate.id}/resume`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FileText className="h-3.5 w-3.5" />
+                Download
+              </a>
+            </Button>
+            <AiButton
+              hasAiAccess={hasAiAccess}
+              onClick={handleParseResume}
+              loading={parsingResume}
+              creditCost={10}
+            >
+              Parse Resume
+            </AiButton>
+          </div>
+          <div className="flex-1 min-h-0 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-800">
+            <iframe
+              src={`/api/candidates/${candidate.id}/resume`}
+              className="w-full h-full"
+              title="Resume preview"
+            />
+          </div>
+        </>
+      )}
 
-      {/* Add to job */}
+      {/* AI tab */}
+      {rightTab === "ai" && (
+        <div className="flex-1 min-h-0 overflow-y-auto pr-0.5">
+          {aiContent}
+        </div>
+      )}
+
+      {/* Notes tab */}
+      {rightTab === "notes" && (
+        <div className="flex-1 min-h-0 overflow-y-auto pr-0.5">
+          {notesContent}
+        </div>
+      )}
+
+      {/* Comms tab */}
+      {rightTab === "comms" && (
+        <div className="flex-1 min-h-0 overflow-y-auto pr-0.5">
+          {commsContent}
+        </div>
+      )}
+
+      {/* Add to job + Meta (always visible at bottom) */}
       {unappliedJobs.length > 0 && (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 shrink-0">
           <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
             Add to Job
           </h3>
@@ -1428,43 +1490,12 @@ export function CandidateDetailClient({
       )}
 
       {/* Meta */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-xs text-gray-400 dark:text-gray-500">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-xs text-gray-400 dark:text-gray-500 shrink-0">
         Added {formatDate(candidate.createdAt)}
       </div>
     </div>
   );
 
-  const noResumePanel = (
-    <div className="space-y-5">
-      {/* Add to job */}
-      {unappliedJobs.length > 0 && (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Add to Job</h3>
-          <div className="flex gap-2">
-            <select
-              value={selectedJobId}
-              onChange={(e) => setSelectedJobId(e.target.value)}
-              className="flex-1 rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100"
-            >
-              <option value="">Select a job…</option>
-              {unappliedJobs.map((j) => (
-                <option key={j.id} value={j.id}>
-                  {j.title}
-                </option>
-              ))}
-            </select>
-            <Button size="sm" onClick={handleAddToJob} disabled={!selectedJobId}>
-              <Plus className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        </div>
-      )}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Details</h3>
-        <p className="text-sm text-gray-400 dark:text-gray-500">Added {formatDate(candidate.createdAt)}</p>
-      </div>
-    </div>
-  );
 
   return (
     <div>
@@ -1491,18 +1522,11 @@ export function CandidateDetailClient({
         </div>
       </div>
 
-      {/* ── Side-by-side or single-column ───────────────────────── */}
-      {hasResume ? (
-        <div className="grid grid-cols-[1fr_460px] gap-5 items-start">
-          <div>{profilePanel}</div>
-          <div>{resumePanel}</div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-5 items-start">
-          <div className="col-span-2">{profilePanel}</div>
-          <div>{noResumePanel}</div>
-        </div>
-      )}
+      {/* ── Side-by-side layout ─────────────────────────────────── */}
+      <div className="grid grid-cols-[1fr_460px] gap-5 items-start">
+        <div>{profilePanel}</div>
+        <div>{tabbedPanel}</div>
+      </div>
 
       {/* ── Compose Email dialog ─────────────────────────────────── */}
       <Dialog
