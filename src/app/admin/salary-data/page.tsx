@@ -8,9 +8,17 @@ export default async function SalaryDataPage() {
 
   const totalEntries = await db.salaryEntry.count();
   const publishedEntries = await db.salaryEntry.count({ where: { publishedAt: { not: null } } });
-  const citiesPopulated = await db.salaryEntry
+  const populatedCitySlugs = await db.salaryEntry
     .findMany({ select: { citySlug: true }, distinct: ["citySlug"] })
-    .then((rows) => rows.length);
+    .then((rows) => new Set(rows.map((r) => r.citySlug)));
+
+  const citiesPopulated = populatedCitySlugs.size;
+
+  const tierStats = ([1, 2, 3] as const).map((t) => {
+    const tierCities = SALARY_CITIES.filter((c) => c.tier === t);
+    const populated = tierCities.filter((c) => populatedCitySlugs.has(c.slug)).length;
+    return { tier: t, populated, total: tierCities.length };
+  });
 
   const cities = SALARY_CITIES.map((c) => ({ slug: c.slug, name: c.name, tier: c.tier }));
 
@@ -35,6 +43,28 @@ export default async function SalaryDataPage() {
             <div className="text-xs text-gray-500 mt-1">{s.label}</div>
           </div>
         ))}
+      </div>
+
+      {/* Per-tier stats */}
+      <div className="grid grid-cols-3 gap-4">
+        {tierStats.map(({ tier, populated, total }) => {
+          const pct = total > 0 ? Math.round((populated / total) * 100) : 0;
+          return (
+            <div key={tier} className="rounded-xl border border-gray-200 bg-white p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-700">Tier {tier}</span>
+                <span className="text-xs text-gray-500">{populated} / {total} cities</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <div
+                  className="bg-gray-900 h-1.5 rounded-full transition-all"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <div className="text-xs text-gray-400">{pct}% populated</div>
+            </div>
+          );
+        })}
       </div>
 
       <SalaryPopulateForm cities={cities} totalEntries={totalEntries} />
