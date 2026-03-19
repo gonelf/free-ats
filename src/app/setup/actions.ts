@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { sendWelcomeEmail } from "@/lib/mail";
 
 export async function createOrganization(formData: FormData) {
   const supabase = await createClient();
@@ -83,6 +84,13 @@ export async function createOrganization(formData: FormData) {
       },
     },
   });
+
+  if (user.email) {
+    const userName = (user.user_metadata?.name as string | undefined) || user.email;
+    sendWelcomeEmail({ to: user.email, name: userName, orgName: companyName }).catch(
+      (err) => console.error("Failed to send welcome email:", err)
+    );
+  }
 
   redirect("/jobs");
 }
