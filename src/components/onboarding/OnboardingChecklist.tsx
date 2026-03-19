@@ -70,17 +70,17 @@ export function OnboardingChecklist({
   if (dismissed || allDone) return null;
 
   return (
-    <div className="rounded-xl border border-indigo-200 bg-indigo-50 overflow-hidden mb-6">
+    <div className="rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 overflow-hidden mb-6">
       <div className="flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
             {completedCount}/{steps.length}
           </div>
           <div>
-            <p className="text-sm font-semibold text-indigo-900">
+            <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
               Getting started
             </p>
-            <p className="text-xs text-indigo-600">
+            <p className="text-xs text-indigo-600 dark:text-indigo-400">
               {steps.length - completedCount} step
               {steps.length - completedCount !== 1 ? "s" : ""} remaining
             </p>
@@ -89,7 +89,7 @@ export function OnboardingChecklist({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setCollapsed((c) => !c)}
-            className="p-1.5 rounded-lg hover:bg-indigo-100 text-indigo-600 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 transition-colors"
             aria-label={collapsed ? "Expand" : "Collapse"}
           >
             {collapsed ? (
@@ -100,7 +100,7 @@ export function OnboardingChecklist({
           </button>
           <button
             onClick={() => setDismissed(true)}
-            className="p-1.5 rounded-lg hover:bg-indigo-100 text-indigo-400 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-400 dark:text-indigo-500 transition-colors"
             aria-label="Dismiss"
           >
             <X className="h-4 w-4" />
@@ -109,7 +109,7 @@ export function OnboardingChecklist({
       </div>
 
       {!collapsed && (
-        <div className="border-t border-indigo-200 bg-white divide-y divide-gray-50">
+        <div className="border-t border-indigo-200 dark:border-indigo-800 bg-white dark:bg-gray-900 divide-y divide-gray-50 dark:divide-gray-800">
           {steps.map((step) => (
             <div
               key={step.id}
@@ -119,7 +119,7 @@ export function OnboardingChecklist({
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                   step.done
                     ? "border-green-500 bg-green-500 text-white"
-                    : "border-gray-200 bg-white text-gray-400"
+                    : "border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500"
                 }`}
               >
                 {step.done ? (
@@ -131,13 +131,13 @@ export function OnboardingChecklist({
               <div className="flex-1 min-w-0">
                 <p
                   className={`text-sm font-medium ${
-                    step.done ? "text-gray-400 line-through" : "text-gray-900"
+                    step.done ? "text-gray-400 dark:text-gray-500 line-through" : "text-gray-900 dark:text-gray-100"
                   }`}
                 >
                   {step.label}
                 </p>
                 {!step.done && (
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {step.description}
                   </p>
                 )}

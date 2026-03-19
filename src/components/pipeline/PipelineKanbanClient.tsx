@@ -62,8 +62,8 @@ export function PipelineKanbanClient({
 
   if (!selectedPipeline) {
     return (
-      <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">No pipelines found</h3>
+      <div className="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No pipelines found</h3>
       </div>
     );
   }
@@ -81,7 +81,7 @@ export function PipelineKanbanClient({
                 <div className="flex items-center justify-between w-full">
                   <span>{p.name}</span>
                   {p.isDefault && (
-                    <span className="ml-2 text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 uppercase font-bold">
+                    <span className="ml-2 text-[10px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-gray-500 dark:text-gray-400 uppercase font-bold">
                       Default
                     </span>
                   )}
@@ -91,16 +91,16 @@ export function PipelineKanbanClient({
           </SelectContent>
         </Select>
 
-        <div className="h-6 w-px bg-gray-200 hidden sm:block" />
+        <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block" />
 
-        <div className="flex items-center bg-gray-100 rounded-lg p-1">
+        <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <button
             onClick={() => setView("board")}
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all",
               view === "board"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             )}
           >
             <LayoutGrid className="h-4 w-4" />
@@ -111,8 +111,8 @@ export function PipelineKanbanClient({
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all",
               view === "settings"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             )}
           >
             <Settings2 className="h-4 w-4" />

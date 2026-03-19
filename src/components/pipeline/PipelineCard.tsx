@@ -97,12 +97,12 @@ export function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="border-b border-gray-100 bg-gray-50/50 p-4 sm:p-6">
+      <div className="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-indigo-100 p-2 text-indigo-600">
+            <div className="rounded-lg bg-indigo-100 dark:bg-indigo-900/40 p-2 text-indigo-600 dark:text-indigo-400">
               <GitBranch className="h-5 w-5" />
             </div>
             <div>
@@ -133,7 +133,7 @@ export function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 group">
-                  <h2 className="text-lg font-semibold text-gray-900">{pipeline.name}</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{pipeline.name}</h2>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -149,7 +149,7 @@ export function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
                   )}
                 </div>
               )}
-              <p className="text-sm text-gray-500 mt-0.5">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                 Used in {pipeline._count.jobs} job{pipeline._count.jobs !== 1 ? "s" : ""}
               </p>
             </div>
@@ -181,12 +181,12 @@ export function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
 
       {/* Stages */}
       <div className="p-4 sm:p-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-4">Pipeline Stages</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Pipeline Stages</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {pipeline.stages.map((stage, index) => (
             <div
               key={stage.id}
-              className="group flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white p-3 hover:border-indigo-200 hover:shadow-sm transition-all"
+              className="group flex items-center justify-between gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 hover:border-indigo-200 dark:hover:border-indigo-600 hover:shadow-sm transition-all"
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <div
@@ -206,7 +206,7 @@ export function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
                     onBlur={() => handleUpdateStage(stage.id)}
                   />
                 ) : (
-                  <span className="truncate text-sm font-medium text-gray-700">
+                  <span className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">
                     {stage.name}
                   </span>
                 )}
@@ -272,8 +272,8 @@ export function PipelineCard({ pipeline }: { pipeline: Pipeline }) {
         </div>
 
         {pipeline.jobs && pipeline.jobs.length > 0 && (
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Active Jobs Using This Pipeline</h4>
+          <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+            <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Active Jobs Using This Pipeline</h4>
             <div className="flex flex-wrap gap-2">
               {pipeline.jobs.map((job) => (
                 <Button key={job.id} variant="outline" size="sm" asChild className="h-8 text-xs">

@@ -569,27 +569,27 @@ export function CandidateDetailClient({
       )}
 
       {/* ── Contact ──────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+        <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
           Contact
         </h2>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">First Name</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">First Name</label>
             <Input
               value={form.firstName}
               onChange={(e) => patchForm("firstName", e.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Last Name</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Last Name</label>
             <Input
               value={form.lastName}
               onChange={(e) => patchForm("lastName", e.target.value)}
             />
           </div>
           <div className="col-span-2">
-            <label className="text-xs text-gray-500 mb-1 block">Email</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Email</label>
             <Input
               type="email"
               value={form.email}
@@ -597,7 +597,7 @@ export function CandidateDetailClient({
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Phone</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Phone</label>
             <Input
               value={form.phone}
               onChange={(e) => patchForm("phone", e.target.value)}
@@ -605,7 +605,7 @@ export function CandidateDetailClient({
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">LinkedIn URL</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">LinkedIn URL</label>
             <Input
               value={form.linkedinUrl}
               onChange={(e) => patchForm("linkedinUrl", e.target.value)}
@@ -616,8 +616,8 @@ export function CandidateDetailClient({
       </div>
 
       {/* ── Professional Summary ─────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+        <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
           Professional Summary
         </h2>
         <Textarea
@@ -629,9 +629,9 @@ export function CandidateDetailClient({
       </div>
 
       {/* ── Skills ───────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Skills</h2>
+          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Skills</h2>
           {hasAiAccess && (
             <AiButton
               hasAiAccess={hasAiAccess}
@@ -685,9 +685,9 @@ export function CandidateDetailClient({
       </div>
 
       {/* ── Work Experience ──────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
             Work Experience
           </h2>
           <Button
@@ -702,7 +702,7 @@ export function CandidateDetailClient({
 
         <div className="space-y-3">
           {form.workExperience.map((exp, idx) => (
-            <div key={idx} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+            <div key={idx} className="rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
               {editingExpIdx === idx ? (
                 <div className="space-y-2">
                   <div className="grid grid-cols-2 gap-2">
@@ -756,11 +756,11 @@ export function CandidateDetailClient({
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{exp.title}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{exp.title}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {exp.company}
                         {(exp.startDate || exp.endDate) && (
-                          <span className="ml-1 text-gray-400">
+                          <span className="ml-1 text-gray-400 dark:text-gray-500">
                             · {exp.startDate}{exp.endDate ? ` – ${exp.endDate}` : ""}
                           </span>
                         )}
@@ -782,7 +782,7 @@ export function CandidateDetailClient({
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="mt-1.5 text-xs text-gray-600 leading-relaxed line-clamp-3">
+                    <p className="mt-1.5 text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">
                       {exp.description}
                     </p>
                   )}
@@ -851,15 +851,15 @@ export function CandidateDetailClient({
       </div>
 
       {/* ── Achievements ─────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+        <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
           Achievements
         </h2>
         <ul className="space-y-1.5 mb-3">
           {form.achievements.map((a, idx) => (
             <li key={idx} className="flex items-start gap-2 group">
               <Trophy className="h-3.5 w-3.5 text-amber-400 mt-0.5 shrink-0" />
-              <span className="flex-1 text-sm text-gray-700">{a}</span>
+              <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">{a}</span>
               <button
                 onClick={() => removeAchievement(idx)}
                 className="text-gray-200 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
@@ -905,10 +905,10 @@ export function CandidateDetailClient({
         {candidate.notes.length > 0 ? (
           <div className="space-y-3">
             {candidate.notes.map((n) => (
-              <div key={n.id} className="rounded-lg bg-gray-50 p-3 text-sm">
-                <p className="text-gray-700 whitespace-pre-wrap">{n.content}</p>
+              <div key={n.id} className="rounded-lg bg-gray-50 dark:bg-gray-800 p-3 text-sm">
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{n.content}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs text-gray-400">{formatDate(n.createdAt)}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(n.createdAt)}</span>
                   {n.authorId === currentUserId && (
                     <button
                       onClick={() => deleteNote(n.id, candidate.id)}
@@ -933,9 +933,9 @@ export function CandidateDetailClient({
   const aiContent = (
     <div className="space-y-4">
       {/* AI Assessment */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
             AI Assessment
           </h2>
           <AiButton
@@ -948,7 +948,7 @@ export function CandidateDetailClient({
           </AiButton>
         </div>
         {aiSummary ? (
-          <p className="text-sm text-gray-600 leading-relaxed">{aiSummary}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{aiSummary}</p>
         ) : (
           <p className="text-xs text-gray-400 italic">
             {hasAiAccess
@@ -959,9 +959,9 @@ export function CandidateDetailClient({
       </div>
 
       {/* Applications */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
         <div className="flex items-start justify-between mb-3">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
             Applications ({candidate.applications.length})
           </h2>
           {!profileComplete && candidate.applications.length > 0 && (
@@ -975,13 +975,13 @@ export function CandidateDetailClient({
         ) : (
           <div className="space-y-3">
             {candidate.applications.map((app) => (
-              <div key={app.id} className="rounded-lg bg-gray-50 p-3 space-y-3">
+              <div key={app.id} className="rounded-lg bg-gray-50 dark:bg-gray-800 p-3 space-y-3">
                 {/* Job header */}
                 <div className="flex items-start justify-between">
                   <div>
                     <Link
                       href={`/jobs/${app.job.id}`}
-                      className="text-sm font-semibold text-gray-900 hover:text-indigo-600 block"
+                      className="text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 block"
                     >
                       {app.job.title}
                     </Link>
@@ -1012,15 +1012,16 @@ export function CandidateDetailClient({
                 {/* AI feature sections */}
                 {hasAiAccess && (
                   <div className="space-y-2">
+
                     {/* Gap Analysis */}
-                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 mb-0.5">
                             <GitBranch className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                            <p className="text-xs font-semibold text-gray-800">Gap Analysis</p>
+                            <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Gap Analysis</p>
                           </div>
-                          <p className="text-[11px] text-gray-500 leading-snug">
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
                             Compare this candidate&apos;s skills against the job requirements to surface matched, partial, and missing competencies.
                           </p>
                         </div>
@@ -1035,7 +1036,7 @@ export function CandidateDetailClient({
                         </AiButton>
                       </div>
                       {appGaps[app.id] && (
-                        <div className="mt-2.5 space-y-2 border-t border-gray-100 pt-2.5">
+                        <div className="mt-2.5 space-y-2 border-t border-gray-100 dark:border-gray-700 pt-2.5">
                           {appGaps[app.id].matched.length > 0 && (
                             <div>
                               <p className="text-[10px] font-semibold text-green-600 mb-1">Matched</p>
@@ -1067,7 +1068,7 @@ export function CandidateDetailClient({
                             </div>
                           )}
                           {appGaps[app.id].developmentPlan && (
-                            <p className="text-xs text-gray-600 italic leading-relaxed border-t border-gray-100 pt-2">
+                            <p className="text-xs text-gray-600 italic leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-2">
                               {appGaps[app.id].developmentPlan}
                             </p>
                           )}
@@ -1076,7 +1077,7 @@ export function CandidateDetailClient({
                     </div>
 
                     {/* Interview Questions */}
-                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 mb-0.5">
@@ -1098,13 +1099,13 @@ export function CandidateDetailClient({
                         </AiButton>
                       </div>
                       {appInterviewQuestions[app.id] && (
-                        <div className="mt-2.5 space-y-2.5 border-t border-gray-100 pt-2.5">
+                        <div className="mt-2.5 space-y-2.5 border-t border-gray-100 dark:border-gray-700 pt-2.5">
                           {appInterviewQuestions[app.id].behavioral?.length > 0 && (
                             <div>
                               <p className="text-[10px] font-semibold text-indigo-600 mb-1">Behavioral</p>
                               <ol className="space-y-1 list-decimal list-inside">
                                 {appInterviewQuestions[app.id].behavioral.map((q, i) => (
-                                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                                  <li key={i} className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{q}</li>
                                 ))}
                               </ol>
                             </div>
@@ -1114,7 +1115,7 @@ export function CandidateDetailClient({
                               <p className="text-[10px] font-semibold text-indigo-600 mb-1">Technical</p>
                               <ol className="space-y-1 list-decimal list-inside">
                                 {appInterviewQuestions[app.id].technical.map((q, i) => (
-                                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                                  <li key={i} className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{q}</li>
                                 ))}
                               </ol>
                             </div>
@@ -1124,7 +1125,7 @@ export function CandidateDetailClient({
                               <p className="text-[10px] font-semibold text-indigo-600 mb-1">Culture Fit</p>
                               <ol className="space-y-1 list-decimal list-inside">
                                 {appInterviewQuestions[app.id].culture.map((q, i) => (
-                                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                                  <li key={i} className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{q}</li>
                                 ))}
                               </ol>
                             </div>
@@ -1134,7 +1135,7 @@ export function CandidateDetailClient({
                     </div>
 
                     {/* Reference Questions */}
-                    <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 mb-0.5">
@@ -1156,10 +1157,10 @@ export function CandidateDetailClient({
                         </AiButton>
                       </div>
                       {appRefQuestions[app.id] && appRefQuestions[app.id].length > 0 && (
-                        <div className="mt-2.5 border-t border-gray-100 pt-2.5">
+                        <div className="mt-2.5 border-t border-gray-100 dark:border-gray-700 pt-2.5">
                           <ol className="space-y-1.5 list-decimal list-inside">
                             {appRefQuestions[app.id].map((q, i) => (
-                              <li key={i} className="text-xs text-gray-700 leading-relaxed">{q}</li>
+                              <li key={i} className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{q}</li>
                             ))}
                           </ol>
                         </div>
@@ -1173,7 +1174,7 @@ export function CandidateDetailClient({
                   (appScores[app.id].strengths.length > 0 ||
                     appScores[app.id].gaps.length > 0 ||
                     appScores[app.id].recommendation) && (
-                    <div className="space-y-2 rounded-lg bg-white border border-gray-100 p-2.5">
+                    <div className="space-y-2 rounded-lg bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 p-2.5">
                       {appScores[app.id].recommendation && (
                         <p className="text-xs text-gray-600 italic leading-relaxed">
                           {appScores[app.id].recommendation}
@@ -1181,10 +1182,10 @@ export function CandidateDetailClient({
                       )}
                       {appScores[app.id].strengths.length > 0 && (
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Strengths</p>
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1">Strengths</p>
                           <ul className="space-y-0.5">
                             {appScores[app.id].strengths.map((s, i) => (
-                              <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600">
+                              <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gray-400">
                                 <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 shrink-0" />
                                 {s}
                               </li>
@@ -1194,10 +1195,10 @@ export function CandidateDetailClient({
                       )}
                       {appScores[app.id].gaps.length > 0 && (
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Gaps</p>
+                          <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1">Gaps</p>
                           <ul className="space-y-0.5">
                             {appScores[app.id].gaps.map((g, i) => (
-                              <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600">
+                              <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gray-400">
                                 <XCircle className="h-3 w-3 text-red-400 mt-0.5 shrink-0" />
                                 {g}
                               </li>
@@ -1249,7 +1250,7 @@ export function CandidateDetailClient({
                           setUpdatingStageId(null);
                         }
                       }}
-                      className="w-full appearance-none rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                      className="w-full appearance-none rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
                     >
                       {app.job.pipeline.stages.map((stage) => (
                         <option key={stage.id} value={stage.id}>
@@ -1274,6 +1275,7 @@ export function CandidateDetailClient({
           </div>
         )}
       </div>
+
     </div>
   );
 
@@ -1430,7 +1432,7 @@ export function CandidateDetailClient({
               Parse Resume
             </AiButton>
           </div>
-          <div className="flex-1 min-h-0 rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+          <div className="flex-1 min-h-0 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-800">
             <iframe
               src={`/api/candidates/${candidate.id}/resume`}
               className="w-full h-full"
@@ -1463,15 +1465,15 @@ export function CandidateDetailClient({
 
       {/* Add to job + Meta (always visible at bottom) */}
       {unappliedJobs.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shrink-0">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 shrink-0">
+          <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
             Add to Job
           </h3>
           <div className="flex gap-2">
             <select
               value={selectedJobId}
               onChange={(e) => setSelectedJobId(e.target.value)}
-              className="flex-1 rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-900"
+              className="flex-1 rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100"
             >
               <option value="">Select a job…</option>
               {unappliedJobs.map((j) => (
@@ -1486,21 +1488,24 @@ export function CandidateDetailClient({
           </div>
         </div>
       )}
-      <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-xs text-gray-400 shrink-0">
+
+      {/* Meta */}
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-xs text-gray-400 dark:text-gray-500 shrink-0">
         Added {formatDate(candidate.createdAt)}
       </div>
     </div>
   );
+
 
   return (
     <div>
       {/* ── Header bar ──────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {candidate.firstName} {candidate.lastName}
           </h1>
-          <p className="text-sm text-gray-500">{candidate.email}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{candidate.email}</p>
         </div>
         <div className="flex items-center gap-2">
           {saveSuccess && (
@@ -1545,11 +1550,11 @@ export function CandidateDetailClient({
           <div className="space-y-3">
             {candidate.applications.length > 0 && (
               <div>
-                <label className="text-xs font-medium text-gray-600 mb-1 block">Job (optional)</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Job (optional)</label>
                 <select
                   value={composeJobId}
                   onChange={(e) => setComposeJobId(e.target.value)}
-                  className="w-full rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="">No specific job</option>
                   {candidate.applications.map((app) => (
@@ -1566,7 +1571,7 @@ export function CandidateDetailClient({
               <select
                 value={emailType}
                 onChange={(e) => setEmailType(e.target.value as EmailType)}
-                className="w-full rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="outreach">Outreach</option>
                 <option value="interview_invite">Interview Invite</option>
@@ -1590,14 +1595,14 @@ export function CandidateDetailClient({
             </div>
 
             {emailResult && (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-3">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 space-y-3">
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Subject</p>
-                  <p className="text-sm font-medium text-gray-900">{emailResult.subject}</p>
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1">Subject</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{emailResult.subject}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Body</p>
-                  <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1">Body</p>
+                  <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">
                     {emailResult.body}
                   </pre>
                 </div>
