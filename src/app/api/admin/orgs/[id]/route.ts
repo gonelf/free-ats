@@ -41,7 +41,7 @@ export async function PATCH(
         entityType: "Organization",
         entityId: id,
         entityName: org.name,
-        metadata: { from: before?.plan ?? null, to: plan as string },
+        metadata: { from: before?.plan, to: plan },
         orgId: id,
       });
     }
@@ -53,7 +53,7 @@ export async function PATCH(
         entityType: "Organization",
         entityId: id,
         entityName: org.name,
-        metadata: { from: before?.aiCreditsBalance ?? null, to: aiCreditsBalance as number },
+        metadata: { from: before?.aiCreditsBalance, to: aiCreditsBalance },
         orgId: id,
       });
     }
@@ -84,7 +84,7 @@ export async function DELETE(
       entityType: "Organization",
       entityId: id,
       entityName: org?.name,
-      metadata: { plan: org?.plan ?? null },
+      metadata: { plan: org?.plan },
     });
     return NextResponse.json({ success: true });
   } catch {

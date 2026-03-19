@@ -6,7 +6,8 @@ type LogAuditParams = {
   entityType: string;
   entityId: string;
   entityName?: string;
-  metadata?: Record<string, string | number | boolean | null>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: Record<string, any>;
   orgId?: string;
 };
 
