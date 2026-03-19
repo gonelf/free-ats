@@ -6,7 +6,7 @@ type LogAuditParams = {
   entityType: string;
   entityId: string;
   entityName?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean | null>;
   orgId?: string;
 };
 
