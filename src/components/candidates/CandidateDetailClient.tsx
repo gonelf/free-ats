@@ -942,6 +942,7 @@ export function CandidateDetailClient({
             hasAiAccess={hasAiAccess}
             onClick={handleGenerateAiSummary}
             loading={generatingAiSummary}
+            creditCost={5}
           >
             {aiSummary ? "Regenerate" : "Generate"}
           </AiButton>

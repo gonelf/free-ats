@@ -79,14 +79,14 @@ export function AiButton({
       size="sm"
       onClick={onClick}
       disabled={loading}
-      className={className}
+      className={`hover:border-amber-300 hover:bg-amber-50/50 ${className ?? ""}`}
     >
-      <Sparkles className="h-3 w-3 mr-1 text-indigo-500" />
+      <Sparkles className="h-3 w-3 mr-1 text-amber-500" />
       {loading ? "Generating..." : children}
       {creditCost !== undefined && !loading && (
-        <span className="ml-1.5 flex items-center gap-0.5 border-l border-gray-200 pl-1.5">
-          <span className="text-xs font-bold tabular-nums text-indigo-500">{creditCost}</span>
-          <span className="text-[10px] font-semibold text-indigo-400">cr</span>
+        <span className="ml-1.5 flex items-center gap-0.5 border-l border-amber-200 pl-1.5">
+          <span className="text-xs font-bold tabular-nums text-amber-600">{creditCost}</span>
+          <span className="text-[10px] font-semibold text-amber-500">cr</span>
         </span>
       )}
     </Button>
