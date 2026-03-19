@@ -27,7 +27,7 @@ export async function PATCH(
       entityType: "Job",
       entityId: id,
       entityName: job.title,
-      metadata: { from: before?.status, to: status },
+      metadata: { from: before?.status ?? null, to: status as string },
       orgId: job.organizationId,
     });
     return NextResponse.json(job);

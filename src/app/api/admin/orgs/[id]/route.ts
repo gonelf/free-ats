@@ -41,7 +41,7 @@ export async function PATCH(
         entityType: "Organization",
         entityId: id,
         entityName: org.name,
-        metadata: { from: before?.plan, to: plan },
+        metadata: { from: before?.plan ?? null, to: plan as string },
         orgId: id,
       });
     }
