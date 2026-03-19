@@ -33,6 +33,7 @@ model Organization {
   invitations    Invitation[]
   feedbacks      Feedback[]
   communications Communication[]
+  integrations   Integration[]
 }
 
 enum Plan {
@@ -113,8 +114,9 @@ model Job {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  applications   Application[]
-  communications Communication[]
+  applications      Application[]
+  communications    Communication[]
+  jobDistributions  JobDistribution[]
 
   @@index([organizationId])
   @@index([pipelineId])
@@ -315,6 +317,59 @@ enum EmailType {
   FOLLOW_UP
   OFFER
   REJECTION
+}
+
+// ============ FEATURE FLAGS ============
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?
+  enabled     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+}
+
+// ============ JOB DISTRIBUTION ============
+
+model Integration {
+  id             String    @id @default(cuid())
+  organizationId String
+  platform       String    // "linkedin" | "indeed_feed"
+  accessToken    String?   @db.Text
+  refreshToken   String?   @db.Text
+  tokenExpiresAt DateTime?
+  externalId     String?   // LinkedIn organization URN
+  enabled        Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, platform])
+  @@index([organizationId])
+}
+
+model JobDistribution {
+  id            String    @id @default(cuid())
+  jobId         String
+  platform      String    // "linkedin" | "indeed_feed"
+  status        String    // "pending" | "distributed" | "failed" | "closed"
+  externalJobId String?   // LinkedIn jobPosting URN
+  errorMessage  String?   @db.Text
+  retryCount    Int       @default(0)
+  distributedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, platform])
+  @@index([jobId])
+  @@index([status])
 }
 
 model Communication {

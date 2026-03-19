@@ -15,6 +15,7 @@ import {
   ClipboardList,
   Clock,
   DollarSign,
+  Flag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -31,6 +32,7 @@ const navItems = [
   { href: "/admin/audit-logs", label: "Audit Logs", icon: ClipboardList, exact: false },
   { href: "/admin/salary-data", label: "Salary Data", icon: DollarSign, exact: false },
   { href: "/admin/cron-logs", label: "Cron Logs", icon: Clock, exact: false },
+  { href: "/admin/feature-flags", label: "Feature Flags", icon: Flag, exact: false },
 ];
 
 interface AdminSidebarProps {
