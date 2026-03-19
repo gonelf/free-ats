@@ -15,7 +15,7 @@ export default async function SettingsPage() {
 
   const member = await db.member.findFirstOrThrow({
     where: { userId: user!.id },
-    include: { organization: { select: { name: true, plan: true, slug: true } } },
+    include: { organization: { select: { id: true, name: true, plan: true, slug: true } } },
   });
 
   const org = member.organization;
