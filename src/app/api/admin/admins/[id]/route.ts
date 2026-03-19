@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminUser } from "@/lib/admin";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 
 export async function DELETE(
   _request: NextRequest,
@@ -21,6 +22,13 @@ export async function DELETE(
 
   try {
     await db.appAdmin.delete({ where: { id } });
+    await logAudit({
+      actorEmail: currentAdmin.user.email!,
+      action: "admin.removed",
+      entityType: "AppAdmin",
+      entityId: id,
+      entityName: target?.email,
+    });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Admin not found" }, { status: 404 });

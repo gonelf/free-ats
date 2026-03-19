@@ -12,6 +12,7 @@ import {
   LogOut,
   Shield,
   Import,
+  ClipboardList,
   Clock,
   DollarSign,
 } from "lucide-react";
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, exact: false },
   { href: "/admin/candidates", label: "Candidates & Resumes", icon: UserCheck, exact: false },
   { href: "/admin/non-ats-jobs", label: "Non-ATS Import", icon: Import, exact: false },
+  { href: "/admin/audit-logs", label: "Audit Logs", icon: ClipboardList, exact: false },
   { href: "/admin/salary-data", label: "Salary Data", icon: DollarSign, exact: false },
   { href: "/admin/cron-logs", label: "Cron Logs", icon: Clock, exact: false },
 ];
