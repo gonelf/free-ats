@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { FlagRollout } from "@prisma/client";
 
 export const FLAGS = {
   JOB_DISTRIBUTION: "job_distribution",
@@ -7,12 +8,19 @@ export const FLAGS = {
 export type FlagKey = (typeof FLAGS)[keyof typeof FLAGS];
 
 /**
- * Check whether a feature flag is enabled. Returns false if the flag
- * doesn't exist yet (unknown flags are off by default).
+ * Check whether a feature flag is enabled for the given context.
+ * - DISABLED: always false
+ * - ADMINS: only true for app admins (pass isAdmin: true)
+ * - EVERYONE: always true
+ *
+ * Unknown flags default to false.
  */
-export async function isFlagEnabled(key: FlagKey): Promise<boolean> {
+export async function isFlagEnabled(key: FlagKey, isAdmin = false): Promise<boolean> {
   const flag = await db.featureFlag.findUnique({ where: { key } });
-  return flag?.enabled ?? false;
+  if (!flag) return false;
+  if (flag.rollout === FlagRollout.EVERYONE) return true;
+  if (flag.rollout === FlagRollout.ADMINS) return isAdmin;
+  return false;
 }
 
 /**
@@ -33,7 +41,7 @@ export async function seedDefaultFlags() {
     await db.featureFlag.upsert({
       where: { key: flag.key },
       update: {},
-      create: { ...flag, enabled: false },
+      create: { ...flag, rollout: FlagRollout.DISABLED },
     });
   }
 }

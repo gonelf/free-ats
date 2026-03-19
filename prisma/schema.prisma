@@ -321,14 +321,20 @@ enum EmailType {
 
 // ============ FEATURE FLAGS ============
 
+enum FlagRollout {
+  DISABLED
+  ADMINS
+  EVERYONE
+}
+
 model FeatureFlag {
-  id          String   @id @default(cuid())
-  key         String   @unique
+  id          String      @id @default(cuid())
+  key         String      @unique
   name        String
   description String?
-  enabled     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  rollout     FlagRollout @default(DISABLED)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([key])
 }

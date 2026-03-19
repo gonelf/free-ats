@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Users, Settings, Share2, CheckCircle2 } from "lucide-react";
 import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
+import { getAdminUser } from "@/lib/admin";
 import { LinkedInDisconnectButton } from "@/components/integrations/LinkedInDisconnectButton";
 import { CopyFeedUrl } from "@/components/integrations/CopyFeedUrl";
 
@@ -21,7 +22,8 @@ export default async function SettingsPage() {
   const org = member.organization;
   const isPro = org.plan === "PRO";
 
-  const jobDistributionEnabled = await isFlagEnabled(FLAGS.JOB_DISTRIBUTION);
+  const isAdmin = !!(await getAdminUser());
+  const jobDistributionEnabled = await isFlagEnabled(FLAGS.JOB_DISTRIBUTION, isAdmin);
 
   const linkedinIntegration = jobDistributionEnabled
     ? await db.integration.findUnique({

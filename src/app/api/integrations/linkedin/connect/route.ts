@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
+import { getAdminUser } from "@/lib/admin";
 
 export async function GET() {
-  if (!(await isFlagEnabled(FLAGS.JOB_DISTRIBUTION))) {
+  const isAdmin = !!(await getAdminUser());
+  if (!(await isFlagEnabled(FLAGS.JOB_DISTRIBUTION, isAdmin))) {
     return NextResponse.json({ error: "Feature not available" }, { status: 404 });
   }
 

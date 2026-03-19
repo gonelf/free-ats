@@ -4,6 +4,12 @@ import { seedDefaultFlags } from "@/lib/feature-flags";
 import { FeatureFlagToggle } from "@/components/admin/FeatureFlagToggle";
 import { Flag } from "lucide-react";
 
+const ROLLOUT_BADGE: Record<string, { label: string; className: string }> = {
+  DISABLED: { label: "Disabled", className: "bg-gray-100 text-gray-600" },
+  ADMINS: { label: "Admins only", className: "bg-amber-50 text-amber-700" },
+  EVERYONE: { label: "Everyone", className: "bg-green-50 text-green-700" },
+};
+
 export default async function FeatureFlagsPage() {
   await requireAdmin();
   await seedDefaultFlags();
@@ -15,7 +21,7 @@ export default async function FeatureFlagsPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Feature Flags</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Enable or disable features across the platform. Changes take effect immediately.
+          Control who can access each feature. Changes take effect immediately.
         </p>
       </div>
 
@@ -33,41 +39,42 @@ export default async function FeatureFlagsPage() {
                 <th className="px-6 py-3 text-left font-medium text-gray-500">Key</th>
                 <th className="px-6 py-3 text-left font-medium text-gray-500">Description</th>
                 <th className="px-6 py-3 text-left font-medium text-gray-500">Status</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-500">Toggle</th>
+                <th className="px-6 py-3 text-left font-medium text-gray-500">Audience</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {flags.map((flag) => (
-                <tr key={flag.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-900">{flag.name}</td>
-                  <td className="px-6 py-4">
-                    <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700">
-                      {flag.key}
-                    </code>
-                  </td>
-                  <td className="px-6 py-4 text-gray-500 max-w-sm">
-                    {flag.description ?? "—"}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={[
-                        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                        flag.enabled
-                          ? "bg-green-50 text-green-700"
-                          : "bg-gray-100 text-gray-600",
-                      ].join(" ")}
-                    >
-                      {flag.enabled ? "Enabled" : "Disabled"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <FeatureFlagToggle
-                      flagKey={flag.key}
-                      initialEnabled={flag.enabled}
-                    />
-                  </td>
-                </tr>
-              ))}
+              {flags.map((flag) => {
+                const badge = ROLLOUT_BADGE[flag.rollout] ?? ROLLOUT_BADGE.DISABLED;
+                return (
+                  <tr key={flag.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-medium text-gray-900">{flag.name}</td>
+                    <td className="px-6 py-4">
+                      <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700">
+                        {flag.key}
+                      </code>
+                    </td>
+                    <td className="px-6 py-4 text-gray-500 max-w-sm">
+                      {flag.description ?? "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={[
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                          badge.className,
+                        ].join(" ")}
+                      >
+                        {badge.label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <FeatureFlagToggle
+                        flagKey={flag.key}
+                        initialRollout={flag.rollout}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
