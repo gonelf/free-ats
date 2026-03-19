@@ -53,7 +53,7 @@ export async function PATCH(
         entityType: "Organization",
         entityId: id,
         entityName: org.name,
-        metadata: { from: before?.aiCreditsBalance, to: aiCreditsBalance },
+        metadata: { from: before?.aiCreditsBalance ?? null, to: aiCreditsBalance as number },
         orgId: id,
       });
     }
