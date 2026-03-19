@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Settings, MapPin, Plus } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
+import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
+import { DistributionStatus } from "@/components/jobs/DistributionStatus";
 
 export async function generateMetadata({
   params,
@@ -30,6 +32,7 @@ async function getJob(jobId: string, orgId: string) {
   return db.job.findFirst({
     where: { id: jobId, organizationId: orgId },
     include: {
+      organization: { select: { slug: true } },
       pipeline: {
         include: {
           stages: { orderBy: { order: "asc" } },
@@ -80,6 +83,26 @@ export default async function JobDetailPage({
 
   const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;
 
+  const jobDistributionEnabled = await isFlagEnabled(FLAGS.JOB_DISTRIBUTION);
+
+  const [distributions, linkedinIntegration] = jobDistributionEnabled
+    ? await Promise.all([
+        db.jobDistribution.findMany({ where: { jobId: job.id } }),
+        db.integration.findUnique({
+          where: {
+            organizationId_platform: {
+              organizationId: member.organization.id,
+              platform: "linkedin",
+            },
+          },
+          select: { id: true },
+        }),
+      ])
+    : [[], null];
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const indeedFeedUrl = `${appUrl}/${job.organization?.slug ?? ""}/jobs.xml`;
+
   return (
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
@@ -124,6 +147,14 @@ export default async function JobDetailPage({
           </Button>
         </div>
       </div>
+
+      {jobDistributionEnabled && (
+        <DistributionStatus
+          distributions={distributions}
+          linkedinConnected={!!linkedinIntegration}
+          indeedFeedUrl={indeedFeedUrl}
+        />
+      )}
 
       <PipelineInsightsWidget jobId={job.id} hasAiAccess={hasAiAccess} />
 

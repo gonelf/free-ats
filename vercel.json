@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/publish-salary-pages",
       "schedule": "0 9 */2 * *"
+    },
+    {
+      "path": "/api/cron/retry-distributions",
+      "schedule": "0 9 * * *"
     }
   ]
 }
