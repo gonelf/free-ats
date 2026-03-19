@@ -2,15 +2,15 @@
  * Cron: Publish Salary Pages
  *
  * Flips publishedAt for the next batch of SalaryEntry rows, making those
- * pages live. Runs weekly via Vercel Cron (see vercel.json).
+ * pages live. Runs every other day via Vercel Cron (see vercel.json).
  *
  * Rollout order:
  *   Tier 1 (10 cities)  → published in first run
- *   Tier 2 (20 cities)  → published across runs 2–4
- *   Tier 3 (20 cities)  → published across runs 5–7
+ *   Tier 2 (20 cities)  → published across runs 2–3
+ *   Tier 3 (20 cities)  → published across runs 4–5
  *
- * Each run publishes one city-tier's worth of entries (all roles for that tier).
- * The cron fires weekly so the full 50k pages roll out over ~7 weeks.
+ * Each run publishes 10 cities worth of entries (all roles for each city).
+ * The cron fires every other day so the full ~50 cities roll out over ~10 days.
  *
  * Secured by CRON_SECRET (same pattern as /api/cron/cleanup-resumes).
  */
@@ -21,7 +21,7 @@ import { db } from "@/lib/db";
 import { getCitiesByTier } from "@/app/salaries/salary-data";
 
 // How many cities to publish per cron run (all roles for each city)
-const CITIES_PER_RUN = 5;
+const CITIES_PER_RUN = 10;
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
