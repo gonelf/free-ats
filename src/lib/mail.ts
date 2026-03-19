@@ -3,6 +3,35 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@kitehr.co";
 
+export async function sendWelcomeEmail({
+  to,
+  name,
+  orgName,
+}: {
+  to: string;
+  name: string;
+  orgName: string;
+}) {
+  const body = `
+    <h1 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0 0 16px;">Welcome to KiteHR, ${name}!</h1>
+    <p style="font-size: 16px; line-height: 24px; color: #4b5563; margin: 0 0 16px;">
+      Your workspace for <strong>${orgName}</strong> is ready. Here's what you can do to get started:
+    </p>
+    <ul style="font-size: 16px; line-height: 28px; color: #4b5563; margin: 0 0 24px; padding-left: 20px;">
+      <li>Post your first job opening</li>
+      <li>Add candidates and track them through your pipeline</li>
+      <li>Invite your team members to collaborate</li>
+      <li>Use AI to score and summarize resumes</li>
+    </ul>
+    <a href="https://app.kitehr.co/jobs" style="display: inline-block; background: #6366f1; color: white; font-size: 15px; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 10px; margin-bottom: 24px;">Go to your dashboard →</a>
+    <p style="font-size: 14px; line-height: 22px; color: #6b7280; margin: 0;">
+      If you have any questions, just reply to this email — we're happy to help.
+    </p>
+  `;
+
+  return sendEmail({ to, subject: `Welcome to KiteHR, ${name}!`, body });
+}
+
 interface SendEmailParams {
   to: string;
   subject: string;
