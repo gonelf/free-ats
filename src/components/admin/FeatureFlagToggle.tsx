@@ -2,48 +2,69 @@
 
 import { useState } from "react";
 
+type Rollout = "DISABLED" | "ADMINS" | "EVERYONE";
+
+const OPTIONS: { value: Rollout; label: string; description: string }[] = [
+  { value: "DISABLED", label: "Off", description: "Disabled for everyone" },
+  { value: "ADMINS", label: "Admins", description: "Visible to app admins only" },
+  { value: "EVERYONE", label: "Everyone", description: "Enabled for all users" },
+];
+
 interface FeatureFlagToggleProps {
   flagKey: string;
-  initialEnabled: boolean;
+  initialRollout: Rollout;
 }
 
-export function FeatureFlagToggle({ flagKey, initialEnabled }: FeatureFlagToggleProps) {
-  const [enabled, setEnabled] = useState(initialEnabled);
+export function FeatureFlagToggle({ flagKey, initialRollout }: FeatureFlagToggleProps) {
+  const [rollout, setRollout] = useState<Rollout>(initialRollout);
   const [loading, setLoading] = useState(false);
 
-  async function toggle() {
+  async function select(value: Rollout) {
+    if (value === rollout || loading) return;
     setLoading(true);
     try {
       const res = await fetch("/api/admin/feature-flags", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: flagKey, enabled: !enabled }),
+        body: JSON.stringify({ key: flagKey, rollout: value }),
       });
-      if (res.ok) {
-        setEnabled((v) => !v);
-      }
+      if (res.ok) setRollout(value);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <button
-      onClick={toggle}
-      disabled={loading}
-      aria-label={enabled ? "Disable flag" : "Enable flag"}
+    <div
       className={[
-        "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none",
-        enabled ? "bg-green-500" : "bg-gray-300",
-        loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+        "inline-flex rounded-lg border border-gray-200 overflow-hidden",
+        loading ? "opacity-50" : "",
       ].join(" ")}
     >
-      <span
-        className={[
-          "inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",
-          enabled ? "translate-x-6" : "translate-x-1",
-        ].join(" ")}
-      />
-    </button>
+      {OPTIONS.map((opt) => {
+        const isActive = rollout === opt.value;
+        const activeClass =
+          opt.value === "DISABLED"
+            ? "bg-gray-700 text-white"
+            : opt.value === "ADMINS"
+              ? "bg-amber-500 text-white"
+              : "bg-green-500 text-white";
+        return (
+          <button
+            key={opt.value}
+            onClick={() => select(opt.value)}
+            disabled={loading}
+            title={opt.description}
+            className={[
+              "px-3 py-1.5 text-xs font-medium transition-colors",
+              isActive ? activeClass : "bg-white text-gray-500 hover:bg-gray-50",
+              loading ? "cursor-not-allowed" : "cursor-pointer",
+            ].join(" ")}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
   );
 }

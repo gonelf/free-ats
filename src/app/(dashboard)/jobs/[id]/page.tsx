@@ -10,6 +10,7 @@ import { Settings, MapPin, Plus } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
+import { getAdminUser } from "@/lib/admin";
 import { DistributionStatus } from "@/components/jobs/DistributionStatus";
 
 export async function generateMetadata({
@@ -83,7 +84,8 @@ export default async function JobDetailPage({
 
   const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;
 
-  const jobDistributionEnabled = await isFlagEnabled(FLAGS.JOB_DISTRIBUTION);
+  const isAdmin = !!(await getAdminUser());
+  const jobDistributionEnabled = await isFlagEnabled(FLAGS.JOB_DISTRIBUTION, isAdmin);
 
   const [distributions, linkedinIntegration] = jobDistributionEnabled
     ? await Promise.all([

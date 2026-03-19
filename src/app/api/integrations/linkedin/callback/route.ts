@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
+import { getAdminUser } from "@/lib/admin";
 
 export async function GET(request: NextRequest) {
-  if (!(await isFlagEnabled(FLAGS.JOB_DISTRIBUTION))) {
+  const isAdmin = !!(await getAdminUser());
+  if (!(await isFlagEnabled(FLAGS.JOB_DISTRIBUTION, isAdmin))) {
     return NextResponse.json({ error: "Feature not available" }, { status: 404 });
   }
 
