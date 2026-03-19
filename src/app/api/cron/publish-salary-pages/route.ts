@@ -12,13 +12,47 @@
  * Each run publishes 10 cities worth of entries (all roles for each city).
  * The cron fires every other day so the full ~50 cities roll out over ~10 days.
  *
+ * After publishing, all new URLs are submitted to IndexNow (api.indexnow.org)
+ * for near-instant indexing by Bing, Yandex, and partner engines.
+ * The ownership key file lives at /public/{INDEXNOW_KEY}.txt.
+ *
  * Secured by CRON_SECRET (same pattern as /api/cron/cleanup-resumes).
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { getCitiesByTier } from "@/app/salaries/salary-data";
+import { getCitiesByTier, SALARY_ROLES } from "@/app/salaries/salary-data";
+
+const SITE_HOST = "kitehr.co";
+const SITE_BASE = `https://${SITE_HOST}`;
+// IndexNow key — matches the file at /public/6f14bfa2e3d84c9ba7e5f1092c3d4a68.txt
+const INDEXNOW_KEY =
+  process.env.INDEXNOW_KEY ?? "6f14bfa2e3d84c9ba7e5f1092c3d4a68";
+
+/**
+ * Submit a list of URLs to IndexNow (api.indexnow.org).
+ * Bing, Yandex, and partner engines pick these up for near-instant indexing.
+ * Returns { submitted, status } — non-fatal on failure.
+ */
+async function submitIndexNow(urls: string[]): Promise<{ submitted: number; status: number | null; error?: string }> {
+  if (urls.length === 0) return { submitted: 0, status: null };
+  try {
+    const res = await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        host: SITE_HOST,
+        key: INDEXNOW_KEY,
+        keyLocation: `${SITE_BASE}/${INDEXNOW_KEY}.txt`,
+        urlList: urls,
+      }),
+    });
+    return { submitted: urls.length, status: res.status };
+  } catch (err) {
+    return { submitted: 0, status: null, error: String(err) };
+  }
+}
 
 // How many cities to publish per cron run (all roles for each city)
 const CITIES_PER_RUN = 10;
@@ -103,13 +137,34 @@ export async function GET(request: NextRequest) {
   console.log(`[cron:publish-salary-pages] Revalidated ${citiesToPublish.length + 1} paths`);
 
   // Ping Google to re-crawl the sitemap
-  const sitemapUrl = `https://kitehr.co/sitemap.xml`;
+  const sitemapUrl = `${SITE_BASE}/sitemap.xml`;
   try {
     const pingRes = await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`);
     console.log(`[cron:publish-salary-pages] Google sitemap ping status: ${pingRes.status}`);
   } catch (err) {
     // Non-fatal — Google will re-crawl on its own schedule
     console.warn(`[cron:publish-salary-pages] Google sitemap ping failed: ${err}`);
+  }
+
+  // Submit all newly published URLs to IndexNow for near-instant indexing by
+  // Bing, Yandex, and partner engines. Each city contributes:
+  //   1 city hub  (/salaries/{city})
+  //   N role pages (/salaries/{city}/{role}) — one per published entry
+  const roleSlugs = SALARY_ROLES.map((r) => r.slug);
+  const indexNowUrls: string[] = [];
+  for (const city of citiesToPublish) {
+    indexNowUrls.push(`${SITE_BASE}/salaries/${city.slug}`);
+    for (const roleSlug of roleSlugs) {
+      indexNowUrls.push(`${SITE_BASE}/salaries/${city.slug}/${roleSlug}`);
+    }
+  }
+  const indexNowResult = await submitIndexNow(indexNowUrls);
+  if (indexNowResult.error) {
+    console.warn(`[cron:publish-salary-pages] IndexNow submission failed: ${indexNowResult.error}`);
+  } else {
+    console.log(
+      `[cron:publish-salary-pages] IndexNow submitted ${indexNowResult.submitted} URLs — HTTP ${indexNowResult.status}`
+    );
   }
 
   const totalPublishedCities = publishedSet.size + citiesToPublish.length;
@@ -123,6 +178,7 @@ export async function GET(request: NextRequest) {
     entriesPublished: result.count,
     totalPublishedCities,
     remainingCities,
+    indexNow: indexNowResult,
   });
 
   return NextResponse.json({
