@@ -24,6 +24,7 @@ import { getCitiesByTier } from "@/app/salaries/salary-data";
 const CITIES_PER_RUN = 10;
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   const runAt = new Date().toISOString();
   console.log(`[cron:publish-salary-pages] Run started at ${runAt}`);
 
@@ -31,6 +32,22 @@ export async function GET(request: NextRequest) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     console.warn("[cron:publish-salary-pages] Unauthorized request — bad or missing CRON_SECRET");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  async function saveLog(
+    status: "success" | "skipped" | "error",
+    message: string,
+    details?: object
+  ) {
+    await db.cronLog.create({
+      data: {
+        job: "publish-salary-pages",
+        status,
+        message,
+        details: details ?? {},
+        durationMs: Date.now() - startedAt,
+      },
+    });
   }
 
   // Count already-published entries to determine which tier to work on next
@@ -55,6 +72,7 @@ export async function GET(request: NextRequest) {
 
   if (unpublishedCities.length === 0) {
     console.log("[cron:publish-salary-pages] All cities already published — nothing to do");
+    await saveLog("skipped", "All cities already published", { publishedCities: publishedSet.size });
     return NextResponse.json({
       message: "All cities are already published",
       publishedCities: publishedSet.size,
@@ -99,6 +117,13 @@ export async function GET(request: NextRequest) {
   console.log(
     `[cron:publish-salary-pages] Done. Total published cities: ${totalPublishedCities}/50. Remaining: ${remainingCities}`
   );
+
+  await saveLog("success", `Published ${citiesToPublish.length} cities (${result.count} entries)`, {
+    cities: citiesToPublish.map((c) => c.name),
+    entriesPublished: result.count,
+    totalPublishedCities,
+    remainingCities,
+  });
 
   return NextResponse.json({
     published: result.count,

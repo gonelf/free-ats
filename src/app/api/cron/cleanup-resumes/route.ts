@@ -10,6 +10,8 @@ import { deleteResumeFromR2 } from "@/lib/r2";
  * Protected by CRON_SECRET to prevent unauthorized access.
  */
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
+
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -39,6 +41,22 @@ export async function GET(request: NextRequest) {
       failed++;
     }
   }
+
+  const status = failed > 0 && deleted === 0 ? "error" : "success";
+  const message =
+    expired.length === 0
+      ? "No expired resumes found"
+      : `Deleted ${deleted} resume(s), ${failed} failed`;
+
+  await db.cronLog.create({
+    data: {
+      job: "cleanup-resumes",
+      status: expired.length === 0 ? "skipped" : status,
+      message,
+      details: { total: expired.length, deleted, failed },
+      durationMs: Date.now() - startedAt,
+    },
+  });
 
   return NextResponse.json({ deleted, failed });
 }

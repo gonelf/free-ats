@@ -12,6 +12,7 @@ import {
   LogOut,
   Shield,
   Import,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, exact: false },
   { href: "/admin/candidates", label: "Candidates & Resumes", icon: UserCheck, exact: false },
   { href: "/admin/non-ats-jobs", label: "Non-ATS Import", icon: Import, exact: false },
+  { href: "/admin/cron-logs", label: "Cron Logs", icon: Clock, exact: false },
 ];
 
 interface AdminSidebarProps {
