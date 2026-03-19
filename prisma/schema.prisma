@@ -296,6 +296,19 @@ model SalaryEntry {
   @@index([category])
 }
 
+model CronLog {
+  id         String   @id @default(cuid())
+  job        String
+  status     String
+  message    String?
+  details    Json?
+  durationMs Int?
+  createdAt  DateTime @default(now())
+
+  @@index([job])
+  @@index([createdAt])
+}
+
 enum EmailType {
   OUTREACH
   INTERVIEW_INVITE
