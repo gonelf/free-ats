@@ -44,15 +44,15 @@ export function PipelineInsightsWidget({ jobId, hasAiAccess }: PipelineInsightsW
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 mb-6">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 mb-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-indigo-500" />
-          <h2 className="text-sm font-semibold text-gray-700">Pipeline Insights</h2>
+          <TrendingUp className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Pipeline Insights</h2>
           {insights && (
             <button
               onClick={() => setExpanded((v) => !v)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             >
               {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
@@ -95,18 +95,18 @@ export function PipelineInsightsWidget({ jobId, hasAiAccess }: PipelineInsightsW
 
           {/* Conversion Rates */}
           {Object.keys(insights.conversionRates).length > 0 && (
-            <div className="rounded-lg bg-gray-50 border border-gray-100 p-3">
+            <div className="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-3">
               <div className="flex items-center gap-1.5 mb-2">
-                <TrendingUp className="h-3.5 w-3.5 text-indigo-500" />
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                <TrendingUp className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Conversion Rates
                 </p>
               </div>
               <ul className="space-y-1.5">
                 {Object.entries(insights.conversionRates).map(([stage, rate]) => (
                   <li key={stage} className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600 truncate max-w-[120px]">{stage}</span>
-                    <span className="text-xs font-semibold text-indigo-600 tabular-nums ml-2">
+                    <span className="text-xs text-gray-600 dark:text-gray-400 truncate max-w-[120px]">{stage}</span>
+                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 tabular-nums ml-2">
                       {typeof rate === "number" ? `${rate}%` : rate}
                     </span>
                   </li>

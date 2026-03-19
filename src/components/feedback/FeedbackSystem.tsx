@@ -88,19 +88,19 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
       {/* Fixed right side panel */}
       <div
         className={cn(
-          "fixed top-0 right-0 h-screen w-[420px] z-50 bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed top-0 right-0 h-screen w-[420px] z-50 bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="p-6 border-b flex items-center justify-between shrink-0">
+        <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <MessageSquare className="h-6 w-6 text-indigo-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Feedback & Requests</h2>
+            <MessageSquare className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Feedback & Requests</h2>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -108,16 +108,16 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
 
         {/* Tabs */}
         <TabsPrimitive.Root defaultValue="FEATURE" className="flex-1 flex flex-col overflow-hidden">
-          <TabsPrimitive.List className="flex border-b bg-gray-50/50 shrink-0">
+          <TabsPrimitive.List className="flex border-b dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 shrink-0">
             <TabsPrimitive.Trigger
               value="FEATURE"
-              className="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-600 transition-all font-semibold"
+              className="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 transition-all font-semibold"
             >
               Features
             </TabsPrimitive.Trigger>
             <TabsPrimitive.Trigger
               value="BUG"
-              className="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-600 transition-all font-semibold"
+              className="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 transition-all font-semibold"
             >
               Bugs
             </TabsPrimitive.Trigger>
@@ -128,7 +128,7 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
         </TabsPrimitive.Root>
 
         {/* Submit form */}
-        <div className="p-6 border-t bg-gray-50 shrink-0">
+        <div className="p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shrink-0">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
@@ -172,23 +172,23 @@ function TabsContent({
     <TabsPrimitive.Content value={value} className="flex-1 overflow-y-auto p-6 outline-none">
       <div className="space-y-4">
         {items.length === 0 ? (
-          <div className="text-center py-20 text-gray-600">
-            <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <div className="text-center py-20 text-gray-600 dark:text-gray-400">
+            <MessageSquare className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <p className="text-lg font-medium">No {title.toLowerCase()} yet.</p>
-            <p className="text-sm text-gray-400 mt-1">Be the first to share your thoughts!</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Be the first to share your thoughts!</p>
           </div>
         ) : (
           items.map((item) => (
-            <div key={item.id} className="flex items-start gap-4 p-4 rounded-xl border bg-white shadow-sm hover:border-indigo-200 transition-colors">
+            <div key={item.id} className="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-semibold text-gray-900">{item.title}</h4>
-                  <Badge variant="outline" className="text-[10px] uppercase font-bold text-gray-600 border-gray-300">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100">{item.title}</h4>
+                  <Badge variant="outline" className="text-[10px] uppercase font-bold text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600">
                     {item.type}
                   </Badge>
                 </div>
-                {item.description && <p className="text-sm text-gray-700 line-clamp-2 leading-relaxed">{item.description}</p>}
-                <p className="text-[10px] text-gray-400 mt-2">
+                {item.description && <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">{item.description}</p>}
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2">
                   {new Date(item.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -198,8 +198,8 @@ function TabsContent({
                 className={cn(
                   "flex flex-col items-center gap-1 p-2 rounded-lg transition-all",
                   item.voterIds.includes(currentUserId)
-                    ? "bg-indigo-50 text-indigo-600"
-                    : "hover:bg-gray-100 text-gray-500 hover:text-indigo-600"
+                    ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
                 )}
               >
                 <ThumbsUp className={cn("h-5 w-5", item.voterIds.includes(currentUserId) && "fill-current")} />

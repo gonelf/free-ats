@@ -67,8 +67,8 @@ export default async function JobsPage() {
 
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Jobs</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Jobs</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {jobs.length} {jobs.length === 1 ? "job" : "jobs"} total
           </p>
         </div>
@@ -81,10 +81,10 @@ export default async function JobsPage() {
       </div>
 
       {jobs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 py-16">
-          <Briefcase className="h-10 w-10 text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">No jobs yet</h3>
-          <p className="text-sm text-gray-500 mt-1 mb-6">
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16">
+          <Briefcase className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No jobs yet</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6">
             Create your first job posting to start building your pipeline
           </p>
           <Button asChild>
@@ -99,28 +99,28 @@ export default async function JobsPage() {
           {jobs.map((job) => (
             <div
               key={job.id}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 md:p-5 shadow-sm transition-shadow hover:shadow-md"
+              className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 md:p-5 shadow-sm transition-shadow hover:shadow-md"
             >
               <div className="flex items-start gap-3 md:gap-4 flex-1 min-w-0">
-                <div className="flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-lg bg-indigo-50 shrink-0">
-                  <Briefcase className="h-4 w-4 md:h-5 md:w-5 text-indigo-600" />
+                <div className="flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900/30 shrink-0">
+                  <Briefcase className="h-4 w-4 md:h-5 md:w-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <Link href={`/jobs/${job.id}`} className="hover:underline">
-                    <h2 className="font-semibold text-gray-900 block truncate">{job.title}</h2>
+                    <h2 className="font-semibold text-gray-900 dark:text-gray-100 block truncate">{job.title}</h2>
                   </Link>
                   <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-1">
                     {job.location && (
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
+                      <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                         <MapPin className="h-3 w-3" />
                         {job.location}
                       </span>
                     )}
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                       <Users className="h-3 w-3" />
                       {job._count.applications} candidates
                     </span>
-                    <span className="text-xs text-gray-400 hidden sm:inline">
+                    <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">
                       {formatDate(job.createdAt)}
                     </span>
                   </div>

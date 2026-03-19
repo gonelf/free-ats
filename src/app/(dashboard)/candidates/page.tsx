@@ -35,8 +35,8 @@ export default async function CandidatesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Candidates</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Candidates</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {candidates.length} total candidates
           </p>
         </div>
@@ -49,10 +49,10 @@ export default async function CandidatesPage() {
       </div>
 
       {candidates.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 py-16">
-          <Users className="h-10 w-10 text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">No candidates yet</h3>
-          <p className="text-sm text-gray-500 mt-1 mb-6">
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16">
+          <Users className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No candidates yet</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6">
             Add candidates manually or through job applications
           </p>
           <Button asChild>
@@ -63,54 +63,54 @@ export default async function CandidatesPage() {
           </Button>
         </div>
       ) : (
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="text-left px-5 py-3 font-medium text-gray-600">Name</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-600 hidden sm:table-cell">Email</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-600 hidden md:table-cell">Tags</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-600">Jobs</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-600 hidden sm:table-cell">Added</th>
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <th className="text-left px-5 py-3 font-medium text-gray-600 dark:text-gray-400">Name</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-600 dark:text-gray-400 hidden sm:table-cell">Email</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-600 dark:text-gray-400 hidden md:table-cell">Tags</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-600 dark:text-gray-400">Jobs</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-600 dark:text-gray-400 hidden sm:table-cell">Added</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                 {candidates.map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <td className="px-5 py-3">
                       <Link
                         href={`/candidates/${c.id}`}
-                        className="font-medium text-gray-900 hover:text-indigo-600"
+                        className="font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                       >
                         {c.firstName} {c.lastName}
                       </Link>
                     </td>
-                    <td className="px-5 py-3 text-gray-500 hidden sm:table-cell">{c.email}</td>
+                    <td className="px-5 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">{c.email}</td>
                     <td className="px-5 py-3 hidden md:table-cell">
                       <div className="flex flex-wrap gap-1">
                         {c.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
+                            className="rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs text-gray-600 dark:text-gray-300"
                           >
                             {tag}
                           </span>
                         ))}
                         {c.tags.length > 3 && (
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-gray-400 dark:text-gray-500">
                             +{c.tags.length - 3}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-5 py-3">
-                      <span className="flex items-center gap-1 text-gray-500">
+                      <span className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
                         <Briefcase className="h-3.5 w-3.5" />
                         {c._count.applications}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-gray-400 hidden sm:table-cell">
+                    <td className="px-5 py-3 text-gray-400 dark:text-gray-500 hidden sm:table-cell">
                       {formatDate(c.createdAt)}
                     </td>
                   </tr>

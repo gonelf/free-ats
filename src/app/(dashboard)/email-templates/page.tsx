@@ -26,8 +26,8 @@ export default async function EmailTemplatesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Email Templates</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Email Templates</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Reusable templates for candidate communications
           </p>
         </div>
@@ -40,10 +40,10 @@ export default async function EmailTemplatesPage() {
       </div>
 
       {templates.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 py-16">
-          <Mail className="h-10 w-10 text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">No templates yet</h3>
-          <p className="text-sm text-gray-500 mt-1 mb-6">
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16">
+          <Mail className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No templates yet</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6">
             Create reusable email templates for outreach, rejections, and offers
           </p>
           <Link href="/email-templates/new">
@@ -58,21 +58,21 @@ export default async function EmailTemplatesPage() {
           {templates.map((t) => (
             <div
               key={t.id}
-              className="rounded-xl border border-gray-200 bg-white p-5 hover:border-indigo-200 transition-colors"
+              className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-900">{t.name}</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{t.name}</h3>
                     {t.type === "CONFIRMATION" && (
-                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                      <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-400 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-500/20">
                         System
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 mt-0.5">{t.subject}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{t.subject}</p>
                   {t.type === "CONFIRMATION" && (
-                    <p className="text-xs text-indigo-500 mt-1">
+                    <p className="text-xs text-indigo-500 dark:text-indigo-400 mt-1">
                       Sent automatically when a candidate applies
                     </p>
                   )}
@@ -88,7 +88,7 @@ export default async function EmailTemplatesPage() {
                   )}
                 </div>
               </div>
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                 Updated {formatDate(t.updatedAt)}
               </p>
             </div>

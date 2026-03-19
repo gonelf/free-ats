@@ -112,10 +112,10 @@ export default async function ReportsPage() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-8">
-        <BarChart3 className="h-6 w-6 text-gray-400" />
+        <BarChart3 className="h-6 w-6 text-gray-400 dark:text-gray-500" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Hiring pipeline at a glance</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Hiring pipeline at a glance</p>
         </div>
       </div>
 
@@ -148,12 +148,12 @@ export default async function ReportsPage() {
       </div>
 
       {/* Candidates per stage */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 mb-6">
-        <h2 className="text-sm font-semibold text-gray-700 mb-6">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 mb-6">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-6">
           Candidates per stage
         </h2>
         {stageData.length === 0 ? (
-          <p className="text-sm text-gray-400">No pipeline data yet.</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">No pipeline data yet.</p>
         ) : (
           <div className="space-y-4">
             {stageData.map((stage) => (
@@ -164,13 +164,13 @@ export default async function ReportsPage() {
                       className="h-2.5 w-2.5 rounded-full"
                       style={{ backgroundColor: stage.color }}
                     />
-                    <span className="text-sm text-gray-700">{stage.name}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{stage.name}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {stage.count}
                   </span>
                 </div>
-                <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-2 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
@@ -187,8 +187,8 @@ export default async function ReportsPage() {
 
       {/* Top jobs by applications */}
       {topJobs.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
             Top jobs by applications
           </h2>
           <ul className="space-y-3">
@@ -197,8 +197,8 @@ export default async function ReportsPage() {
                 key={job.title}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-gray-700 truncate max-w-xs">{job.title}</span>
-                <span className="font-medium text-gray-900 tabular-nums">
+                <span className="text-gray-700 dark:text-gray-300 truncate max-w-xs">{job.title}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100 tabular-nums">
                   {job.count} application{job.count !== 1 ? "s" : ""}
                 </span>
               </li>
@@ -208,10 +208,10 @@ export default async function ReportsPage() {
       )}
 
       {applications.length === 0 && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 py-16 text-center">
-          <BarChart3 className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700">No data yet</p>
-          <p className="text-xs text-gray-400 mt-1">
+        <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16 text-center">
+          <BarChart3 className="h-10 w-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">No data yet</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
             Add candidates to jobs and move them through the pipeline to see metrics here.
           </p>
         </div>
@@ -232,15 +232,15 @@ function StatCard({
   sub: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
       <div className="flex items-center gap-2 mb-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 dark:bg-gray-800">
           {icon}
         </div>
-        <span className="text-xs text-gray-500">{label}</span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">{label}</span>
       </div>
-      <p className="text-3xl font-bold text-gray-900 tabular-nums">{value}</p>
-      <p className="text-xs text-gray-400 mt-1">{sub}</p>
+      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{value}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</p>
     </div>
   );
 }

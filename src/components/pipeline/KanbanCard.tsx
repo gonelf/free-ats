@@ -85,10 +85,10 @@ export function KanbanCard({
       {...attributes}
       {...listeners}
       className={cn(
-        "group flex items-start gap-4 rounded-xl border bg-white p-4 transition-all duration-200 cursor-grab active:cursor-grabbing",
+        "group flex items-start gap-4 rounded-xl border bg-white dark:bg-gray-800 p-4 transition-all duration-200 cursor-grab active:cursor-grabbing",
         isCurrentlyDragging
           ? "opacity-50 shadow-2xl ring-2 ring-indigo-500 border-indigo-500 scale-[1.02] z-50"
-          : "border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 hover:-translate-y-0.5"
+          : "border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-600 hover:-translate-y-0.5"
       )}
     >
       <div className="flex-1 min-w-0">
@@ -96,7 +96,7 @@ export function KanbanCard({
           <Link
             href={`/candidates/${candidate.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="text-sm font-semibold text-gray-900 hover:text-indigo-600 truncate block transition-colors"
+            className="text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 truncate block transition-colors"
           >
             {candidate.firstName} {candidate.lastName}
           </Link>
@@ -121,7 +121,7 @@ export function KanbanCard({
               onClick={handleScore}
               disabled={scoring}
               title="Score this candidate against the job"
-              className="shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-50 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 disabled:opacity-50"
+              className="shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 disabled:opacity-50"
             >
               <Sparkles className="h-3 w-3" />
               {scoring ? "Scoring…" : "Score"}
@@ -130,9 +130,9 @@ export function KanbanCard({
         </div>
 
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-gray-500 truncate">{candidate.email}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{candidate.email}</p>
           {application.job && (
-            <p className="text-[10px] font-bold text-indigo-500 truncate uppercase tracking-widest bg-indigo-50/50 w-fit px-1.5 py-0.5 rounded">
+            <p className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 truncate uppercase tracking-widest bg-indigo-50/50 dark:bg-indigo-900/20 w-fit px-1.5 py-0.5 rounded">
               {application.job.title}
             </p>
           )}
@@ -143,13 +143,13 @@ export function KanbanCard({
             {candidate.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-gray-100/80 px-2 py-0.5 text-[10px] font-medium text-gray-600 border border-gray-200/50"
+                className="rounded-full bg-gray-100/80 dark:bg-gray-700 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:text-gray-300 border border-gray-200/50 dark:border-gray-600"
               >
                 {tag}
               </span>
             ))}
             {candidate.tags.length > 3 && (
-              <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-medium text-gray-400 border border-gray-100">
+              <span className="rounded-full bg-gray-50 dark:bg-gray-700 px-2 py-0.5 text-[10px] font-medium text-gray-400 dark:text-gray-500 border border-gray-100 dark:border-gray-600">
                 +{candidate.tags.length - 3}
               </span>
             )}
@@ -157,7 +157,7 @@ export function KanbanCard({
         )}
       </div>
 
-      <div className="mt-0.5 text-gray-300 group-hover:text-gray-400 transition-colors">
+      <div className="mt-0.5 text-gray-300 dark:text-gray-600 group-hover:text-gray-400 dark:group-hover:text-gray-500 transition-colors">
         <GripVertical className="h-4 w-4" />
       </div>
     </div>
