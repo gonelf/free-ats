@@ -94,7 +94,7 @@ export function EmailTemplateForm({ initialData }: EmailTemplateFormProps) {
               {["candidate_name", "job_title", "company_name"].map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
+                  className="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                 >
                   {"{{"}{tag}{"}}"}
                 </span>

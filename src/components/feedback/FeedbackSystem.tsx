@@ -132,11 +132,11 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <Input name="title" placeholder="Summary of your request..." required className="bg-white" />
+                <Input name="title" placeholder="Summary of your request..." required />
               </div>
               <select
                 name="type"
-                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-gray-700 font-medium"
+                className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 text-gray-700 font-medium dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                 defaultValue="FEATURE"
               >
                 <option value="FEATURE">Feature Request</option>
@@ -147,7 +147,7 @@ export function FeedbackSystem({ initialFeedbacks, currentUserId }: FeedbackSyst
                 Submit
               </Button>
             </div>
-            <Textarea name="description" placeholder="More details (optional)..." className="bg-white" />
+            <Textarea name="description" placeholder="More details (optional)..." />
           </form>
         </div>
       </div>
