@@ -250,6 +250,22 @@ model AppAdmin {
   createdAt DateTime @default(now())
 }
 
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  actorEmail String
+  action     String
+  entityType String
+  entityId   String
+  entityName String?
+  metadata   Json?
+  orgId      String?
+
+  @@index([createdAt])
+  @@index([actorEmail])
+  @@index([orgId])
+}
+
 model SalaryEntry {
   citySlug           String
   roleSlug           String

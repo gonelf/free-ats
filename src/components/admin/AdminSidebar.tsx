@@ -12,6 +12,7 @@ import {
   LogOut,
   Shield,
   Import,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, exact: false },
   { href: "/admin/candidates", label: "Candidates & Resumes", icon: UserCheck, exact: false },
   { href: "/admin/non-ats-jobs", label: "Non-ATS Import", icon: Import, exact: false },
+  { href: "/admin/audit-logs", label: "Audit Logs", icon: ClipboardList, exact: false },
 ];
 
 interface AdminSidebarProps {
