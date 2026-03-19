@@ -84,7 +84,7 @@ export async function DELETE(
       entityType: "Organization",
       entityId: id,
       entityName: org?.name,
-      metadata: { plan: org?.plan },
+      metadata: { plan: org?.plan ?? null },
     });
     return NextResponse.json({ success: true });
   } catch {
