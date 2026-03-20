@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { getAllCompetitorSlugs } from "./vs/competitors";
 import { getAllFeatureSlugs } from "./features/features-data";
 import { getAllSegmentSlugs } from "./for/segments-data";
-import { getAllBlogSlugs } from "./blog/posts";
+import { getAllBlogSlugs, blogPosts } from "./blog/posts";
 import { getAllJobDescriptionSlugs } from "./job-descriptions/job-descriptions-data";
 import { getAllInterviewQuestionsSlugs } from "./interview-questions/interview-questions-data";
 import { getAllHowToHireSlugs } from "./how-to-hire/how-to-hire-data";
@@ -79,9 +79,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  const blogRoutes: MetadataRoute.Sitemap = getAllBlogSlugs().map((slug) => ({
-    url: `${BASE_URL}/blog/${slug}`,
-    lastModified: new Date(),
+  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.publishedAt),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

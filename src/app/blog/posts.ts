@@ -626,6 +626,190 @@ export const blogPosts: BlogPost[] = [
     ],
   },
   {
+    slug: "outgrown-recruiting-spreadsheet",
+    title:
+      "10 Signs You've Outgrown Tracking Candidates in a Spreadsheet",
+    description:
+      "Spreadsheets get you started, but there's a point where tracking candidates in a spreadsheet costs more time than it saves. Here are the 10 signs you've hit it.",
+    publishedAt: "2026-03-20",
+    readingTime: "7 min read",
+    category: "Hiring Tips",
+    content: [
+      {
+        type: "p",
+        content:
+          "Every hiring team starts with a spreadsheet. It's the obvious move — fast to set up, free, and flexible enough to track a handful of candidates across a few roles. For your first two or three hires, tracking candidates in a spreadsheet works fine.",
+      },
+      {
+        type: "p",
+        content:
+          "Then something breaks. A candidate slips through. A teammate overwrites your notes. You spend 20 minutes hunting for a resume you know you received. You realize you've been emailing the wrong person about the wrong role.",
+      },
+      {
+        type: "p",
+        content:
+          "The spreadsheet didn't fail all at once. It just quietly stopped scaling — and at some point, you crossed the line from 'this is fine' to 'this is costing us real hires.' Here are the 10 signs that line is behind you.",
+      },
+      {
+        type: "h2",
+        content: "Sign 1: You've Sent the Wrong Candidate the Wrong Email",
+      },
+      {
+        type: "p",
+        content:
+          "It happens fast. You're moving through a backlog of candidate emails, your spreadsheet is open in another tab, and you paste the wrong name into the salutation. Or you send a rejection to someone you meant to advance. Or you send an interview invite for Tuesday at 2pm when your calendar says you're already booked.",
+      },
+      {
+        type: "p",
+        content:
+          "One mistake is embarrassing. A pattern of mistakes signals a broken process. When candidate communications live in your personal inbox and candidate data lives in a spreadsheet, there's no connection between the two — and that gap is where errors happen. A dedicated ATS keeps candidate records and communications in one place, so you're never copying and pasting between tools.",
+      },
+      {
+        type: "h2",
+        content: "Sign 2: You Have No Idea Where Each Candidate Is in the Process",
+      },
+      {
+        type: "p",
+        content:
+          "Open your spreadsheet right now. Can you immediately tell, for every candidate, exactly what stage they're in and what the next action is? If the answer involves scrolling, reading old notes, or checking your inbox — you've outgrown it.",
+      },
+      {
+        type: "p",
+        content:
+          "A candidate pipeline should be instantly readable. Who's in review, who's scheduled for a phone screen, who's waiting on a decision, who was rejected last week. A spreadsheet can technically hold all of this information, but it doesn't surface it the way a visual pipeline does. When you're managing more than ten candidates at once, that visibility gap becomes a genuine problem.",
+      },
+      {
+        type: "h2",
+        content: "Sign 3: Two People Are Editing the Sheet at the Same Time",
+      },
+      {
+        type: "p",
+        content:
+          "Even with Google Sheets — which handles simultaneous edits better than most — concurrent editing creates problems. Someone updates a candidate's status in column D while someone else is adding interview notes in column F, and by the time you look at the sheet, the picture is inconsistent. Filter views get accidentally removed. Rows get sorted by one column and then the context for another column disappears.",
+      },
+      {
+        type: "p",
+        content:
+          "The deeper issue: spreadsheets aren't built for collaborative workflows. They're built for data. The moment hiring becomes a team sport — which it usually is by the second or third role — you need a tool designed around collaboration, not one that tolerates it.",
+      },
+      {
+        type: "h2",
+        content: "Sign 4: You've Lost Track of Someone Who Applied Weeks Ago",
+      },
+      {
+        type: "p",
+        content:
+          "A strong candidate applies during a busy week. You add their name to the spreadsheet. You mean to get back to them after you finish interviewing the current batch. Three weeks later, you find their row while looking for something else — and they've already accepted an offer somewhere else.",
+      },
+      {
+        type: "p",
+        content:
+          "Spreadsheets are passive. They hold data, but they don't prompt you to act on it. A candidate row doesn't remind you that it's been sitting in 'In Review' for two weeks. That passive nature is fine when you have three candidates. It's a liability when you have thirty.",
+      },
+      {
+        type: "h2",
+        content: "Signs 5–10: The Smaller Cracks That Add Up",
+      },
+      {
+        type: "p",
+        content:
+          "These signs are less dramatic but equally telling. If more than two of these are true, you're past the spreadsheet phase:",
+      },
+      {
+        type: "ul",
+        content: [
+          "Sign 5: Duplicate entries. The same candidate applies twice, or gets added to the spreadsheet by two different people. You don't notice until you've already contacted them twice.",
+          "Sign 6: No audit trail. You have no record of who changed what or when. A candidate's status changed from 'In Review' to 'Rejected' and you're not sure if it was intentional or accidental.",
+          "Sign 7: You're writing the same emails from scratch every time. Every application confirmation, interview invitation, and rejection is manually written. You don't have templates, and you don't have a consistent voice.",
+          "Sign 8: You can't answer basic recruiting questions. How long does your process typically take? What percentage of applicants make it to an interview? Where do your best candidates come from? The spreadsheet can't tell you any of this without significant manual work.",
+          "Sign 9: You've missed an interview because it wasn't tracked anywhere obvious. The interview was confirmed over email, your spreadsheet didn't have the time, and it slipped through the gap between your tools.",
+          "Sign 10: You're not sure if you're compliant. If a candidate claimed you discriminated against them in your hiring process, could you demonstrate a consistent, documented process? A spreadsheet with informal notes and missing history makes that very hard.",
+        ],
+      },
+      {
+        type: "h2",
+        content: "What Happens When You Make the Switch",
+      },
+      {
+        type: "p",
+        content:
+          "The change from a recruiting spreadsheet to an ATS isn't a big-bang migration. You don't owe your spreadsheet a ceremony. You set up your new tool, create your first job, and start tracking new candidates there. Current open roles can be imported or just rebuilt — it takes less time than you think.",
+      },
+      {
+        type: "p",
+        content:
+          "What changes immediately:",
+      },
+      {
+        type: "ul",
+        content: [
+          "Every candidate has a record with their resume, notes, communications, and status attached — all in one place.",
+          "Your whole team sees the same data in real time. No versioning, no overwriting, no confusion about who's been talked to.",
+          "Your pipeline is visual. You can see at a glance who's at each stage, who's been waiting longest, and what needs to happen next.",
+          "You have an audit trail. Every status change, note, and communication is timestamped and attributed to a user.",
+          "Email templates live alongside your candidate records. You're not rewriting the same rejection email for the fifteenth time.",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "What doesn't change: how you evaluate candidates, how you make decisions, and how you run interviews. The ATS is the operational layer. The judgment is still yours.",
+      },
+      {
+        type: "h2",
+        content: "The Concern About Switching Costs",
+      },
+      {
+        type: "p",
+        content:
+          "The most common reason teams stick with recruiting spreadsheets too long isn't loyalty to the format — it's friction avoidance. Setting up a new tool sounds like a project. Learning a new interface sounds like time you don't have.",
+      },
+      {
+        type: "p",
+        content:
+          "Modern ATS tools are designed to eliminate that concern. KiteHR, for example, can be set up in under 10 minutes — create an account, post your first job, customize your pipeline stages, invite your team. There's no implementation project, no onboarding call required, no contract to sign.",
+      },
+      {
+        type: "p",
+        content:
+          "And it's free. Unlimited jobs, unlimited candidates, unlimited users — no credit card required. The switching cost is measured in minutes, not days. The cost of staying on a spreadsheet past its useful life is measured in missed hires.",
+      },
+      {
+        type: "h2",
+        content: "The Easiest First Step",
+      },
+      {
+        type: "p",
+        content:
+          "You don't have to move all your historical candidate data. You don't have to archive your spreadsheet immediately. The simplest path forward:",
+      },
+      {
+        type: "ol",
+        content: [
+          "Create a free KiteHR account.",
+          "Set up your next open role as a job posting in the ATS.",
+          "Send that application link to candidates instead of collecting resumes over email.",
+          "Watch what happens when every applicant is automatically organized, searchable, and visible to your whole team.",
+        ],
+      },
+      {
+        type: "p",
+        content:
+          "One role is enough to feel the difference. After that, migrating the rest of your active candidates takes about an hour.",
+      },
+      {
+        type: "p",
+        content:
+          "If you're not sure whether you're really past the spreadsheet stage, our breakdown of ATS vs. spreadsheets covers the specific failure modes in more detail. And if you're still figuring out what an ATS actually is before making any decisions, the plain-English guide to applicant tracking systems is a good starting point.",
+      },
+      {
+        type: "p",
+        content:
+          "The spreadsheet phase isn't shameful — it's where every hiring team starts. The goal isn't to skip it. The goal is to recognize when you've outgrown it and move on before it costs you a hire you needed.",
+      },
+    ],
+  },
+  {
     slug: "what-is-an-applicant-tracking-system",
     title:
       "What Is an Applicant Tracking System? A Plain-English Guide for Small Businesses",

@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Blog — KiteHR",
   description:
     "Hiring guides, ATS tips, and recruiting best practices from the KiteHR team.",
+  alternates: {
+    types: {
+      "application/rss+xml": "https://kitehr.co/blog/feed.xml",
+    },
+  },
 };
 
 export default function BlogPage() {
