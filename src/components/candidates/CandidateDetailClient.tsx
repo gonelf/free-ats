@@ -249,6 +249,9 @@ export function CandidateDetailClient({
     return initial;
   });
 
+  // ── Left panel tab ────────────────────────────────────────────────────────
+  const [leftTab, setLeftTab] = useState<"profile" | "experience" | "skills">("profile");
+
   // ── Right panel tab ───────────────────────────────────────────────────────
   const [rightTab, setRightTab] = useState<"resume" | "ai" | "notes" | "comms">(
     candidate.resumeUrl ? "resume" : "ai"
@@ -549,6 +552,12 @@ export function CandidateDetailClient({
 
   // ── Layout ────────────────────────────────────────────────────────────────
 
+  const leftTabs: { key: typeof leftTab; label: string }[] = [
+    { key: "profile", label: "Profile" },
+    { key: "experience", label: "Experience" },
+    { key: "skills", label: "Skills" },
+  ];
+
   const profilePanel = (
     <div className="space-y-5">
       {/* ── Parse banner ─────────────────────────────────────────── */}
@@ -568,8 +577,26 @@ export function CandidateDetailClient({
         </div>
       )}
 
+      {/* ── Left panel tab bar ───────────────────────────────────── */}
+      <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5 gap-0.5">
+        {leftTabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setLeftTab(t.key)}
+            className={cn(
+              "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+              leftTab === t.key
+                ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {/* ── Contact ──────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+      {leftTab === "profile" && <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
           Contact
         </h2>
@@ -613,10 +640,10 @@ export function CandidateDetailClient({
             />
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Professional Summary ─────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+      {leftTab === "profile" && <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
           Professional Summary
         </h2>
@@ -626,10 +653,10 @@ export function CandidateDetailClient({
           placeholder="A brief professional summary…"
           rows={4}
         />
-      </div>
+      </div>}
 
       {/* ── Skills ───────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+      {leftTab === "skills" && <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Skills</h2>
           {hasAiAccess && (
@@ -682,10 +709,10 @@ export function CandidateDetailClient({
             <Plus className="h-3 w-3" />
           </Button>
         </div>
-      </div>
+      </div>}
 
       {/* ── Work Experience ──────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+      {leftTab === "experience" && <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
             Work Experience
@@ -848,10 +875,10 @@ export function CandidateDetailClient({
             </div>
           )}
         </div>
-      </div>
+      </div>}
 
       {/* ── Achievements ─────────────────────────────────────────── */}
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+      {leftTab === "experience" && <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
         <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
           Achievements
         </h2>
@@ -884,7 +911,7 @@ export function CandidateDetailClient({
             <Plus className="h-3 w-3" />
           </Button>
         </div>
-      </div>
+      </div>}
     </div>
   );
 
