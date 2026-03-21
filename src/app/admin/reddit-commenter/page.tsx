@@ -8,6 +8,9 @@ import {
   MinusCircle,
   Play,
   Save,
+  Copy,
+  ExternalLink,
+  Clock,
 } from "lucide-react";
 
 interface RedditComment {
@@ -31,9 +34,8 @@ interface RedditConfig {
 }
 
 interface Stats {
-  totalPosted: number;
-  todayPosted: number;
-  successRate: number;
+  totalDrafted: number;
+  pendingDrafts: number;
   totalAttempted: number;
 }
 
@@ -43,6 +45,14 @@ function StatusBadge({ status }: { status: string }) {
       <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
         <CheckCircle2 className="h-3 w-3" />
         posted
+      </span>
+    );
+  }
+  if (status === "draft") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+        <Clock className="h-3 w-3" />
+        draft
       </span>
     );
   }
@@ -70,6 +80,7 @@ export default function RedditCommenterPage() {
   const [runResult, setRunResult] = useState<string | null>(null);
   const [subredditsInput, setSubredditsInput] = useState("");
   const [keywordsInput, setKeywordsInput] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   async function fetchData() {
@@ -127,13 +138,28 @@ export default function RedditCommenterPage() {
       const data = await res.json();
       if (res.ok) {
         setRunResult(
-          `Run complete: ${data.posted} posted, ${data.skipped} skipped, ${data.failed} failed`
+          `Run complete: ${data.drafted} drafted, ${data.skipped} skipped, ${data.failed} failed`
         );
         fetchData();
       } else {
         setRunResult(`Error: ${data.error ?? "Unknown error"}`);
       }
     });
+  }
+
+  async function handleCopy(comment: RedditComment) {
+    await navigator.clipboard.writeText(comment.commentText);
+    setCopiedId(comment.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
+
+  async function handleMarkPosted(id: string) {
+    await fetch("/api/admin/reddit-commenter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "mark-posted", id }),
+    });
+    fetchData();
   }
 
   if (loading) {
@@ -144,13 +170,15 @@ export default function RedditCommenterPage() {
     );
   }
 
+  const pendingDrafts = comments.filter((c) => c.status === "draft");
+
   return (
     <div>
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reddit Auto-Commenter</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Monitors Reddit for hiring discussions and posts AI-generated comments mentioning KiteHR.
+            Finds relevant Reddit posts and generates AI comment drafts for you to post manually.
           </p>
         </div>
         <button
@@ -163,6 +191,15 @@ export default function RedditCommenterPage() {
         </button>
       </div>
 
+      {/* How it works banner */}
+      <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
+        <p className="text-sm font-medium text-blue-800">How it works</p>
+        <p className="text-xs text-blue-600 mt-0.5">
+          No Reddit API key needed. This tool searches Reddit&apos;s public posts, generates a tailored comment with Gemini AI, and saves it as a draft below.
+          Copy the comment, open the Reddit post, and paste it yourself. Then click &quot;Mark as posted&quot;.
+        </p>
+      </div>
+
       {runResult && (
         <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
           {runResult}
@@ -171,11 +208,10 @@ export default function RedditCommenterPage() {
 
       {/* Stats */}
       {stats && (
-        <div className="mb-8 grid grid-cols-4 gap-4">
+        <div className="mb-8 grid grid-cols-3 gap-4">
           {[
-            { label: "Total Posted", value: stats.totalPosted },
-            { label: "Today", value: stats.todayPosted },
-            { label: "Success Rate", value: `${stats.successRate}%` },
+            { label: "Pending Drafts", value: stats.pendingDrafts },
+            { label: "Total Drafted", value: stats.totalDrafted },
             { label: "Total Attempts", value: stats.totalAttempted },
           ].map((s) => (
             <div key={s.label} className="rounded-xl border border-gray-200 bg-white p-4">
@@ -186,16 +222,83 @@ export default function RedditCommenterPage() {
         </div>
       )}
 
+      {/* Pending drafts — prominent section */}
+      {pendingDrafts.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-sm font-semibold text-gray-900 mb-3">
+            Ready to Post ({pendingDrafts.length})
+          </h2>
+          <div className="space-y-3">
+            {pendingDrafts.map((c) => (
+              <div key={c.id} className="rounded-xl border border-blue-100 bg-white p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-medium text-gray-500">r/{c.subreddit}</span>
+                      <span className="text-gray-300">·</span>
+                      <span className="text-xs text-gray-400">
+                        {new Date(c.createdAt).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <a
+                      href={c.postUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-sm font-medium text-gray-900 hover:text-red-600 mb-3"
+                    >
+                      {c.postTitle}
+                      <ExternalLink className="h-3 w-3 shrink-0" />
+                    </a>
+                    <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2">
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{c.commentText}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <button
+                    onClick={() => handleCopy(c)}
+                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    <Copy className="h-3 w-3" />
+                    {copiedId === c.id ? "Copied!" : "Copy comment"}
+                  </button>
+                  <a
+                    href={c.postUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Open on Reddit
+                  </a>
+                  <button
+                    onClick={() => handleMarkPosted(c.id)}
+                    className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
+                  >
+                    <CheckCircle2 className="h-3 w-3" />
+                    Mark as posted
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Config */}
       <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6">
         <h2 className="text-sm font-semibold text-gray-900 mb-4">Configuration</h2>
 
-        {/* Enable toggle */}
         <div className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-700">Enable auto-commenter</p>
             <p className="text-xs text-gray-500 mt-0.5">
-              When enabled, the cron job will post comments every 6 hours.
+              When enabled, the cron job generates new drafts every 6 hours.
             </p>
           </div>
           <button
@@ -212,7 +315,6 @@ export default function RedditCommenterPage() {
           </button>
         </div>
 
-        {/* Subreddits */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-gray-700 mb-1">
             Subreddits (comma-separated, without r/)
@@ -226,7 +328,6 @@ export default function RedditCommenterPage() {
           />
         </div>
 
-        {/* Keywords */}
         <div className="mb-5">
           <label className="block text-xs font-medium text-gray-700 mb-1">
             Keywords to search (comma-separated)
@@ -249,16 +350,16 @@ export default function RedditCommenterPage() {
         </button>
       </div>
 
-      {/* Recent comments */}
+      {/* History */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-900 mb-3">Recent Comments</h2>
+        <h2 className="text-sm font-semibold text-gray-900 mb-3">History</h2>
 
         {comments.length === 0 ? (
           <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
             <MessageSquare className="mx-auto h-8 w-8 text-gray-300 mb-3" />
-            <p className="text-sm text-gray-500">No comments yet.</p>
+            <p className="text-sm text-gray-500">No drafts yet.</p>
             <p className="text-xs text-gray-400 mt-1">
-              Enable the commenter and click Run Now to get started.
+              Enable the commenter and click Run Now to generate your first drafts.
             </p>
           </div>
         ) : (
@@ -269,7 +370,7 @@ export default function RedditCommenterPage() {
                   <th className="px-4 py-3 text-left font-medium text-gray-500">Post</th>
                   <th className="px-4 py-3 text-left font-medium text-gray-500">Subreddit</th>
                   <th className="px-4 py-3 text-left font-medium text-gray-500">Status</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">Comment</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-500">Draft</th>
                   <th className="px-4 py-3 text-left font-medium text-gray-500">Date</th>
                 </tr>
               </thead>
@@ -300,7 +401,7 @@ export default function RedditCommenterPage() {
                       {c.commentText ? (
                         <details>
                           <summary className="cursor-pointer text-xs text-gray-400 hover:text-gray-600">
-                            view comment
+                            view
                           </summary>
                           <p className="mt-1 text-xs text-gray-600 whitespace-pre-wrap">
                             {c.commentText}

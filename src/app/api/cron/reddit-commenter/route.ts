@@ -3,7 +3,8 @@ import { db } from "@/lib/db";
 import { runRedditCommenter } from "@/lib/reddit-commenter";
 
 /**
- * Posts AI-generated comments to relevant Reddit threads to market KiteHR.
+ * Finds relevant Reddit posts and generates AI comment drafts for manual posting.
+ * No Reddit API credentials required — uses Reddit's public JSON endpoints.
  * Protected by CRON_SECRET. Scheduled every 6 hours via Vercel cron.
  */
 export async function GET(request: NextRequest) {
@@ -14,29 +15,29 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { posted, skipped, failed } = await runRedditCommenter();
+  const { drafted, skipped, failed } = await runRedditCommenter();
 
   const status =
-    posted === 0 && failed === 0
+    drafted === 0 && failed === 0
       ? "skipped"
-      : failed > 0 && posted === 0
+      : failed > 0 && drafted === 0
         ? "error"
         : "success";
 
   const message =
-    posted === 0 && failed === 0
+    drafted === 0 && failed === 0
       ? "Commenter disabled or no new posts found"
-      : `Posted ${posted} comment(s), skipped ${skipped}, failed ${failed}`;
+      : `Drafted ${drafted} comment(s), skipped ${skipped}, failed ${failed}`;
 
   await db.cronLog.create({
     data: {
       job: "reddit-commenter",
       status,
       message,
-      details: { posted, skipped, failed },
+      details: { drafted, skipped, failed },
       durationMs: Date.now() - startedAt,
     },
   });
 
-  return NextResponse.json({ posted, skipped, failed });
+  return NextResponse.json({ drafted, skipped, failed });
 }

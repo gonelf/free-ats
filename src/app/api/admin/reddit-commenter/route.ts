@@ -47,34 +47,25 @@ export async function GET() {
     });
   }
 
-  const [recentComments, totalPosted, todayPosted] = await Promise.all([
+  const [recentComments, totalDrafted, pendingDrafts] = await Promise.all([
     db.redditComment.findMany({
       orderBy: { createdAt: "desc" },
       take: 50,
     }),
-    db.redditComment.count({ where: { status: "posted" } }),
-    db.redditComment.count({
-      where: {
-        status: "posted",
-        createdAt: {
-          gte: new Date(new Date().setHours(0, 0, 0, 0)),
-        },
-      },
-    }),
+    db.redditComment.count({ where: { status: { in: ["draft", "posted"] } } }),
+    db.redditComment.count({ where: { status: "draft" } }),
   ]);
 
   const totalAttempted = await db.redditComment.count();
-  const successRate =
-    totalAttempted > 0 ? Math.round((totalPosted / totalAttempted) * 100) : 0;
 
   return NextResponse.json({
     config,
     recentComments,
-    stats: { totalPosted, todayPosted, successRate, totalAttempted },
+    stats: { totalDrafted, pendingDrafts, totalAttempted },
   });
 }
 
-/** POST — manual trigger */
+/** POST — manual trigger or mark-as-posted */
 export async function POST(request: NextRequest) {
   const admin = await requireAdminUser();
   if (!admin) {
@@ -82,12 +73,21 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  if (body?.action !== "run") {
-    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+
+  if (body?.action === "run") {
+    const result = await runRedditCommenter();
+    return NextResponse.json(result);
   }
 
-  const result = await runRedditCommenter();
-  return NextResponse.json(result);
+  if (body?.action === "mark-posted" && body?.id) {
+    const updated = await db.redditComment.update({
+      where: { id: body.id },
+      data: { status: "posted" },
+    });
+    return NextResponse.json(updated);
+  }
+
+  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }
 
 /** PATCH — update config */

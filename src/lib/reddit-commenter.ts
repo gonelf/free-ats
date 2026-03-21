@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { flashModel, generateText } from "@/lib/ai/gemini";
-import { searchSubreddit, postComment, type RedditPost } from "@/lib/reddit";
+import { searchSubreddit, type RedditPost } from "@/lib/reddit";
 
 const DEFAULT_SUBREDDITS = [
   "recruiting",
@@ -21,11 +21,11 @@ const DEFAULT_KEYWORDS = [
   "manage applications",
 ];
 
-// Maximum new posts to comment on per run (keeps things natural)
-const MAX_COMMENTS_PER_RUN = 5;
+// Maximum drafts to generate per run
+const MAX_DRAFTS_PER_RUN = 5;
 
 export interface CommenterResult {
-  posted: number;
+  drafted: number;
   skipped: number;
   failed: number;
 }
@@ -45,13 +45,13 @@ export async function runRedditCommenter(): Promise<CommenterResult> {
   }
 
   if (!config.enabled) {
-    return { posted: 0, skipped: 0, failed: 0 };
+    return { drafted: 0, skipped: 0, failed: 0 };
   }
 
   const subreddits = config.subreddits.length ? config.subreddits : DEFAULT_SUBREDDITS;
   const keywords = config.keywords.length ? config.keywords : DEFAULT_KEYWORDS;
 
-  // Collect candidate posts
+  // Collect candidate posts across all subreddit × keyword combos
   const seenPostIds = new Set<string>();
   const candidates: RedditPost[] = [];
 
@@ -71,7 +71,7 @@ export async function runRedditCommenter(): Promise<CommenterResult> {
     }
   }
 
-  // Filter out posts already commented on
+  // Filter out posts we've already drafted a comment for
   const existingPostIds = await db.redditComment
     .findMany({
       where: { postId: { in: candidates.map((p) => p.id) } },
@@ -81,16 +81,15 @@ export async function runRedditCommenter(): Promise<CommenterResult> {
 
   const newPosts = candidates.filter((p) => !existingPostIds.has(p.id));
 
-  let posted = 0;
+  let drafted = 0;
   let skipped = 0;
   let failed = 0;
 
   for (const post of newPosts) {
-    if (posted >= MAX_COMMENTS_PER_RUN) break;
+    if (drafted >= MAX_DRAFTS_PER_RUN) break;
 
     const postUrl = `https://reddit.com${post.permalink}`;
 
-    // Skip posts with no meaningful content
     if (!post.title || post.title.length < 10) {
       skipped++;
       await db.redditComment.create({
@@ -110,21 +109,19 @@ export async function runRedditCommenter(): Promise<CommenterResult> {
     try {
       const commentText = await generateComment(post);
 
-      const commentId = await postComment(post.name, commentText);
-
+      // Save as draft — admin copies and posts manually on Reddit
       await db.redditComment.create({
         data: {
           postId: post.id,
           postTitle: post.title,
           subreddit: post.subreddit,
           postUrl,
-          commentId,
           commentText,
-          status: "posted",
+          status: "draft",
         },
       });
 
-      posted++;
+      drafted++;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       failed++;
@@ -143,13 +140,11 @@ export async function runRedditCommenter(): Promise<CommenterResult> {
     }
   }
 
-  return { posted, skipped, failed };
+  return { drafted, skipped, failed };
 }
 
 async function generateComment(post: RedditPost): Promise<string> {
-  const bodyPreview = post.selftext
-    ? post.selftext.slice(0, 500)
-    : "(no body text)";
+  const bodyPreview = post.selftext ? post.selftext.slice(0, 500) : "(no body text)";
 
   const prompt = `You are a helpful community member on Reddit who works in HR tech.
 Someone posted in r/${post.subreddit} with the following:
