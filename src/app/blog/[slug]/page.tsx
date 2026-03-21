@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
-import { getBlogPost, getAllBlogSlugs, blogPosts, type BlogPost, type BlogSection } from "../posts";
+import { getBlogPost, blogPosts, type BlogPost, type BlogSection } from "../posts";
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -36,10 +38,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${post.title} — KiteHR Blog`,
     description: post.description,
   };
-}
-
-export function generateStaticParams() {
-  return getAllBlogSlugs().map((slug) => ({ slug }));
 }
 
 export default async function BlogPostPage({ params }: Props) {
