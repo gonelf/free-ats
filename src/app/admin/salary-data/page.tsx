@@ -17,22 +17,22 @@ export default async function SalaryDataPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Salary Data</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Salary Data</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Populate the salary database using Gemini AI calibrated to BLS/H-1B benchmarks.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[
           { label: "Total entries", value: totalEntries.toLocaleString() },
           { label: "Published", value: publishedEntries.toLocaleString() },
           { label: "Cities populated", value: `${citiesPopulated} / ${SALARY_CITIES.length}` },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-gray-200 bg-white p-5">
-            <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-            <div className="text-xs text-gray-500 mt-1">{s.label}</div>
+          <div key={s.label} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{s.value}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{s.label}</div>
           </div>
         ))}
       </div>
