@@ -5,6 +5,8 @@ import { blogPosts, type BlogPost } from "./posts";
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog — KiteHR",
   description:
