@@ -378,6 +378,32 @@ model JobDistribution {
   @@index([status])
 }
 
+// ============ REDDIT AUTO-COMMENTER ============
+
+model RedditComment {
+  id          String   @id @default(cuid())
+  postId      String
+  postTitle   String
+  subreddit   String
+  postUrl     String
+  commentId   String?
+  commentText String   @db.Text
+  status      String   // "posted" | "failed" | "skipped"
+  errorMsg    String?
+  createdAt   DateTime @default(now())
+
+  @@index([postId])
+  @@index([createdAt])
+}
+
+model RedditConfig {
+  id         String   @id @default("singleton")
+  enabled    Boolean  @default(false)
+  subreddits String[]
+  keywords   String[]
+  updatedAt  DateTime @updatedAt
+}
+
 model Communication {
   id             String       @id @default(cuid())
   candidateId    String

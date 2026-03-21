@@ -19,6 +19,10 @@
     {
       "path": "/api/cron/retry-distributions",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/reddit-commenter",
+      "schedule": "0 */6 * * *"
     }
   ]
 }
