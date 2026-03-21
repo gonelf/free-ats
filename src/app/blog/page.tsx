@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
-import { blogPosts } from "./posts";
+import { blogPosts, type BlogPost } from "./posts";
+import { db } from "@/lib/db";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Blog — KiteHR",
@@ -15,7 +18,30 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const dbPosts = await db.generatedBlogPost.findMany({
+    orderBy: { planDay: "asc" },
+    select: {
+      slug: true,
+      title: true,
+      description: true,
+      category: true,
+      readingTime: true,
+      publishedAt: true,
+    },
+  });
+
+  const generatedPosts: BlogPost[] = dbPosts.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    description: p.description,
+    publishedAt: p.publishedAt.toISOString().split("T")[0],
+    readingTime: p.readingTime,
+    category: p.category,
+    content: [],
+  }));
+
+  const allPosts = [...blogPosts, ...generatedPosts];
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
       <PublicNav />
@@ -39,7 +65,7 @@ export default function BlogPage() {
       <section className="py-8 pb-24">
         <div className="mx-auto max-w-4xl px-6">
           <div className="grid gap-4">
-            {blogPosts.map((post) => (
+            {allPosts.map((post) => (
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
