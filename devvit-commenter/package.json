@@ -1,0 +1,21 @@
+{
+  "name": "kite-hr-commenter",
+  "version": "0.0.1",
+  "private": true,
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "build": "devvit build",
+    "dev": "devvit playtest r/YOUR_SUBREDDIT",
+    "upload": "devvit upload"
+  },
+  "dependencies": {
+    "@devvit/public-api": "0.12.15"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
