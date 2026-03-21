@@ -311,6 +311,22 @@ model CronLog {
   @@index([createdAt])
 }
 
+model GeneratedBlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  content     Json
+  category    String
+  readingTime String
+  planDay     Int      @unique
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([planDay])
+  @@index([publishedAt])
+}
+
 enum EmailType {
   OUTREACH
   INTERVIEW_INVITE

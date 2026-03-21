@@ -5,6 +5,9 @@
     },
     "src/app/api/webhooks/**": {
       "maxDuration": 30
+    },
+    "src/app/api/cron/generate-blog-post": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -19,6 +22,10 @@
     {
       "path": "/api/cron/retry-distributions",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/generate-blog-post",
+      "schedule": "0 8 * * *"
     }
   ]
 }

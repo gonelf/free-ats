@@ -2,16 +2,35 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
-import { getBlogPost, getAllBlogSlugs, blogPosts, type BlogSection } from "../posts";
+import { getBlogPost, getAllBlogSlugs, blogPosts, type BlogPost, type BlogSection } from "../posts";
+import { db } from "@/lib/db";
 import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+async function resolvePost(slug: string): Promise<BlogPost | null> {
+  const staticPost = getBlogPost(slug);
+  if (staticPost) return staticPost;
+
+  const dbPost = await db.generatedBlogPost.findUnique({ where: { slug } });
+  if (!dbPost) return null;
+
+  return {
+    slug: dbPost.slug,
+    title: dbPost.title,
+    description: dbPost.description,
+    publishedAt: dbPost.publishedAt.toISOString().split("T")[0],
+    readingTime: dbPost.readingTime,
+    category: dbPost.category,
+    content: dbPost.content as BlogSection[],
+  };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await resolvePost(slug);
   if (!post) return {};
   return {
     title: `${post.title} — KiteHR Blog`,
@@ -25,10 +44,21 @@ export function generateStaticParams() {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await resolvePost(slug);
   if (!post) return notFound();
 
-  const otherPosts = blogPosts.filter((p) => p.slug !== slug).slice(0, 2);
+  const dbOtherPosts = await db.generatedBlogPost.findMany({
+    where: { slug: { not: slug } },
+    orderBy: { planDay: "asc" },
+    take: 2,
+    select: { slug: true, title: true, description: true, category: true, readingTime: true },
+  });
+
+  const staticOtherPosts = blogPosts
+    .filter((p) => p.slug !== slug)
+    .map((p) => ({ slug: p.slug, title: p.title, description: p.description, category: p.category, readingTime: p.readingTime }));
+
+  const otherPosts = [...staticOtherPosts, ...dbOtherPosts].slice(0, 2);
 
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
