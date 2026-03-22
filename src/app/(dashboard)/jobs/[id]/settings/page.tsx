@@ -55,6 +55,16 @@ export default async function JobSettingsPage({
             <Label>Location</Label>
             <Input name="location" defaultValue={job.location || ""} />
           </div>
+          <div className="flex gap-4">
+            <div className="space-y-2 flex-1">
+              <Label>Street address (optional)</Label>
+              <Input name="streetAddress" defaultValue={job.streetAddress || ""} placeholder="e.g. 123 Main St" />
+            </div>
+            <div className="space-y-2 flex-1">
+              <Label>Postal code (optional)</Label>
+              <Input name="postalCode" defaultValue={job.postalCode || ""} placeholder="e.g. 94105" />
+            </div>
+          </div>
           <div className="space-y-2">
             <Label>Status</Label>
             <select

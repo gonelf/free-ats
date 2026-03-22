@@ -53,6 +53,8 @@ export async function createJob(formData: FormData) {
   const description = formData.get("description") as string;
   const requirements = formData.get("requirements") as string;
   const location = formData.get("location") as string;
+  const streetAddress = formData.get("streetAddress") as string;
+  const postalCode = formData.get("postalCode") as string;
   const salaryMin = formData.get("salaryMin")
     ? parseInt(formData.get("salaryMin") as string)
     : null;
@@ -72,6 +74,8 @@ export async function createJob(formData: FormData) {
       description,
       requirements,
       location,
+      streetAddress,
+      postalCode,
       salaryMin,
       salaryMax,
       slug: await generateUniqueJobSlug(org.id, title),
@@ -90,6 +94,8 @@ export async function updateJob(jobId: string, formData: FormData) {
   const description = formData.get("description") as string;
   const requirements = formData.get("requirements") as string;
   const location = formData.get("location") as string;
+  const streetAddress = formData.get("streetAddress") as string;
+  const postalCode = formData.get("postalCode") as string;
   const status = formData.get("status") as "DRAFT" | "OPEN" | "CLOSED";
 
   const existingJob = await db.job.findUniqueOrThrow({
@@ -103,10 +109,12 @@ export async function updateJob(jobId: string, formData: FormData) {
   await db.job.update({
     where: { id: jobId, organizationId: org.id },
     data: { 
-      title, 
-      description, 
-      requirements, 
-      location, 
+      title,
+      description,
+      requirements,
+      location,
+      streetAddress,
+      postalCode,
       status,
       slug
     },
