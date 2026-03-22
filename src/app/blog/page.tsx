@@ -41,7 +41,11 @@ export default async function BlogPage() {
     content: [],
   }));
 
-  const allPosts = [...blogPosts, ...generatedPosts];
+  const postMap = new Map<string, BlogPost>();
+  for (const post of [...blogPosts, ...generatedPosts]) {
+    postMap.set(post.slug, post);
+  }
+  const allPosts = Array.from(postMap.values());
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
       <PublicNav />

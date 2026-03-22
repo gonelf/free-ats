@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { generateJSON } from "@/lib/ai/gemini";
-import { proModel } from "@/lib/ai/gemini";
+import { generateJSON, proModel } from "@/lib/ai/gemini";
 import { readFileSync } from "fs";
 import { join } from "path";
 import type { BlogSection } from "@/app/blog/posts";
@@ -40,20 +39,26 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Determine which day to generate next
-  const lastPost = await db.generatedBlogPost.findFirst({
-    orderBy: { planDay: "desc" },
+  // Determine which day to generate next by finding the first unpublished day
+  const publishedPosts = await db.generatedBlogPost.findMany({
     select: { planDay: true },
   });
+  const publishedDays = new Set(publishedPosts.map((p) => p.planDay));
 
-  const nextDay = lastPost ? lastPost.planDay + 1 : 1;
+  let nextDay: number | null = null;
+  for (let day = 1; day <= TOTAL_PLAN_DAYS; day++) {
+    if (!publishedDays.has(day)) {
+      nextDay = day;
+      break;
+    }
+  }
 
-  if (nextDay > TOTAL_PLAN_DAYS) {
+  if (nextDay === null) {
     await db.cronLog.create({
       data: {
         job: "generate-blog-post",
         status: "skipped",
-        message: "All 30 blog posts have been generated",
+        message: `All ${TOTAL_PLAN_DAYS} blog posts have been generated`,
         durationMs: Date.now() - startedAt,
       },
     });
