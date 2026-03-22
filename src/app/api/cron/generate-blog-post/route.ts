@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { generateJSON } from "@/lib/ai/gemini";
-import { proModel } from "@/lib/ai/gemini";
+import { generateJSON, proModel } from "@/lib/ai/gemini";
 import { readFileSync } from "fs";
 import { join } from "path";
 import type { BlogSection } from "@/app/blog/posts";
