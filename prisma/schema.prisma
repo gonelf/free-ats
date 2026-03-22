@@ -104,6 +104,8 @@ model Job {
   description    String       @db.Text
   requirements   String?      @db.Text
   location       String?
+  streetAddress  String?
+  postalCode     String?
   salaryMin      Int?
   salaryMax      Int?
   status         JobStatus    @default(DRAFT)

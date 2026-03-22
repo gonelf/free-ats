@@ -16,6 +16,8 @@ interface NewJobFormProps {
     description?: string;
     requirements?: string;
     location?: string;
+    streetAddress?: string;
+    postalCode?: string;
   };
 }
 
@@ -25,6 +27,8 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
   const [requirements, setRequirements] = useState(defaultValues?.requirements || "");
   const [skills, setSkills] = useState("");
   const [location, setLocation] = useState(defaultValues?.location || "");
+  const [streetAddress, setStreetAddress] = useState(defaultValues?.streetAddress || "");
+  const [postalCode, setPostalCode] = useState(defaultValues?.postalCode || "");
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [generatingDescription, setGeneratingDescription] = useState(false);
@@ -116,6 +120,29 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
+        </div>
+
+        <div className="flex gap-4">
+          <div className="space-y-2 flex-1">
+            <Label htmlFor="streetAddress">Street address (optional)</Label>
+            <Input
+              id="streetAddress"
+              name="streetAddress"
+              placeholder="e.g. 123 Main St"
+              value={streetAddress}
+              onChange={(e) => setStreetAddress(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2 flex-1">
+            <Label htmlFor="postalCode">Postal code (optional)</Label>
+            <Input
+              id="postalCode"
+              name="postalCode"
+              placeholder="e.g. 94105"
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="flex gap-4">

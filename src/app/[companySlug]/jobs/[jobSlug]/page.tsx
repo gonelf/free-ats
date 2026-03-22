@@ -87,6 +87,8 @@ export default async function PublicJobPage({
       "address": {
         "@type": "PostalAddress",
         "addressLocality": job.location || "Remote",
+        ...(job.streetAddress ? { "streetAddress": job.streetAddress } : {}),
+        ...(job.postalCode ? { "postalCode": job.postalCode } : {}),
       },
     },
     "baseSalary": job.salaryMin && job.salaryMax ? {
