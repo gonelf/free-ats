@@ -59,7 +59,7 @@ export default function RootLayout({
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PP6J5J3W');`}
+})(window,document,'script','dataLayer','GTM-W424GR57');`}
         </Script>
         <Script
           async
@@ -80,7 +80,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       >
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-PP6J5J3W"
+            src="https://www.googletagmanager.com/ns.html?id=GTM-W424GR57"
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
