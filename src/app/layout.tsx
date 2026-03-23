@@ -21,9 +21,6 @@ export const metadata: Metadata = {
   title: "KiteHR — Applicant Tracking System",
   description:
     "A free applicant tracking system with optional AI-powered features for faster hiring.",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "KiteHR — Applicant Tracking System",
     description:
