@@ -22,9 +22,22 @@ export async function requireAdmin(): Promise<{
   user: NonNullable<Awaited<ReturnType<typeof getAdminUser>>>["user"];
   admin: NonNullable<Awaited<ReturnType<typeof getAdminUser>>>["admin"];
 }> {
-  const result = await getAdminUser();
-  if (!result) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user?.email) {
     redirect("/login");
   }
-  return result;
+
+  const admin = await db.appAdmin.findUnique({
+    where: { email: user.email },
+  });
+
+  if (!admin) {
+    redirect("/jobs");
+  }
+
+  return { user, admin };
 }
