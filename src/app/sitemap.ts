@@ -8,7 +8,7 @@ import { getAllJobDescriptionSlugs } from "./job-descriptions/job-descriptions-d
 import { getAllInterviewQuestionsSlugs } from "./interview-questions/interview-questions-data";
 import { getAllHowToHireSlugs } from "./how-to-hire/how-to-hire-data";
 import { getAllHrEmailTemplateSlugs } from "./hr-email-templates/hr-email-templates-data";
-import { SALARY_CITIES, getAllRoleSlugs } from "./salaries/salary-data";
+import { SALARY_CITIES } from "./salaries/salary-data";
 
 const BASE_URL = "https://kitehr.co";
 
@@ -127,36 +127,50 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── Salary directory ───────────────────────────────────────────
-  // Index + all city hubs (always present regardless of publishedAt)
+  // All salary routes are gated on publishedAt so the sitemap stays in sync
+  // with what the pages actually serve. Wrapped in try/catch so a missing
+  // SalaryEntry table (pre-migration) never crashes the sitemap build.
   const salaryIndexRoute: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/salaries`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
   ];
 
-  const salaryCityRoutes: MetadataRoute.Sitemap = SALARY_CITIES.map((city) => ({
-    url: `${BASE_URL}/salaries/${city.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: city.tier === 1 ? 0.85 : city.tier === 2 ? 0.75 : 0.65,
-  }));
-
-  // Role hub pages
-  const salaryRoleRoutes: MetadataRoute.Sitemap = getAllRoleSlugs().map((slug) => ({
-    url: `${BASE_URL}/salaries/roles/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
-  // Leaf pages — only published entries (publishedAt IS NOT NULL)
-  // Wrapped in try/catch: the SalaryEntry table may not exist yet if the
-  // migration hasn't been applied, and we must not crash the build.
+  let salaryCityRoutes: MetadataRoute.Sitemap = [];
+  let salaryRoleRoutes: MetadataRoute.Sitemap = [];
   let salaryLeafRoutes: MetadataRoute.Sitemap = [];
+
   try {
     const publishedSalaryEntries = await db.salaryEntry.findMany({
       where: { publishedAt: { not: null } },
       select: { citySlug: true, roleSlug: true, publishedAt: true },
       orderBy: { publishedAt: "desc" },
     });
+
+    // City hub pages — only cities that have at least one published entry
+    const publishedCitySlugs = [...new Set(publishedSalaryEntries.map((e) => e.citySlug))];
+    salaryCityRoutes = publishedCitySlugs.map((slug) => {
+      const city = SALARY_CITIES.find((c) => c.slug === slug);
+      const lastEntry = publishedSalaryEntries.find((e) => e.citySlug === slug);
+      return {
+        url: `${BASE_URL}/salaries/${slug}`,
+        lastModified: lastEntry?.publishedAt ?? new Date(),
+        changeFrequency: "weekly" as const,
+        priority: city?.tier === 1 ? 0.85 : city?.tier === 2 ? 0.75 : 0.65,
+      };
+    });
+
+    // Role hub pages — only roles that have at least one published entry
+    const publishedRoleSlugs = [...new Set(publishedSalaryEntries.map((e) => e.roleSlug))];
+    salaryRoleRoutes = publishedRoleSlugs.map((slug) => {
+      const lastEntry = publishedSalaryEntries.find((e) => e.roleSlug === slug);
+      return {
+        url: `${BASE_URL}/salaries/roles/${slug}`,
+        lastModified: lastEntry?.publishedAt ?? new Date(),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      };
+    });
+
+    // Leaf pages — one per published (city, role) pair
     salaryLeafRoutes = publishedSalaryEntries.map((entry) => {
       const city = SALARY_CITIES.find((c) => c.slug === entry.citySlug);
       return {
@@ -167,7 +181,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
   } catch {
-    // Table not yet migrated — leaf pages will be added to the sitemap
+    // Table not yet migrated — salary routes will be added to the sitemap
     // on the first successful build after `prisma migrate deploy` runs.
   }
 
