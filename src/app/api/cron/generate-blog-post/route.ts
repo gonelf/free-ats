@@ -16,6 +16,12 @@ function extractDayBrief(planContent: string, day: number): string {
   return planContent.slice(start, end === -1 ? planContent.length : end).trim();
 }
 
+function extractDayTitle(planContent: string, day: number): string | null {
+  const brief = extractDayBrief(planContent, day);
+  const match = brief.match(/\*\*Post Title:\*\*\s*(.+)/);
+  return match ? match[1].trim() : null;
+}
+
 interface GeneratedPost {
   slug: string;
   title: string;
@@ -40,17 +46,23 @@ export async function GET(request: NextRequest) {
   }
 
   // Determine which day to generate next by finding the first unpublished day
+  // whose title hasn't already been published
   const publishedPosts = await db.generatedBlogPost.findMany({
-    select: { planDay: true },
+    select: { planDay: true, title: true },
   });
   const publishedDays = new Set(publishedPosts.map((p) => p.planDay));
+  const publishedTitles = new Set(publishedPosts.map((p) => p.title.toLowerCase()));
+
+  const planPath = join(process.cwd(), "SEO_BLOG_PLAN.md");
+  const planContent = readFileSync(planPath, "utf-8");
 
   let nextDay: number | null = null;
   for (let day = 1; day <= TOTAL_PLAN_DAYS; day++) {
-    if (!publishedDays.has(day)) {
-      nextDay = day;
-      break;
-    }
+    if (publishedDays.has(day)) continue;
+    const title = extractDayTitle(planContent, day);
+    if (title && publishedTitles.has(title.toLowerCase())) continue;
+    nextDay = day;
+    break;
   }
 
   if (nextDay === null) {
@@ -65,9 +77,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ skipped: true, reason: "All 30 posts generated" });
   }
 
-  // Read the plan
-  const planPath = join(process.cwd(), "SEO_BLOG_PLAN.md");
-  const planContent = readFileSync(planPath, "utf-8");
+  // Extract the brief for the selected day
   const dayBrief = extractDayBrief(planContent, nextDay);
 
   const prompt = `You are a content writer for KiteHR, a free applicant tracking system (ATS) for small businesses and startups.
