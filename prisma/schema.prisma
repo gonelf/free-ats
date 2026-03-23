@@ -396,6 +396,7 @@ model JobDistribution {
   @@index([status])
 }
 
+
 model Communication {
   id             String       @id @default(cuid())
   candidateId    String
