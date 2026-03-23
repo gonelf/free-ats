@@ -23,6 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${city.name} Salary Guide 2025 — 100+ Roles — KiteHR`,
     description: `Salary benchmarks for 100+ roles in ${city.name}, ${city.state}. See local vs. remote costs and calculate your hiring savings.`,
+    alternates: {
+      canonical: `/salaries/${citySlug}`,
+    },
   };
 }
 

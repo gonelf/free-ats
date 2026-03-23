@@ -28,6 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${role.title} Salary in ${city.name} 2025 — KiteHR`,
     description: `${role.title} salary in ${city.name}: see the P25/P50/P75 range, total employer cost, and how much you could save hiring remote via KiteHR.`,
+    alternates: {
+      canonical: `/salaries/${citySlug}/${roleSlug}`,
+    },
     openGraph: {
       title: `${role.title} Salary in ${city.name} 2025`,
       description: `What does a ${role.title} cost in ${city.name}? Compare local vs remote and calculate your ${currency} savings.`,

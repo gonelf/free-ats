@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   title: "KiteHR — Applicant Tracking System with AI Features",
   description:
     "Free applicant tracking system for modern hiring teams. Unlimited users, job posts & candidates — forever free. AI resume parsing available.",
+  alternates: {
+    canonical: "/",
+  },
 };
 
 const unlimitedItems = [
