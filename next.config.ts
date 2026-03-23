@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "www.kitehr.co" }],
         destination: "https://kitehr.co/:path*",
-        permanent: true,
+        permanent: false,
       },
     ];
   },
