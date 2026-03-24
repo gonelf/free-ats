@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Upload, CheckCircle2, AlertCircle, Loader2, Clock } from "lucide-react";
+import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -207,11 +207,6 @@ export function ApplyForm({ jobId }: ApplyFormProps) {
               />
             </label>
           </div>
-        </div>
-
-        <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
-          <Clock className="h-4 w-4 shrink-0 mt-0.5" />
-          <p>Uploaded resumes are automatically deleted after 10 days.</p>
         </div>
 
         <div className="pt-4">
