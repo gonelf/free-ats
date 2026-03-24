@@ -16,6 +16,7 @@ import {
   Clock,
   DollarSign,
   Flag,
+  MessageSquare,
   Menu,
   X,
 } from "lucide-react";
@@ -36,6 +37,7 @@ const navItems = [
   { href: "/admin/salary-data", label: "Salary Data", icon: DollarSign, exact: false },
   { href: "/admin/cron-logs", label: "Cron Logs", icon: Clock, exact: false },
   { href: "/admin/feature-flags", label: "Feature Flags", icon: Flag, exact: false },
+  { href: "/admin/requests", label: "Requests", icon: MessageSquare, exact: false },
 ];
 
 interface AdminSidebarProps {
