@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronRight,
   BookMarked,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1431,6 +1432,15 @@ export function CandidateDetailClient({
       {/* Resume tab */}
       {rightTab === "resume" && hasResume && (
         <>
+          {candidate.resumeExpiresAt && (
+            <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              <Clock className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                Resume cleanup scheduled &mdash; will be deleted on{" "}
+                <strong>{new Date(candidate.resumeExpiresAt).toLocaleDateString()}</strong>.
+              </span>
+            </div>
+          )}
           <div className="flex items-center gap-2 flex-wrap">
             {candidate.linkedinUrl && (
               <Button variant="outline" size="sm" asChild>
