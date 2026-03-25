@@ -407,9 +407,10 @@ model OutreachLead {
   website        String?
   contactEmail   String?
   contactName    String?
-  source         String   // "hn_hiring" | "manual" | "reddit" | "csv"
+  source         String   // "hn_hiring" | "manual" | "reddit" | "csv" | "product_hunt" | "yc"
   sourceUrl      String?
   hiringFor      String?  @db.Text
+  companyStage   String?  // "startup" | "smb" | "enterprise"
   status         String   @default("new") // "new" | "contacted" | "bounced" | "responded" | "converted" | "unsubscribed"
   notes          String?  @db.Text
   lastContactedAt DateTime?

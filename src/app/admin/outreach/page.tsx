@@ -9,19 +9,23 @@ import { BulkSendButton } from "@/components/admin/BulkSendButton";
 import { FindContactsButton } from "@/components/admin/FindContactsButton";
 
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
+const STAGE_FILTERS = ["all", "startup", "smb", "enterprise"] as const;
 
 interface Props {
-  searchParams: Promise<{ status?: string; page?: string }>;
+  searchParams: Promise<{ status?: string; page?: string; stage?: string }>;
 }
 
 export default async function OutreachPage({ searchParams }: Props) {
   await requireAdmin();
 
-  const { status: statusFilter = "all", page: pageStr = "1" } = await searchParams;
+  const { status: statusFilter = "all", page: pageStr = "1", stage: stageFilter = "all" } = await searchParams;
   const page = Math.max(1, parseInt(pageStr, 10));
   const pageSize = 50;
 
-  const where = statusFilter !== "all" ? { status: statusFilter } : {};
+  const where = {
+    ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+    ...(stageFilter !== "all" ? { companyStage: stageFilter } : {}),
+  };
 
   const [leads, total, stats, bulkEligibleCount, missingContactCount] = await Promise.all([
     db.outreachLead.findMany({
@@ -93,23 +97,41 @@ export default async function OutreachPage({ searchParams }: Props) {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 flex-wrap">
-        {STATUS_FILTERS.map((s) => {
-          const count = s === "all" ? totalLeads : (statMap[s] ?? 0);
-          return (
+      <div className="space-y-2">
+        <div className="flex gap-2 flex-wrap">
+          {STATUS_FILTERS.map((s) => {
+            const count = s === "all" ? totalLeads : (statMap[s] ?? 0);
+            return (
+              <Link
+                key={s}
+                href={`/admin/outreach?status=${s}&stage=${stageFilter}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
+                  statusFilter === s
+                    ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
+              >
+                {s} {count > 0 && <span className="ml-1 opacity-60">{count}</span>}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="flex gap-2 flex-wrap items-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500">Stage:</span>
+          {STAGE_FILTERS.map((s) => (
             <Link
               key={s}
-              href={`/admin/outreach?status=${s}`}
+              href={`/admin/outreach?status=${statusFilter}&stage=${s}`}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
-                statusFilter === s
-                  ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                stageFilter === s
+                  ? "bg-indigo-600 text-white"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
-              {s} {count > 0 && <span className="ml-1 opacity-60">{count}</span>}
+              {s}
             </Link>
-          );
-        })}
+          ))}
+        </div>
       </div>
 
       {/* Table */}
@@ -133,6 +155,7 @@ export default async function OutreachPage({ searchParams }: Props) {
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Company</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Contact</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Hiring for</th>
+                  <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Stage</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Source</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Emails</th>
@@ -173,8 +196,23 @@ export default async function OutreachPage({ searchParams }: Props) {
                       <p className="text-gray-600 dark:text-gray-400 text-xs line-clamp-2">{lead.hiringFor ?? "—"}</p>
                     </td>
                     <td className="px-5 py-3.5">
+                      {lead.companyStage ? (
+                        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
+                          lead.companyStage === "startup"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                            : lead.companyStage === "smb"
+                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                        }`}>
+                          {lead.companyStage}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300 dark:text-gray-600 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3.5">
                       <span className="inline-flex rounded-md bg-gray-100 dark:bg-gray-800 px-2 py-0.5 text-xs text-gray-600 dark:text-gray-400 capitalize">
-                        {lead.source.replace("_", " ")}
+                        {lead.source.replace(/_/g, " ")}
                       </span>
                       {lead.sourceUrl && (
                         <a
@@ -221,7 +259,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           <div className="flex gap-2">
             {page > 1 && (
               <Link
-                href={`/admin/outreach?status=${statusFilter}&page=${page - 1}`}
+                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&page=${page - 1}`}
                 className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Previous
@@ -229,7 +267,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             )}
             {page < totalPages && (
               <Link
-                href={`/admin/outreach?status=${statusFilter}&page=${page + 1}`}
+                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&page=${page + 1}`}
                 className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Next
