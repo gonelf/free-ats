@@ -440,6 +440,23 @@ model OutreachEmail {
   @@index([leadId])
 }
 
+// ============ GOOGLE INDEXING ============
+
+model GoogleIndexingLog {
+  id           String   @id @default(cuid())
+  url          String
+  type         String   @default("URL_UPDATED") // URL_UPDATED | URL_DELETED
+  status       String   // "success" | "error"
+  httpStatus   Int?
+  response     Json?
+  errorMessage String?  @db.Text
+  submittedBy  String
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([url])
+}
+
 model Communication {
   id             String       @id @default(cuid())
   candidateId    String
