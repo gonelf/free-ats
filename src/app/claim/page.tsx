@@ -29,6 +29,19 @@ export default async function ClaimPage({ searchParams }: Props) {
   });
 
   if (!org) {
+    // Check if it's an outreach lead claim token
+    const lead = await db.outreachLead.findFirst({
+      where: {
+        claimToken: token,
+        claimTokenExpiresAt: { gt: new Date() },
+      },
+    });
+
+    if (lead) {
+      // Redirect to signup — the lead hasn't been set up as an org yet
+      redirect(`/signup?from_outreach=1`);
+    }
+
     // Token expired or already claimed
     return (
       <div className="flex min-h-screen items-center justify-content: center bg-[#080c10] text-white">

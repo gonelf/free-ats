@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminUser } from "@/lib/admin";
 import { db } from "@/lib/db";
 import { sendOutreachEmail } from "@/lib/outreach-mail";
+import { randomBytes } from "crypto";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.kitehr.co";
+
+function ensureClaimToken(lead: { claimToken: string | null; claimTokenExpiresAt: Date | null }) {
+  if (lead.claimToken && lead.claimTokenExpiresAt && lead.claimTokenExpiresAt > new Date()) {
+    return lead.claimToken;
+  }
+  return randomBytes(32).toString("hex");
+}
 
 // POST /api/admin/outreach/[id]/send — send a cold email to this lead
 export async function POST(
@@ -27,16 +37,29 @@ export async function POST(
     return NextResponse.json({ error: "Lead has no contact email" }, { status: 400 });
   }
 
+  // Generate (or reuse) a claim token so the email can include a personalised /claim link
+  const claimToken = ensureClaimToken(lead);
+  const claimTokenExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  const claimUrl = `${APP_URL}/claim?token=${claimToken}`;
+
+  await db.outreachLead.update({
+    where: { id },
+    data: { claimToken, claimTokenExpiresAt },
+  });
+
+  // Replace placeholder in body so the sender can include {{CLAIM_URL}} in the template
+  const resolvedBody = body.replace(/\{\{CLAIM_URL\}\}/g, claimUrl);
+
   // Create the email record first (so we have an ID for tracking links)
   const emailRecord = await db.outreachEmail.create({
-    data: { leadId: id, subject, body },
+    data: { leadId: id, subject, body: resolvedBody },
   });
 
   // Send via Resend, injecting tracking pixel + click wrapper
   const result = await sendOutreachEmail({
     to: lead.contactEmail,
     subject,
-    body,
+    body: resolvedBody,
     emailId: emailRecord.id,
     leadId: id,
   });

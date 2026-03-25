@@ -3,30 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
-
-const DEFAULT_SUBJECT = (companyName: string) =>
-  `Free ATS for ${companyName}'s hiring`;
-
-const DEFAULT_BODY = (companyName: string, hiringFor: string) => `Hi ${companyName},
-
-${hiringFor ? `Saw you're hiring for ${hiringFor} — congrats on the growth.\n\n` : ""}We built KiteHR — a completely free ATS (unlimited jobs, unlimited candidates, unlimited users). No per-seat pricing, no hidden fees, no trial period.
-
-Most ATS tools charge $200-500/month. We don't.
-
-Worth a look if you're managing hiring in spreadsheets or email:
-https://app.kitehr.co/signup
-
-— The KiteHR team`;
+import { buildOutreachEmailBody, DEFAULT_OUTREACH_SUBJECT } from "@/lib/outreach-email-template";
 
 interface Props {
   leadId: string;
   companyName: string;
   hiringFor: string;
+  claimUrl: string;
 }
 
-export function SendEmailForm({ leadId, companyName, hiringFor }: Props) {
-  const [subject, setSubject] = useState(DEFAULT_SUBJECT(companyName));
-  const [body, setBody] = useState(DEFAULT_BODY(companyName, hiringFor));
+export function SendEmailForm({ leadId, companyName, hiringFor, claimUrl }: Props) {
+  const [subject, setSubject] = useState(DEFAULT_OUTREACH_SUBJECT(companyName));
+  const [body, setBody] = useState(buildOutreachEmailBody({ companyName, hiringFor, claimUrl }));
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -86,16 +74,18 @@ export function SendEmailForm({ leadId, companyName, hiringFor }: Props) {
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Body (plain text)</label>
+        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Body (HTML)</label>
         <textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          rows={10}
+          rows={14}
           required
-          className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+          className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-xs text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
         />
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          Plain text only. Links to app.kitehr.co will be click-tracked automatically.
+          HTML body. Links to app.kitehr.co are click-tracked automatically. Use{" "}
+          <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">{"{{CLAIM_URL}}"}</code>{" "}
+          as a placeholder if you want the send route to inject the token URL.
         </p>
       </div>
       {error && (

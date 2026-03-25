@@ -2,10 +2,13 @@ import { requireAdmin } from "@/lib/admin";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Mail, CheckCircle2, Eye, MousePointer } from "lucide-react";
+import { ArrowLeft, ExternalLink, Mail, Eye, MousePointer } from "lucide-react";
 import { OutreachStatusBadge } from "@/components/admin/OutreachStatusBadge";
 import { SendEmailForm } from "@/components/admin/SendEmailForm";
 import { UpdateLeadForm } from "@/components/admin/UpdateLeadForm";
+import { randomBytes } from "crypto";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.kitehr.co";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -15,12 +18,25 @@ export default async function OutreachLeadPage({ params }: Props) {
   await requireAdmin();
   const { id } = await params;
 
-  const lead = await db.outreachLead.findUnique({
+  let lead = await db.outreachLead.findUnique({
     where: { id },
     include: { emails: { orderBy: { createdAt: "desc" } } },
   });
 
   if (!lead) notFound();
+
+  // Ensure a claim token exists so the email form can show the personalised link
+  if (!lead.claimToken || !lead.claimTokenExpiresAt || lead.claimTokenExpiresAt < new Date()) {
+    const claimToken = randomBytes(32).toString("hex");
+    const claimTokenExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    lead = await db.outreachLead.update({
+      where: { id },
+      data: { claimToken, claimTokenExpiresAt },
+      include: { emails: { orderBy: { createdAt: "desc" } } },
+    });
+  }
+
+  const claimUrl = `${APP_URL}/claim?token=${lead.claimToken}`;
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -88,6 +104,7 @@ export default async function OutreachLeadPage({ params }: Props) {
             leadId={lead.id}
             companyName={lead.companyName}
             hiringFor={lead.hiringFor ?? ""}
+            claimUrl={claimUrl}
           />
         </div>
       )}
