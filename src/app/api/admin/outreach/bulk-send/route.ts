@@ -1,25 +1,13 @@
 import { NextRequest } from "next/server";
 import { getAdminUser } from "@/lib/admin";
 import { db } from "@/lib/db";
-import { sendOutreachEmail } from "@/lib/outreach-mail";
+import { sendOutreachEmail, buildOutreachEmailBody } from "@/lib/outreach-mail";
 import { randomBytes } from "crypto";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.kitehr.co";
 
 const DEFAULT_SUBJECT = (companyName: string) =>
-  `Free ATS for ${companyName}'s hiring`;
-
-const DEFAULT_BODY = (companyName: string, hiringFor: string | null, claimUrl: string) =>
-  `Hi ${companyName},
-
-${hiringFor ? `Saw you're hiring for ${hiringFor} — congrats on the growth.\n\n` : ""}We built KiteHR — a completely free ATS (unlimited jobs, unlimited candidates, unlimited users). No per-seat pricing, no hidden fees, no trial period.
-
-Most ATS tools charge $200-500/month. We don't.
-
-We set up a free workspace for you — claim it here:
-${claimUrl}
-
-— The KiteHR team`;
+  `${companyName} — your free ATS workspace is ready`;
 
 function send(controller: ReadableStreamDefaultController, data: object) {
   controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
@@ -85,7 +73,11 @@ export async function POST(request: NextRequest) {
 
           const claimUrl = `${APP_URL}/claim?token=${claimToken}`;
           const subject = DEFAULT_SUBJECT(lead.companyName);
-          const body = DEFAULT_BODY(lead.companyName, lead.hiringFor, claimUrl);
+          const body = buildOutreachEmailBody({
+            companyName: lead.companyName,
+            hiringFor: lead.hiringFor,
+            claimUrl,
+          });
 
           // Create email record
           const emailRecord = await db.outreachEmail.create({
