@@ -52,8 +52,15 @@ export default async function OutreachPage({ searchParams }: Props) {
         ...(sourceFilter !== "all" ? { source: sourceFilter } : {}),
       },
     }),
-    // Leads missing contact but have a website we can search
-    db.outreachLead.count({ where: { contactEmail: null, website: { not: null } } }),
+    // Leads missing contact but have a website we can search, respecting active filters
+    db.outreachLead.count({
+      where: {
+        contactEmail: null,
+        website: { not: null },
+        ...(stageFilter !== "all" ? { companyStage: stageFilter } : {}),
+        ...(sourceFilter !== "all" ? { source: sourceFilter } : {}),
+      },
+    }),
   ]);
 
   const statMap = Object.fromEntries(
@@ -84,7 +91,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             <FlaskConical className="h-4 w-4" />
             Test
           </Link>
-          <FindContactsButton missingCount={missingContactCount} />
+          <FindContactsButton missingCount={missingContactCount} sourceFilter={sourceFilter} stageFilter={stageFilter} />
           <BulkSendButton eligibleCount={bulkEligibleCount} sourceFilter={sourceFilter} stageFilter={stageFilter} />
           <RunSourceScraperButton />
           <RunScraperButton />

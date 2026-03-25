@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   if (!admin) return new Response("Forbidden", { status: 403 });
 
   const body = await request.json().catch(() => ({}));
-  const { leadId } = body as { leadId?: string };
+  const { leadId, source, stage } = body as { leadId?: string; source?: string; stage?: string };
 
   const encoder = new TextEncoder();
 
@@ -90,7 +90,12 @@ export async function POST(request: NextRequest) {
       try {
         const where = leadId
           ? { id: leadId }
-          : { contactEmail: null, website: { not: null } };
+          : {
+              contactEmail: null,
+              website: { not: null },
+              ...(source && source !== "all" ? { source } : {}),
+              ...(stage && stage !== "all" ? { companyStage: stage } : {}),
+            };
 
         const leads = await db.outreachLead.findMany({
           where,
