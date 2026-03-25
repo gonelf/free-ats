@@ -18,6 +18,8 @@ model Organization {
   slug                 String        @unique
   plan                 Plan          @default(FREE)
   claimedStatus        ClaimedStatus @default(CLAIMED)
+  claimToken           String?       @unique // one-time token to claim an unclaimed org
+  claimTokenExpiresAt  DateTime?
   stripeCustomerId     String?       @unique
   stripeSubscriptionId String?       @unique
   aiCreditsBalance     Int           @default(100)
@@ -396,6 +398,44 @@ model JobDistribution {
   @@index([status])
 }
 
+
+// ============ OUTREACH ============
+
+model OutreachLead {
+  id             String   @id @default(cuid())
+  companyName    String
+  website        String?
+  contactEmail   String?
+  contactName    String?
+  source         String   // "hn_hiring" | "manual" | "reddit" | "csv"
+  sourceUrl      String?
+  hiringFor      String?  @db.Text
+  status         String   @default("new") // "new" | "contacted" | "bounced" | "responded" | "converted" | "unsubscribed"
+  notes          String?  @db.Text
+  lastContactedAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  emails         OutreachEmail[]
+
+  @@index([status])
+  @@index([source])
+  @@index([createdAt])
+}
+
+model OutreachEmail {
+  id        String   @id @default(cuid())
+  leadId    String
+  subject   String
+  body      String   @db.Text
+  sentAt    DateTime?
+  openedAt  DateTime?
+  clickedAt DateTime?
+  resendId  String?
+  createdAt DateTime @default(now())
+  lead      OutreachLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+}
 
 model Communication {
   id             String       @id @default(cuid())
