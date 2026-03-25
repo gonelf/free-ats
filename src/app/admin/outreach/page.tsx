@@ -7,6 +7,7 @@ import { AddLeadButton } from "@/components/admin/AddLeadButton";
 import { RunScraperButton } from "@/components/admin/RunScraperButton";
 import { BulkSendButton } from "@/components/admin/BulkSendButton";
 import { FindContactsButton } from "@/components/admin/FindContactsButton";
+import { RunSourceScraperButton } from "@/components/admin/RunSourceScraperButton";
 
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
 const STAGE_FILTERS = ["all", "startup", "smb", "enterprise"] as const;
@@ -76,6 +77,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           </Link>
           <FindContactsButton missingCount={missingContactCount} />
           <BulkSendButton eligibleCount={bulkEligibleCount} />
+          <RunSourceScraperButton />
           <RunScraperButton />
           <AddLeadButton />
         </div>
