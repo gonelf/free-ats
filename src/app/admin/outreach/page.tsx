@@ -5,6 +5,8 @@ import { Mail, ExternalLink } from "lucide-react";
 import { OutreachStatusBadge } from "@/components/admin/OutreachStatusBadge";
 import { AddLeadButton } from "@/components/admin/AddLeadButton";
 import { RunScraperButton } from "@/components/admin/RunScraperButton";
+import { BulkSendButton } from "@/components/admin/BulkSendButton";
+import { FindContactsButton } from "@/components/admin/FindContactsButton";
 
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
 
@@ -21,7 +23,7 @@ export default async function OutreachPage({ searchParams }: Props) {
 
   const where = statusFilter !== "all" ? { status: statusFilter } : {};
 
-  const [leads, total, stats] = await Promise.all([
+  const [leads, total, stats, bulkEligibleCount, missingContactCount] = await Promise.all([
     db.outreachLead.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -34,6 +36,10 @@ export default async function OutreachPage({ searchParams }: Props) {
       by: ["status"],
       _count: { status: true },
     }),
+    // Leads eligible for bulk send: new + has contact email
+    db.outreachLead.count({ where: { status: "new", contactEmail: { not: null } } }),
+    // Leads missing contact but have a website we can search
+    db.outreachLead.count({ where: { contactEmail: null, website: { not: null } } }),
   ]);
 
   const statMap = Object.fromEntries(
@@ -56,7 +62,9 @@ export default async function OutreachPage({ searchParams }: Props) {
             Cold email pipeline for acquiring new companies
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <FindContactsButton missingCount={missingContactCount} />
+          <BulkSendButton eligibleCount={bulkEligibleCount} />
           <RunScraperButton />
           <AddLeadButton />
         </div>
