@@ -18,11 +18,15 @@ export async function POST(request: NextRequest) {
     return new Response("Forbidden", { status: 403 });
   }
 
-  // Optional: accept status filter from body (defaults to "new")
+  // Optional: accept filters from body
   let statusFilter: string[] = ["new"];
+  let sourceFilter: string | null = null;
+  let stageFilter: string | null = null;
   try {
     const body = await request.json();
     if (Array.isArray(body?.statuses)) statusFilter = body.statuses;
+    if (typeof body?.source === "string" && body.source !== "all") sourceFilter = body.source;
+    if (typeof body?.stage === "string" && body.stage !== "all") stageFilter = body.stage;
   } catch {
     // body may be empty — that's fine
   }
@@ -35,11 +39,13 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
 
       try {
-        // Fetch all eligible leads
+        // Fetch all eligible leads respecting active filters
         const leads = await db.outreachLead.findMany({
           where: {
             status: { in: statusFilter },
             contactEmail: { not: null },
+            ...(sourceFilter ? { source: sourceFilter } : {}),
+            ...(stageFilter ? { companyStage: stageFilter } : {}),
           },
           orderBy: { createdAt: "asc" },
         });

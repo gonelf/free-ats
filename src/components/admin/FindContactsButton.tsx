@@ -6,6 +6,8 @@ import { Search, X, CheckCircle2, Loader2 } from "lucide-react";
 
 interface Props {
   missingCount: number; // leads without a contact email that have a website
+  sourceFilter?: string;
+  stageFilter?: string;
 }
 
 interface ProgressEvent {
@@ -22,7 +24,7 @@ interface ProgressEvent {
   } | null;
 }
 
-export function FindContactsButton({ missingCount }: Props) {
+export function FindContactsButton({ missingCount, sourceFilter, stageFilter }: Props) {
   const [open, setOpen] = useState(false);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<ProgressEvent | null>(null);
@@ -46,7 +48,10 @@ export function FindContactsButton({ missingCount }: Props) {
     const res = await fetch("/api/admin/outreach/find-contacts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        source: sourceFilter ?? "all",
+        stage: stageFilter ?? "all",
+      }),
     });
 
     if (!res.ok || !res.body) {
@@ -127,7 +132,14 @@ export function FindContactsButton({ missingCount }: Props) {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     This will search for contact emails for{" "}
                     <strong>{missingCount} leads</strong> that are missing a contact but
-                    have a website. It fetches their site and uses AI to find the best email.
+                    have a website
+                    {(sourceFilter && sourceFilter !== "all") || (stageFilter && stageFilter !== "all") ? (
+                      <>
+                        {" "}matching your active filter
+                        {sourceFilter && sourceFilter !== "all" && <> (source: <strong>{sourceFilter.replace(/_/g, " ")}</strong>)</>}
+                        {stageFilter && stageFilter !== "all" && <> (stage: <strong>{stageFilter}</strong>)</>}
+                      </>
+                    ) : null}. It fetches their site and uses AI to find the best email.
                   </p>
                   <div className="flex justify-end gap-2 pt-2">
                     <button
