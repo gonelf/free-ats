@@ -3,11 +3,11 @@ import { db } from "@/lib/db";
 import { generateJSON, flashModel } from "@/lib/ai/gemini";
 
 /**
- * Monthly cron that scrapes the latest HN "Ask HN: Who is hiring?" thread,
- * extracts company/contact info with AI, and upserts into OutreachLead.
+ * Daily cron that scrapes the latest HN "Ask HN: Who is hiring?" thread.
+ * HN posts the thread on the 1st but companies comment throughout the month,
+ * so we run daily and rely on per-comment sourceUrl dedup to skip seen posts.
  *
- * HN posts a new thread on the 1st of each month.
- * Schedule: 1st of every month at 10:00 UTC
+ * Schedule: daily at 10:00 UTC
  * Protected by CRON_SECRET.
  */
 export async function GET(request: NextRequest) {
@@ -70,8 +70,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ skipped: true, reason: "No comments" });
     }
 
-    // Process up to 200 comments per run to stay within Vercel function timeout
-    const commentIds = threadData.kids.slice(0, 200);
+    const commentIds = threadData.kids;
 
     // 3. Process in small batches to stay within rate limits
     const BATCH = 5;
