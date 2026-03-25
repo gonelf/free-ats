@@ -71,7 +71,7 @@ export async function sendEmail({ to, subject, body }: SendEmailParams) {
       subject,
       html,
     });
-    return data;
+    return { resendId: data.data?.id ?? null };
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;

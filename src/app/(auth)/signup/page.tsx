@@ -25,6 +25,7 @@ function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const invitationToken = searchParams.get("invitation_token");
+  const claimToken = searchParams.get("claim_token");
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +47,10 @@ function SignupForm() {
       setLoading(false);
     } else {
       analytics.signedUp({ has_invitation: !!invitationToken });
-      if (invitationToken) {
+      if (claimToken) {
+        router.push(`/claim?token=${encodeURIComponent(claimToken)}`);
+        router.refresh();
+      } else if (invitationToken) {
         router.push(`/invitations/accept?token=${encodeURIComponent(invitationToken)}`);
         router.refresh();
       } else {

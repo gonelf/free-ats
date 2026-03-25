@@ -19,6 +19,7 @@ import {
   MessageSquare,
   Menu,
   X,
+  Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -38,6 +39,7 @@ const navItems = [
   { href: "/admin/cron-logs", label: "Cron Logs", icon: Clock, exact: false },
   { href: "/admin/feature-flags", label: "Feature Flags", icon: Flag, exact: false },
   { href: "/admin/requests", label: "Requests", icon: MessageSquare, exact: false },
+  { href: "/admin/outreach", label: "Outreach", icon: Mail, exact: false },
 ];
 
 interface AdminSidebarProps {
