@@ -20,7 +20,19 @@ export async function triggerLinkedInPost(postId: string) {
   });
 
   if (!linkedInIntegration?.accessToken || !linkedInIntegration.externalId) {
-    throw new Error("No active LinkedIn integration found for KiteHR");
+    // Log details to help diagnose KITEHR_ORGANIZATION_ID mismatches in Vercel logs
+    const allLinkedIn = await db.integration.findMany({
+      where: { platform: "linkedin" },
+      select: { organizationId: true, enabled: true, externalId: true, tokenExpiresAt: true },
+    });
+    console.error(
+      `[LinkedIn] No active integration found. KITEHR_ORGANIZATION_ID=${kitehrOrgId}. ` +
+      `All LinkedIn integrations in DB: ${JSON.stringify(allLinkedIn)}`
+    );
+    throw new Error(
+      `No active LinkedIn integration found for KiteHR (org=${kitehrOrgId}). ` +
+      `Found ${allLinkedIn.length} LinkedIn integration(s) in DB — check Vercel logs for details.`
+    );
   }
 
   const blogText = (post.content as BlogSection[])
