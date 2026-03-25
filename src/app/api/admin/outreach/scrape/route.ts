@@ -137,10 +137,14 @@ export async function POST() {
                   contactEmail?: string | null;
                   contactName?: string | null;
                   hiringFor?: string | null;
+                  companyStage?: string | null;
                 }>(
                   flashModel,
                   `Extract structured hiring data from this HN "Who is Hiring?" comment.
-Return JSON: {"companyName":"...","website":"...or null","contactEmail":"...or null","contactName":"...or null","hiringFor":"brief summary max 100 chars or null"}
+Return JSON: {"companyName":"...","website":"...or null","contactEmail":"...or null","contactName":"...or null","hiringFor":"brief summary max 100 chars or null","companyStage":"startup|smb|enterprise"}
+- companyStage "startup": seed/Series A/B, early-stage, small team (<50 people), bootstrapped, recently founded
+- companyStage "smb": established small/mid-size business, Series C+, 50-200 employees
+- companyStage "enterprise": public company, Fortune 500, FAANG, large corporation, >200 employees
 If not a real job posting, return: {"skip":true}
 
 Comment:
@@ -152,6 +156,13 @@ ${clean}`
                   return;
                 }
 
+                // Skip enterprise companies — they already have ATS solutions
+                if (extracted.companyStage === "enterprise") {
+                  skipped++;
+                  send({ type: "progress", processed, total, newLeads, skipped, errors });
+                  return;
+                }
+
                 await db.outreachLead.create({
                   data: {
                     companyName: extracted.companyName,
@@ -159,6 +170,7 @@ ${clean}`
                     contactEmail: extracted.contactEmail ?? null,
                     contactName: extracted.contactName ?? null,
                     hiringFor: extracted.hiringFor ?? null,
+                    companyStage: extracted.companyStage ?? null,
                     source: "hn_hiring",
                     sourceUrl,
                     status: "new",

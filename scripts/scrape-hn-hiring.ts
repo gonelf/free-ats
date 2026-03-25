@@ -104,6 +104,7 @@ interface ExtractedLead {
   contactEmail: string | null;
   contactName: string | null;
   hiringFor: string | null;
+  companyStage: string | null;
 }
 
 const SYSTEM_PROMPT = `You are extracting structured data from Hacker News "Who is Hiring?" comments.
@@ -114,8 +115,9 @@ Each comment is posted by a company or recruiter. Extract:
 - contactEmail: the email address to reach for hiring inquiries (or null)
 - contactName: the name of the person posting if mentioned (or null)
 - hiringFor: a brief summary (max 100 chars) of what roles they are hiring for
+- companyStage: classify as "startup" (seed/Series A/B, early-stage, <50 people, bootstrapped), "smb" (50-200 employees, Series C+), or "enterprise" (public company, Fortune 500, FAANG, >200 employees)
 
-Return ONLY valid JSON like: {"companyName":"Acme","website":"acme.com","contactEmail":"jobs@acme.com","contactName":"Jane","hiringFor":"Senior engineers, remote"}
+Return ONLY valid JSON like: {"companyName":"Acme","website":"acme.com","contactEmail":"jobs@acme.com","contactName":"Jane","hiringFor":"Senior engineers, remote","companyStage":"startup"}
 
 If the comment is not a real job posting (e.g. it's a meta comment, off-topic, or spam), return: {"skip":true}`;
 
@@ -167,8 +169,14 @@ async function processBatch(ids: number[]): Promise<void> {
 
     const sourceUrl = `https://news.ycombinator.com/item?id=${item.id}`;
 
+    // Skip enterprise companies — they already have ATS solutions
+    if (lead.companyStage === "enterprise") {
+      console.log(`  [SKIP] ${lead.companyName} is enterprise`);
+      continue;
+    }
+
     if (DRY_RUN) {
-      console.log(`  [DRY] ${lead.companyName} | ${lead.contactEmail ?? "no email"} | ${lead.hiringFor ?? ""}`);
+      console.log(`  [DRY] ${lead.companyName} | ${lead.companyStage ?? "?"} | ${lead.contactEmail ?? "no email"} | ${lead.hiringFor ?? ""}`);
       continue;
     }
 
@@ -189,13 +197,14 @@ async function processBatch(ids: number[]): Promise<void> {
         contactEmail: lead.contactEmail ?? null,
         contactName: lead.contactName ?? null,
         hiringFor: lead.hiringFor ?? null,
+        companyStage: lead.companyStage ?? null,
         source: "hn_hiring",
         sourceUrl,
         status: "new",
       },
     });
 
-    console.log(`  [+] ${lead.companyName} | ${lead.contactEmail ?? "no email"} | ${lead.hiringFor ?? ""}`);
+    console.log(`  [+] ${lead.companyName} | ${lead.companyStage ?? "?"} | ${lead.contactEmail ?? "no email"} | ${lead.hiringFor ?? ""}`);
   }
 }
 
