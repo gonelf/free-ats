@@ -107,6 +107,90 @@ export async function postJobToLinkedIn(
   return urn;
 }
 
+export async function postBlogPostToLinkedIn(
+  integration: Integration,
+  text: string,
+  blogTitle: string,
+  blogDescription: string,
+  blogSlug: string
+): Promise<string> {
+  const token = await getValidToken(integration);
+  const orgId = integration.externalId?.replace("urn:li:organization:", "") ?? "";
+  const orgUrn = `urn:li:organization:${orgId}`;
+  const blogUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://kitehr.com"}/blog/${blogSlug}`;
+
+  const body = {
+    author: orgUrn,
+    lifecycleState: "PUBLISHED",
+    specificContent: {
+      "com.linkedin.ugc.ShareContent": {
+        shareCommentary: { text },
+        shareMediaCategory: "ARTICLE",
+        media: [
+          {
+            status: "READY",
+            description: { text: blogDescription },
+            originalUrl: blogUrl,
+            title: { text: blogTitle },
+          },
+        ],
+      },
+    },
+    visibility: {
+      "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
+    },
+  };
+
+  const res = await fetch("https://api.linkedin.com/v2/ugcPosts", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "X-Restli-Protocol-Version": "2.0.0",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => res.statusText);
+    throw new Error(`LinkedIn ugcPost error ${res.status}: ${errText}`);
+  }
+
+  return res.headers.get("x-restli-id") ?? "";
+}
+
+export async function commentOnLinkedInPost(
+  integration: Integration,
+  postUrn: string,
+  commentText: string
+): Promise<void> {
+  const token = await getValidToken(integration);
+  const orgId = integration.externalId?.replace("urn:li:organization:", "") ?? "";
+  const orgUrn = `urn:li:organization:${orgId}`;
+
+  const encodedUrn = encodeURIComponent(postUrn);
+  const res = await fetch(
+    `https://api.linkedin.com/v2/socialActions/${encodedUrn}/comments`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0",
+      },
+      body: JSON.stringify({
+        actor: orgUrn,
+        message: { text: commentText },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => res.statusText);
+    throw new Error(`LinkedIn comment error ${res.status}: ${errText}`);
+  }
+}
+
 export async function closeJobOnLinkedIn(
   integration: Integration,
   externalJobId: string

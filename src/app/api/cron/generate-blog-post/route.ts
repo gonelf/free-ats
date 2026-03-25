@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { generateJSON, proModel } from "@/lib/ai/gemini";
+import { generateJSON, generateText, proModel } from "@/lib/ai/gemini";
 import { readFileSync } from "fs";
 import { join } from "path";
 import type { BlogSection } from "@/app/blog/posts";
+import { postBlogPostToLinkedIn, commentOnLinkedInPost } from "@/lib/distribution/linkedin";
 
 const TOTAL_PLAN_DAYS = 30;
 
@@ -144,6 +145,106 @@ Write the full post following the outline in the brief. Target the word count sp
       durationMs: Date.now() - startedAt,
     },
   });
+
+  // Post to KiteHR's LinkedIn company page
+  const kitehrOrgId = process.env.KITEHR_ORGANIZATION_ID;
+  if (kitehrOrgId) {
+    try {
+      const linkedInIntegration = await db.integration.findFirst({
+        where: { organizationId: kitehrOrgId, platform: "linkedin", enabled: true },
+      });
+
+      if (linkedInIntegration?.accessToken && linkedInIntegration.externalId) {
+        const blogText = generated.content
+          .map((section: BlogSection) =>
+            Array.isArray(section.content)
+              ? section.content.join("\n")
+              : section.content
+          )
+          .join("\n\n")
+          .slice(0, 2000);
+
+        const linkedInPrompt = `You are writing a LinkedIn post for KiteHR's company page to promote a new blog article.
+
+Blog Post Title: ${generated.title}
+Blog Post Description: ${generated.description}
+Blog Content:
+${blogText}
+
+Write an engaging LinkedIn post that:
+- Opens with a compelling hook (a question, bold statement, or surprising insight)
+- Shares 3-5 key takeaways from the article as short punchy lines
+- Ends with a call-to-action inviting people to read the full article
+- Includes 3-5 relevant hashtags (e.g. #hiring #recruiting #HR #smallbusiness #ATS)
+- Is between 800-1300 characters total
+- Sounds like a knowledgeable colleague sharing practical advice, not a marketing pitch
+
+Do NOT include the blog URL — it will be attached as a link preview automatically.
+Return only the post text, nothing else.`;
+
+        const linkedInText = await generateText(proModel, linkedInPrompt);
+
+        const linkedInPostUrn = await postBlogPostToLinkedIn(
+          linkedInIntegration,
+          linkedInText.trim(),
+          generated.title,
+          generated.description,
+          generated.slug
+        );
+
+        await db.cronLog.create({
+          data: {
+            job: "generate-blog-post-linkedin",
+            status: "success",
+            message: `Posted Day ${nextDay} to LinkedIn: "${generated.title}"`,
+            details: { planDay: nextDay, slug: generated.slug, linkedInPostUrn },
+            durationMs: Date.now() - startedAt,
+          },
+        });
+
+        // Add a comment with the direct blog link so followers can click through
+        if (linkedInPostUrn) {
+          const blogUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://kitehr.co"}/blog/${generated.slug}`;
+          try {
+            await commentOnLinkedInPost(
+              linkedInIntegration,
+              linkedInPostUrn,
+              `Read the full article here 👉 ${blogUrl}`
+            );
+            await db.cronLog.create({
+              data: {
+                job: "generate-blog-post-linkedin-comment",
+                status: "success",
+                message: `Commented blog link on LinkedIn post for Day ${nextDay}: "${generated.title}"`,
+                details: { planDay: nextDay, slug: generated.slug, linkedInPostUrn, blogUrl },
+                durationMs: Date.now() - startedAt,
+              },
+            });
+          } catch (commentError) {
+            await db.cronLog.create({
+              data: {
+                job: "generate-blog-post-linkedin-comment",
+                status: "error",
+                message: `Failed to comment blog link on LinkedIn post for Day ${nextDay}: ${commentError instanceof Error ? commentError.message : String(commentError)}`,
+                details: { planDay: nextDay, slug: generated.slug, linkedInPostUrn },
+                durationMs: Date.now() - startedAt,
+              },
+            });
+          }
+        }
+      }
+    } catch (linkedInError) {
+      await db.cronLog.create({
+        data: {
+          job: "generate-blog-post-linkedin",
+          status: "error",
+          message: `Failed to post Day ${nextDay} to LinkedIn: ${linkedInError instanceof Error ? linkedInError.message : String(linkedInError)}`,
+          details: { planDay: nextDay, slug: generated.slug },
+          durationMs: Date.now() - startedAt,
+        },
+      });
+    }
+  }
 
   return NextResponse.json({
     planDay: nextDay,
