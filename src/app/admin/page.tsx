@@ -2,6 +2,9 @@ import { requireAdmin } from "@/lib/admin";
 import { db } from "@/lib/db";
 import { Building2, Users, Briefcase, UserCheck, FileText, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { LinkedInPostTrigger } from "@/components/admin/LinkedInPostTrigger";
+import { getGeneratedBlogPosts } from "@/app/admin/actions/linkedin";
+
 
 export default async function AdminOverviewPage() {
   await requireAdmin();
@@ -38,6 +41,9 @@ export default async function AdminOverviewPage() {
     db.organization.count({ where: { plan: "PRO" } }),
     db.job.count({ where: { status: "OPEN" } }),
   ]);
+
+  const blogPosts = await getGeneratedBlogPosts();
+
 
   const stats = [
     {
@@ -123,6 +129,13 @@ export default async function AdminOverviewPage() {
             </Link>
           );
         })}
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Content &amp; Distribution</h2>
+        <div className="max-w-sm">
+          <LinkedInPostTrigger posts={blogPosts} />
+        </div>
       </div>
     </div>
   );
