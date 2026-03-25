@@ -3,11 +3,11 @@ import { db } from "@/lib/db";
 import { generateJSON, flashModel } from "@/lib/ai/gemini";
 
 /**
- * Daily cron that scrapes the latest HN "Ask HN: Who is hiring?" thread.
- * Runs every day but exits immediately if the thread ID hasn't changed
- * since the last successful run — so it only does real work ~once/month.
+ * Monthly cron that scrapes the latest HN "Ask HN: Who is hiring?" thread,
+ * extracts company/contact info with AI, and upserts into OutreachLead.
  *
- * Schedule: daily at 10:00 UTC (Vercel Hobby plan compatible)
+ * HN posts a new thread on the 1st of each month.
+ * Schedule: 1st of every month at 10:00 UTC
  * Protected by CRON_SECRET.
  */
 export async function GET(request: NextRequest) {
@@ -49,18 +49,7 @@ export async function GET(request: NextRequest) {
 
     const threadId = parseInt(thread.objectID, 10);
 
-    // 2. Skip if we already scraped this thread (same thread ID as last success)
-    const lastSuccess = await db.cronLog.findFirst({
-      where: { job: "scrape-hn-hiring", status: "success" },
-      orderBy: { createdAt: "desc" },
-    });
-    const lastThreadId = (lastSuccess?.details as { threadId?: number } | null)?.threadId;
-    if (lastThreadId === threadId) {
-      // No new thread yet — skip silently (no log entry to avoid noise)
-      return NextResponse.json({ skipped: true, reason: "Already scraped this thread" });
-    }
-
-    // 3. Fetch thread to get comment IDs
+    // 2. Fetch thread to get comment IDs
     const threadRes = await fetch(
       `https://hacker-news.firebaseio.com/v0/item/${threadId}.json`
     );
@@ -84,7 +73,7 @@ export async function GET(request: NextRequest) {
     // Process up to 200 comments per run to stay within Vercel function timeout
     const commentIds = threadData.kids.slice(0, 200);
 
-    // 4. Process in small batches to stay within rate limits
+    // 3. Process in small batches to stay within rate limits
     const BATCH = 5;
     for (let i = 0; i < commentIds.length; i += BATCH) {
       const batch = commentIds.slice(i, i + BATCH);
