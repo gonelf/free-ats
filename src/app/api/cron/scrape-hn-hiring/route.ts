@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { generateJSON, flashModel } from "@/lib/ai/gemini";
 
+export const maxDuration = 300;
+
+/** Max new (unseen) comments to send through AI per cron run. */
+const MAX_NEW = 100;
+
 /**
  * Daily cron that scrapes the latest HN "Ask HN: Who is hiring?" thread.
  * HN posts the thread on the 1st but companies comment throughout the month,
@@ -72,12 +77,16 @@ export async function GET(request: NextRequest) {
 
     const commentIds = threadData.kids;
 
-    // 3. Process in small batches to stay within rate limits
+    // 3. Process in small batches, capped at MAX_NEW new leads via AI
     const BATCH = 5;
-    for (let i = 0; i < commentIds.length; i += BATCH) {
+    let newProcessed = 0;
+    let limitReached = false;
+
+    outer: for (let i = 0; i < commentIds.length; i += BATCH) {
       const batch = commentIds.slice(i, i + BATCH);
       await Promise.all(
         batch.map(async (commentId) => {
+          if (newProcessed >= MAX_NEW) return;
           try {
             const itemRes = await fetch(
               `https://hacker-news.firebaseio.com/v0/item/${commentId}.json`
@@ -87,7 +96,7 @@ export async function GET(request: NextRequest) {
 
             const sourceUrl = `https://news.ycombinator.com/item?id=${item.id}`;
 
-            // Skip duplicates
+            // Skip duplicates (fast, no AI)
             const existing = await db.outreachLead.findFirst({
               where: { sourceUrl },
             });
@@ -95,6 +104,8 @@ export async function GET(request: NextRequest) {
               skipped++;
               return;
             }
+
+            if (newProcessed >= MAX_NEW) return;
 
             // Extract lead info with AI
             const clean = item.text
@@ -140,24 +151,30 @@ ${clean}`
               },
             });
             newLeads++;
+            newProcessed++;
           } catch {
             errors++;
           }
         })
       );
+
+      if (newProcessed >= MAX_NEW) {
+        limitReached = true;
+        break outer;
+      }
     }
 
     await db.cronLog.create({
       data: {
         job: "scrape-hn-hiring",
         status: "success",
-        message: `Thread ${threadId} ("${thread.title}"): +${newLeads} leads, ${skipped} skipped, ${errors} errors`,
-        details: { threadId, threadTitle: thread.title, newLeads, skipped, errors },
+        message: `Thread ${threadId} ("${thread.title}"): +${newLeads} leads, ${skipped} skipped, ${errors} errors${limitReached ? ` (limit ${MAX_NEW} reached)` : ""}`,
+        details: { threadId, threadTitle: thread.title, newLeads, skipped, errors, limitReached },
         durationMs: Date.now() - startedAt,
       },
     });
 
-    return NextResponse.json({ threadId, newLeads, skipped, errors });
+    return NextResponse.json({ threadId, newLeads, skipped, errors, limitReached });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     await db.cronLog.create({
