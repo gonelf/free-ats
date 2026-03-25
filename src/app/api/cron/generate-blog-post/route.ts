@@ -4,7 +4,7 @@ import { generateJSON, generateText, proModel } from "@/lib/ai/gemini";
 import { readFileSync } from "fs";
 import { join } from "path";
 import type { BlogSection } from "@/app/blog/posts";
-import { postBlogPostToLinkedIn } from "@/lib/distribution/linkedin";
+import { postBlogPostToLinkedIn, commentOnLinkedInPost } from "@/lib/distribution/linkedin";
 
 const TOTAL_PLAN_DAYS = 30;
 
@@ -201,6 +201,37 @@ Return only the post text, nothing else.`;
             durationMs: Date.now() - startedAt,
           },
         });
+
+        // Add a comment with the direct blog link so followers can click through
+        if (linkedInPostUrn) {
+          const blogUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://kitehr.co"}/blog/${generated.slug}`;
+          try {
+            await commentOnLinkedInPost(
+              linkedInIntegration,
+              linkedInPostUrn,
+              `Read the full article here 👉 ${blogUrl}`
+            );
+            await db.cronLog.create({
+              data: {
+                job: "generate-blog-post-linkedin-comment",
+                status: "success",
+                message: `Commented blog link on LinkedIn post for Day ${nextDay}: "${generated.title}"`,
+                details: { planDay: nextDay, slug: generated.slug, linkedInPostUrn, blogUrl },
+                durationMs: Date.now() - startedAt,
+              },
+            });
+          } catch (commentError) {
+            await db.cronLog.create({
+              data: {
+                job: "generate-blog-post-linkedin-comment",
+                status: "error",
+                message: `Failed to comment blog link on LinkedIn post for Day ${nextDay}: ${commentError instanceof Error ? commentError.message : String(commentError)}`,
+                details: { planDay: nextDay, slug: generated.slug, linkedInPostUrn },
+                durationMs: Date.now() - startedAt,
+              },
+            });
+          }
+        }
       }
     } catch (linkedInError) {
       await db.cronLog.create({

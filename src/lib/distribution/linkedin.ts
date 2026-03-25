@@ -159,6 +159,38 @@ export async function postBlogPostToLinkedIn(
   return res.headers.get("x-restli-id") ?? "";
 }
 
+export async function commentOnLinkedInPost(
+  integration: Integration,
+  postUrn: string,
+  commentText: string
+): Promise<void> {
+  const token = await getValidToken(integration);
+  const orgId = integration.externalId?.replace("urn:li:organization:", "") ?? "";
+  const orgUrn = `urn:li:organization:${orgId}`;
+
+  const encodedUrn = encodeURIComponent(postUrn);
+  const res = await fetch(
+    `https://api.linkedin.com/v2/socialActions/${encodedUrn}/comments`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0",
+      },
+      body: JSON.stringify({
+        actor: orgUrn,
+        message: { text: commentText },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => res.statusText);
+    throw new Error(`LinkedIn comment error ${res.status}: ${errText}`);
+  }
+}
+
 export async function closeJobOnLinkedIn(
   integration: Integration,
   externalJobId: string
