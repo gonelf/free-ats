@@ -123,6 +123,7 @@ export function PublicFooter() {
               <li><Link href="/blog" className="text-sm text-white/40 hover:text-white/70 transition-colors">Blog</Link></li>
               <li><Link href="/about" className="text-sm text-white/40 hover:text-white/70 transition-colors">About</Link></li>
               <li><Link href="/faq" className="text-sm text-white/40 hover:text-white/70 transition-colors">FAQ</Link></li>
+              <li><Link href="/privacy" className="text-sm text-white/40 hover:text-white/70 transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
           {/* Use Cases */}
