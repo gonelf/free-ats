@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/admin";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import { Mail, ExternalLink } from "lucide-react";
+import { Mail, ExternalLink, FlaskConical } from "lucide-react";
 import { OutreachStatusBadge } from "@/components/admin/OutreachStatusBadge";
 import { AddLeadButton } from "@/components/admin/AddLeadButton";
 import { RunScraperButton } from "@/components/admin/RunScraperButton";
@@ -63,6 +63,13 @@ export default async function OutreachPage({ searchParams }: Props) {
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <Link
+            href="/admin/outreach/test"
+            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <FlaskConical className="h-4 w-4" />
+            Test
+          </Link>
           <FindContactsButton missingCount={missingContactCount} />
           <BulkSendButton eligibleCount={bulkEligibleCount} />
           <RunScraperButton />
