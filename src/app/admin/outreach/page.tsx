@@ -11,21 +11,23 @@ import { RunSourceScraperButton } from "@/components/admin/RunSourceScraperButto
 
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
 const STAGE_FILTERS = ["all", "startup", "smb", "enterprise"] as const;
+const SOURCE_FILTERS = ["all", "yc", "hn_hiring", "product_hunt", "reddit", "manual"] as const;
 
 interface Props {
-  searchParams: Promise<{ status?: string; page?: string; stage?: string }>;
+  searchParams: Promise<{ status?: string; page?: string; stage?: string; source?: string }>;
 }
 
 export default async function OutreachPage({ searchParams }: Props) {
   await requireAdmin();
 
-  const { status: statusFilter = "all", page: pageStr = "1", stage: stageFilter = "all" } = await searchParams;
+  const { status: statusFilter = "all", page: pageStr = "1", stage: stageFilter = "all", source: sourceFilter = "all" } = await searchParams;
   const page = Math.max(1, parseInt(pageStr, 10));
   const pageSize = 50;
 
   const where = {
     ...(statusFilter !== "all" ? { status: statusFilter } : {}),
     ...(stageFilter !== "all" ? { companyStage: stageFilter } : {}),
+    ...(sourceFilter !== "all" ? { source: sourceFilter } : {}),
   };
 
   const [leads, total, stats, bulkEligibleCount, missingContactCount] = await Promise.all([
@@ -41,8 +43,15 @@ export default async function OutreachPage({ searchParams }: Props) {
       by: ["status"],
       _count: { status: true },
     }),
-    // Leads eligible for bulk send: new + has contact email
-    db.outreachLead.count({ where: { status: "new", contactEmail: { not: null } } }),
+    // Leads eligible for bulk send: new + has contact email, respecting active filters
+    db.outreachLead.count({
+      where: {
+        status: "new",
+        contactEmail: { not: null },
+        ...(stageFilter !== "all" ? { companyStage: stageFilter } : {}),
+        ...(sourceFilter !== "all" ? { source: sourceFilter } : {}),
+      },
+    }),
     // Leads missing contact but have a website we can search
     db.outreachLead.count({ where: { contactEmail: null, website: { not: null } } }),
   ]);
@@ -76,7 +85,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             Test
           </Link>
           <FindContactsButton missingCount={missingContactCount} />
-          <BulkSendButton eligibleCount={bulkEligibleCount} />
+          <BulkSendButton eligibleCount={bulkEligibleCount} sourceFilter={sourceFilter} stageFilter={stageFilter} />
           <RunSourceScraperButton />
           <RunScraperButton />
           <AddLeadButton />
@@ -106,7 +115,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             return (
               <Link
                 key={s}
-                href={`/admin/outreach?status=${s}&stage=${stageFilter}`}
+                href={`/admin/outreach?status=${s}&stage=${stageFilter}&source=${sourceFilter}`}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
                   statusFilter === s
                     ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
@@ -123,7 +132,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           {STAGE_FILTERS.map((s) => (
             <Link
               key={s}
-              href={`/admin/outreach?status=${statusFilter}&stage=${s}`}
+              href={`/admin/outreach?status=${statusFilter}&stage=${s}&source=${sourceFilter}`}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
                 stageFilter === s
                   ? "bg-indigo-600 text-white"
@@ -131,6 +140,22 @@ export default async function OutreachPage({ searchParams }: Props) {
               }`}
             >
               {s}
+            </Link>
+          ))}
+        </div>
+        <div className="flex gap-2 flex-wrap items-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500">Source:</span>
+          {SOURCE_FILTERS.map((s) => (
+            <Link
+              key={s}
+              href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${s}`}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
+                sourceFilter === s
+                  ? "bg-violet-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              {s.replace(/_/g, " ")}
             </Link>
           ))}
         </div>
@@ -261,7 +286,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           <div className="flex gap-2">
             {page > 1 && (
               <Link
-                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&page=${page - 1}`}
+                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&page=${page - 1}`}
                 className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Previous
@@ -269,7 +294,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             )}
             {page < totalPages && (
               <Link
-                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&page=${page + 1}`}
+                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&page=${page + 1}`}
                 className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Next

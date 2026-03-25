@@ -6,6 +6,8 @@ import { Send, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 interface Props {
   eligibleCount: number; // new leads with contact email
+  sourceFilter?: string;
+  stageFilter?: string;
 }
 
 interface ProgressEvent {
@@ -21,7 +23,7 @@ interface ProgressEvent {
   message?: string;
 }
 
-export function BulkSendButton({ eligibleCount }: Props) {
+export function BulkSendButton({ eligibleCount, sourceFilter, stageFilter }: Props) {
   const [open, setOpen] = useState(false);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<ProgressEvent | null>(null);
@@ -45,7 +47,11 @@ export function BulkSendButton({ eligibleCount }: Props) {
     const res = await fetch("/api/admin/outreach/bulk-send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ statuses: ["new"] }),
+      body: JSON.stringify({
+        statuses: ["new"],
+        source: sourceFilter ?? "all",
+        stage: stageFilter ?? "all",
+      }),
     });
 
     if (!res.ok || !res.body) {
@@ -125,7 +131,14 @@ export function BulkSendButton({ eligibleCount }: Props) {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     This will send the default outreach email (with a personalised{" "}
                     <strong>/claim</strong> link) to{" "}
-                    <strong>{eligibleCount} new leads</strong> that have a contact email.
+                    <strong>{eligibleCount} new leads</strong> that have a contact email
+                    {(sourceFilter && sourceFilter !== "all") || (stageFilter && stageFilter !== "all") ? (
+                      <>
+                        {" "}matching your active filter
+                        {sourceFilter && sourceFilter !== "all" && <> (source: <strong>{sourceFilter.replace(/_/g, " ")}</strong>)</>}
+                        {stageFilter && stageFilter !== "all" && <> (stage: <strong>{stageFilter}</strong>)</>}
+                      </>
+                    ) : null}.
                     Leads will be marked as <em>contacted</em>.
                   </p>
                   <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-3 py-2">
