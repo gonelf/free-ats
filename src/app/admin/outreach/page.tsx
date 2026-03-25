@@ -1,9 +1,10 @@
 import { requireAdmin } from "@/lib/admin";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import { Mail, Plus, ExternalLink, RefreshCw } from "lucide-react";
+import { Mail, ExternalLink } from "lucide-react";
 import { OutreachStatusBadge } from "@/components/admin/OutreachStatusBadge";
 import { AddLeadButton } from "@/components/admin/AddLeadButton";
+import { RunScraperButton } from "@/components/admin/RunScraperButton";
 
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
 
@@ -55,7 +56,10 @@ export default async function OutreachPage({ searchParams }: Props) {
             Cold email pipeline for acquiring new companies
           </p>
         </div>
-        <AddLeadButton />
+        <div className="flex items-center gap-2">
+          <RunScraperButton />
+          <AddLeadButton />
+        </div>
       </div>
 
       {/* Stats */}
@@ -102,9 +106,9 @@ export default async function OutreachPage({ searchParams }: Props) {
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               Run the HN scraper or add leads manually to get started.
             </p>
-            <code className="mt-3 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
-              npx tsx scripts/scrape-hn-hiring.ts
-            </code>
+            <div className="mt-4">
+              <RunScraperButton />
+            </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
