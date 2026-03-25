@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { buildOutreachEmailBody, DEFAULT_OUTREACH_SUBJECT } from "@/lib/outreach-email-template";
 import { useRouter } from "next/navigation";
 import {
   RefreshCw,
@@ -62,61 +63,18 @@ export function TestLeadPanel({ lead: initialLead, org: initialOrg, claimUrl: in
     setLoading("send");
     setMessage(null);
     try {
-      // Use {{CLAIM_URL}} — the send route replaces it with the persisted token URL
-      const body = `<!-- Greeting -->
-<p style="margin:0 0 20px;font-size:16px;color:#111827;line-height:1.6;">
-  Hi <strong>Gonelf</strong>,
-</p>
-<p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">
-  Saw you&rsquo;re hiring for <strong>Senior Software Engineer</strong>. We built KiteHR — a completely
-  free ATS — and set up a workspace for you so you can start managing applications today,
-  without the usual setup headache.
-</p>
-<table cellpadding="0" cellspacing="0" role="presentation"
-       style="width:100%;margin:0 0 28px;background:#f5f3ff;border-radius:14px;padding:20px 24px;">
-  <tr><td>
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
-      <span style="font-size:17px;">📋</span>
-      <span style="font-size:14px;color:#3730a3;font-weight:500;">Unlimited jobs, candidates &amp; users</span>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
-      <span style="font-size:17px;">⚡</span>
-      <span style="font-size:14px;color:#3730a3;font-weight:500;">Kanban pipeline + AI-assisted screening</span>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:10px;">
-      <span style="font-size:17px;">🔒</span>
-      <span style="font-size:14px;color:#3730a3;font-weight:500;">Free forever — no credit card, no trial</span>
-    </div>
-  </td></tr>
-</table>
-<table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;margin:0 0 28px;">
-  <tr>
-    <td align="center">
-      <a href="{{CLAIM_URL}}"
-         style="display:inline-block;background:#4f46e5;color:#ffffff;
-                padding:16px 40px;border-radius:12px;font-size:16px;
-                font-weight:700;text-decoration:none;letter-spacing:-0.2px;
-                box-shadow:0 4px 14px rgba(79,70,229,0.35);">
-        Claim your free workspace &rarr;
-      </a>
-    </td>
-  </tr>
-</table>
-<p style="margin:0;font-size:14px;color:#9ca3af;text-align:center;">
-  No per-seat pricing. No hidden fees. Most teams are set up in under 10 minutes.
-</p>
-<p style="margin:24px 0 0;font-size:14px;color:#9ca3af;">&mdash; The KiteHR team</p>
-<p style="margin:16px 0 0;font-size:13px;color:#d1d5db;line-height:1.6;border-top:1px solid #f3f4f6;padding-top:16px;">
-  <em>P.S. Yes, this email was sent by a robot. We&rsquo;re a tiny team, so we automate
-  everything we possibly can &mdash; which is exactly why we built KiteHR.
-  We figured if automation is good enough for our outreach, it&rsquo;s good enough for your hiring too. 🤖</em>
-</p>`;
+      // Use {{CLAIM_URL}} as placeholder — the send route replaces it with the persisted token URL
+      const body = buildOutreachEmailBody({
+        companyName: "Acme Corp (test)",
+        hiringFor: "Senior Software Engineer",
+        claimUrl: "{{CLAIM_URL}}",
+      });
 
       const res = await fetch(`/api/admin/outreach/${lead.id}/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: `Acme Corp — your free ATS workspace is ready`,
+          subject: DEFAULT_OUTREACH_SUBJECT("Acme Corp (test)"),
           body,
         }),
       });

@@ -1,13 +1,11 @@
 import { NextRequest } from "next/server";
 import { getAdminUser } from "@/lib/admin";
 import { db } from "@/lib/db";
-import { sendOutreachEmail, buildOutreachEmailBody } from "@/lib/outreach-mail";
+import { sendOutreachEmail } from "@/lib/outreach-mail";
+import { buildOutreachEmailBody, DEFAULT_OUTREACH_SUBJECT } from "@/lib/outreach-email-template";
 import { randomBytes } from "crypto";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.kitehr.co";
-
-const DEFAULT_SUBJECT = (companyName: string) =>
-  `${companyName} — your free ATS workspace is ready`;
 
 function send(controller: ReadableStreamDefaultController, data: object) {
   controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
@@ -72,7 +70,7 @@ export async function POST(request: NextRequest) {
           }
 
           const claimUrl = `${APP_URL}/claim?token=${claimToken}`;
-          const subject = DEFAULT_SUBJECT(lead.companyName);
+          const subject = DEFAULT_OUTREACH_SUBJECT(lead.companyName);
           const body = buildOutreachEmailBody({
             companyName: lead.companyName,
             hiringFor: lead.hiringFor,

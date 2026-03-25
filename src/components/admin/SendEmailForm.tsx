@@ -3,66 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
-
-const DEFAULT_SUBJECT = (companyName: string) =>
-  `${companyName} — your free ATS workspace is ready`;
-
-// Returns the styled HTML body that matches the bulk-send template.
-// The textarea shows the HTML so admins can customise it if needed.
-const DEFAULT_BODY = (companyName: string, hiringFor: string, claimUrl: string) => {
-  const role = hiringFor?.split(",")[0]?.trim() || "your open roles";
-  return `<!-- Greeting -->
-<p style="margin:0 0 20px;font-size:16px;color:#111827;line-height:1.6;">
-  Hi <strong>${companyName}</strong>,
-</p>
-
-<!-- Hook -->
-<p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">
-  Saw you're hiring for <strong>${role}</strong>. We built KiteHR — a completely
-  free ATS — and set up a workspace for you so you can start managing applications today,
-  without the usual setup headache.
-</p>
-
-<!-- Feature bullets -->
-<table cellpadding="0" cellspacing="0" role="presentation"
-       style="width:100%;margin:0 0 28px;background:#f5f3ff;border-radius:14px;padding:20px 24px;">
-  <tr><td>
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
-      <span style="font-size:17px;">📋</span>
-      <span style="font-size:14px;color:#3730a3;font-weight:500;">Unlimited jobs, candidates &amp; users</span>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
-      <span style="font-size:17px;">⚡</span>
-      <span style="font-size:14px;color:#3730a3;font-weight:500;">Kanban pipeline + AI-assisted screening</span>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:10px;">
-      <span style="font-size:17px;">🔒</span>
-      <span style="font-size:14px;color:#3730a3;font-weight:500;">Free forever — no credit card, no trial</span>
-    </div>
-  </td></tr>
-</table>
-
-<!-- CTA button -->
-<table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;margin:0 0 28px;">
-  <tr>
-    <td align="center">
-      <a href="${claimUrl}"
-         style="display:inline-block;background:#4f46e5;color:#ffffff;
-                padding:16px 40px;border-radius:12px;font-size:16px;
-                font-weight:700;text-decoration:none;letter-spacing:-0.2px;
-                box-shadow:0 4px 14px rgba(79,70,229,0.35);">
-        Claim your free workspace &rarr;
-      </a>
-    </td>
-  </tr>
-</table>
-
-<!-- Sign-off -->
-<p style="margin:0;font-size:14px;color:#9ca3af;text-align:center;">
-  No per-seat pricing. No hidden fees. Most teams are set up in under 10 minutes.
-</p>
-<p style="margin:24px 0 0;font-size:14px;color:#9ca3af;">&mdash; The KiteHR team</p>`;
-};
+import { buildOutreachEmailBody, DEFAULT_OUTREACH_SUBJECT } from "@/lib/outreach-email-template";
 
 interface Props {
   leadId: string;
@@ -72,8 +13,8 @@ interface Props {
 }
 
 export function SendEmailForm({ leadId, companyName, hiringFor, claimUrl }: Props) {
-  const [subject, setSubject] = useState(DEFAULT_SUBJECT(companyName));
-  const [body, setBody] = useState(DEFAULT_BODY(companyName, hiringFor, claimUrl));
+  const [subject, setSubject] = useState(DEFAULT_OUTREACH_SUBJECT(companyName));
+  const [body, setBody] = useState(buildOutreachEmailBody({ companyName, hiringFor, claimUrl }));
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
