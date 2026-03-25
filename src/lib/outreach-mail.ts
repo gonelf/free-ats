@@ -1,7 +1,8 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@kitehr.co";
+// RESEND_FROM_EMAIL can include a display name, e.g. "Alex from KiteHR <alex@kitehr.co>"
+const fromEmail = process.env.RESEND_FROM_EMAIL || "The KiteHR Team <hello@kitehr.co>";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.kitehr.co";
 
 interface SendOutreachEmailParams {
@@ -197,6 +198,13 @@ export function buildOutreachEmailBody({
     <!-- Sign-off -->
     <p style="margin:24px 0 0;font-size:14px;color:#9ca3af;">
       &mdash; The KiteHR team
+    </p>
+
+    <!-- P.S. joke -->
+    <p style="margin:16px 0 0;font-size:13px;color:#d1d5db;line-height:1.6;border-top:1px solid #f3f4f6;padding-top:16px;">
+      <em>P.S. Yes, this email was sent by a robot. We&rsquo;re a tiny team, so we automate
+      everything we possibly can &mdash; which is exactly why we built KiteHR.
+      We figured if automation is good enough for our outreach, it&rsquo;s good enough for your hiring too. 🤖</em>
     </p>
   `;
 }
