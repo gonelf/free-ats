@@ -3,9 +3,20 @@ import type { Integration, Job, Organization } from "@prisma/client";
 
 type JobWithOrg = Job & { organization: Organization };
 
+// Shared shape accepted by both Integration (client orgs) and
+// PlatformIntegration (KiteHR's own connections).
+export interface LinkedInTokenHolder {
+  id: string;
+  accessToken: string | null;
+  refreshToken: string | null;
+  tokenExpiresAt: Date | null;
+  externalId: string | null;
+}
+
 async function refreshLinkedInToken(
-  integration: Integration
-): Promise<Integration> {
+  integration: LinkedInTokenHolder,
+  isPlatform: boolean
+): Promise<LinkedInTokenHolder> {
   if (!integration.refreshToken) throw new Error("No refresh token");
 
   const res = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
@@ -23,25 +34,29 @@ async function refreshLinkedInToken(
 
   const tokens = await res.json();
   const tokenExpiresAt = new Date(Date.now() + (tokens.expires_in ?? 5183944) * 1000);
+  const data = {
+    accessToken: tokens.access_token,
+    refreshToken: tokens.refresh_token ?? integration.refreshToken,
+    tokenExpiresAt,
+  };
 
-  return db.integration.update({
-    where: { id: integration.id },
-    data: {
-      accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token ?? integration.refreshToken,
-      tokenExpiresAt,
-    },
-  });
+  if (isPlatform) {
+    return db.platformIntegration.update({ where: { id: integration.id }, data });
+  }
+  return db.integration.update({ where: { id: integration.id }, data });
 }
 
-async function getValidToken(integration: Integration): Promise<string> {
+async function getValidToken(
+  integration: LinkedInTokenHolder,
+  isPlatform = false
+): Promise<string> {
   const fiveMinutes = 5 * 60 * 1000;
   const expiresSoon =
     integration.tokenExpiresAt &&
     integration.tokenExpiresAt.getTime() - Date.now() < fiveMinutes;
 
   if (expiresSoon && integration.refreshToken) {
-    const refreshed = await refreshLinkedInToken(integration);
+    const refreshed = await refreshLinkedInToken(integration, isPlatform);
     return refreshed.accessToken!;
   }
 
@@ -52,7 +67,7 @@ export async function postJobToLinkedIn(
   integration: Integration,
   job: JobWithOrg
 ): Promise<string> {
-  const token = await getValidToken(integration);
+  const token = await getValidToken(integration, false);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const applyUrl = `${appUrl}/${job.organization.slug}/jobs/${job.slug ?? job.id}`;
 
@@ -108,13 +123,13 @@ export async function postJobToLinkedIn(
 }
 
 export async function postBlogPostToLinkedIn(
-  integration: Integration,
+  integration: LinkedInTokenHolder,
   text: string,
   blogTitle: string,
   blogDescription: string,
   blogSlug: string
 ): Promise<string> {
-  const token = await getValidToken(integration);
+  const token = await getValidToken(integration, true);
   const orgId = integration.externalId?.replace("urn:li:organization:", "") ?? "";
   const orgUrn = `urn:li:organization:${orgId}`;
   const blogUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://kitehr.com"}/blog/${blogSlug}`;
@@ -160,11 +175,11 @@ export async function postBlogPostToLinkedIn(
 }
 
 export async function commentOnLinkedInPost(
-  integration: Integration,
+  integration: LinkedInTokenHolder,
   postUrn: string,
   commentText: string
 ): Promise<void> {
-  const token = await getValidToken(integration);
+  const token = await getValidToken(integration, true);
   const orgId = integration.externalId?.replace("urn:li:organization:", "") ?? "";
   const orgUrn = `urn:li:organization:${orgId}`;
 

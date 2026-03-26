@@ -9,29 +9,17 @@ import type { BlogSection } from "@/app/blog/posts";
 export async function triggerLinkedInPost(postId: string) {
   await requireAdmin();
 
-  const kitehrOrgId = process.env.KITEHR_ORGANIZATION_ID;
-  if (!kitehrOrgId) throw new Error("KITEHR_ORGANIZATION_ID is not set");
-
   const post = await db.generatedBlogPost.findUnique({ where: { id: postId } });
   if (!post) throw new Error("Blog post not found");
 
-  const linkedInIntegration = await db.integration.findFirst({
-    where: { organizationId: kitehrOrgId, platform: "linkedin", enabled: true },
+  const linkedInIntegration = await db.platformIntegration.findUnique({
+    where: { platform: "linkedin_blog" },
   });
 
-  if (!linkedInIntegration?.accessToken || !linkedInIntegration.externalId) {
-    // Log details to help diagnose KITEHR_ORGANIZATION_ID mismatches in Vercel logs
-    const allLinkedIn = await db.integration.findMany({
-      where: { platform: "linkedin" },
-      select: { organizationId: true, enabled: true, externalId: true, tokenExpiresAt: true },
-    });
-    console.error(
-      `[LinkedIn] No active integration found. KITEHR_ORGANIZATION_ID=${kitehrOrgId}. ` +
-      `All LinkedIn integrations in DB: ${JSON.stringify(allLinkedIn)}`
-    );
+  if (!linkedInIntegration?.accessToken || !linkedInIntegration.externalId || !linkedInIntegration.enabled) {
     throw new Error(
-      `No active LinkedIn integration found for KiteHR (org=${kitehrOrgId}). ` +
-      `Found ${allLinkedIn.length} LinkedIn integration(s) in DB — check Vercel logs for details.`
+      "KiteHR LinkedIn integration is not connected. " +
+      "Go to Admin → Connect LinkedIn to set it up."
     );
   }
 
@@ -102,4 +90,28 @@ export async function getGeneratedBlogPosts() {
     select: { id: true, title: true, slug: true, planDay: true, createdAt: true },
     orderBy: { planDay: "asc" },
   });
+}
+
+export async function getLinkedInStatus() {
+  await requireAdmin();
+
+  const integration = await db.platformIntegration.findUnique({
+    where: { platform: "linkedin_blog" },
+    select: { enabled: true, externalId: true, tokenExpiresAt: true },
+  });
+
+  if (!integration) return { connected: false } as const;
+
+  return {
+    connected: true,
+    enabled: integration.enabled,
+    externalId: integration.externalId,
+    tokenExpiresAt: integration.tokenExpiresAt,
+  } as const;
+}
+
+export async function disconnectLinkedIn() {
+  await requireAdmin();
+
+  await db.platformIntegration.delete({ where: { platform: "linkedin_blog" } });
 }

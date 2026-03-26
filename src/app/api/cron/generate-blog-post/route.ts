@@ -147,14 +147,12 @@ Write the full post following the outline in the brief. Target the word count sp
   });
 
   // Post to KiteHR's LinkedIn company page
-  const kitehrOrgId = process.env.KITEHR_ORGANIZATION_ID;
-  if (kitehrOrgId) {
-    try {
-      const linkedInIntegration = await db.integration.findFirst({
-        where: { organizationId: kitehrOrgId, platform: "linkedin", enabled: true },
-      });
+  try {
+    const linkedInIntegration = await db.platformIntegration.findUnique({
+      where: { platform: "linkedin_blog" },
+    });
 
-      if (linkedInIntegration?.accessToken && linkedInIntegration.externalId) {
+    if (linkedInIntegration?.accessToken && linkedInIntegration.externalId && linkedInIntegration.enabled) {
         const blogText = generated.content
           .map((section: BlogSection) =>
             Array.isArray(section.content)
@@ -244,7 +242,6 @@ Return only the post text, nothing else.`;
         },
       });
     }
-  }
 
   return NextResponse.json({
     planDay: nextDay,

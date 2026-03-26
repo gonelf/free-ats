@@ -359,6 +359,22 @@ model FeatureFlag {
   @@index([key])
 }
 
+// ============ PLATFORM-LEVEL INTEGRATIONS ============
+// Used for KiteHR's own connections (e.g. posting blog content to the KiteHR
+// LinkedIn company page). Not tied to any client organization.
+
+model PlatformIntegration {
+  id             String    @id @default(cuid())
+  platform       String    @unique  // e.g. "linkedin_blog"
+  accessToken    String?   @db.Text
+  refreshToken   String?   @db.Text
+  tokenExpiresAt DateTime?
+  externalId     String?   // LinkedIn organization URN
+  enabled        Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
 // ============ JOB DISTRIBUTION ============
 
 model Integration {
