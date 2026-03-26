@@ -59,23 +59,14 @@ export async function GET(request: NextRequest) {
   const expiresIn: number = tokens.expires_in ?? 5183944;
   const tokenExpiresAt = new Date(Date.now() + expiresIn * 1000);
 
-  // Fetch the LinkedIn organization URN for the authenticated user
-  let linkedinOrgUrn: string | undefined;
-  try {
-    const aclRes = await fetch(
-      "https://api.linkedin.com/v2/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&projection=(elements*(organization~(id,localizedName)))",
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
-    if (aclRes.ok) {
-      const aclData = await aclRes.json();
-      const firstOrg = aclData?.elements?.[0];
-      if (firstOrg?.organization) {
-        linkedinOrgUrn = `urn:li:organization:${firstOrg.organization.id}`;
-      }
-    }
-  } catch {
-    // Non-fatal — admin can reconnect
-  }
+  // Derive the LinkedIn organization URN.
+  // KITEHR_LINKEDIN_ORG_ID should be the numeric LinkedIn org ID (e.g. 112314616).
+  // We can't auto-fetch it without the r_organization_admin scope, so it must be
+  // configured as an env var.
+  const kitehrLinkedInOrgId = process.env.KITEHR_LINKEDIN_ORG_ID;
+  const linkedinOrgUrn = kitehrLinkedInOrgId
+    ? `urn:li:organization:${kitehrLinkedInOrgId}`
+    : undefined;
 
   await db.platformIntegration.upsert({
     where: { platform: "linkedin_blog" },

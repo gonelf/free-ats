@@ -19,7 +19,7 @@ export async function GET() {
     client_id: clientId,
     redirect_uri: redirectUri,
     state,
-    scope: "r_organization_admin rw_organization_admin w_member_social w_organization_social",
+    scope: "w_member_social",
   });
 
   const response = NextResponse.redirect(
