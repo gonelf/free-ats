@@ -9,6 +9,7 @@ import { getAllInterviewQuestionsSlugs } from "./interview-questions/interview-q
 import { getAllHowToHireSlugs } from "./how-to-hire/how-to-hire-data";
 import { getAllHrEmailTemplateSlugs } from "./hr-email-templates/hr-email-templates-data";
 import { SALARY_CITIES } from "./salaries/salary-data";
+import { getAllAlternativeSlugs } from "./alternatives/alternatives-data";
 
 const BASE_URL = "https://kitehr.co";
 
@@ -57,6 +58,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
   ];
+
+  const alternativesRoutes: MetadataRoute.Sitemap = getAllAlternativeSlugs().map((slug) => ({
+    url: `${BASE_URL}/alternatives/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
 
   const vsRoutes: MetadataRoute.Sitemap = getAllCompetitorSlugs().map((slug) => ({
     url: `${BASE_URL}/vs/${slug}`,
@@ -210,6 +218,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticRoutes,
+    ...alternativesRoutes,
     ...vsRoutes,
     ...featureRoutes,
     ...forRoutes,
