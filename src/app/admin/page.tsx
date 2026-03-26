@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { Building2, Users, Briefcase, UserCheck, FileText, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { LinkedInPostTrigger } from "@/components/admin/LinkedInPostTrigger";
-import { getGeneratedBlogPosts } from "@/app/admin/actions/linkedin";
+import { getGeneratedBlogPosts, getLinkedInStatus } from "@/app/admin/actions/linkedin";
 
 
 export default async function AdminOverviewPage() {
@@ -42,7 +42,10 @@ export default async function AdminOverviewPage() {
     db.job.count({ where: { status: "OPEN" } }),
   ]);
 
-  const blogPosts = await getGeneratedBlogPosts();
+  const [blogPosts, linkedInStatus] = await Promise.all([
+    getGeneratedBlogPosts(),
+    getLinkedInStatus(),
+  ]);
 
 
   const stats = [
@@ -134,7 +137,7 @@ export default async function AdminOverviewPage() {
       <div className="mt-10">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Content &amp; Distribution</h2>
         <div className="max-w-sm">
-          <LinkedInPostTrigger posts={blogPosts} />
+          <LinkedInPostTrigger posts={blogPosts} linkedInStatus={linkedInStatus} />
         </div>
       </div>
     </div>
