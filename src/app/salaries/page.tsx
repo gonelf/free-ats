@@ -2,7 +2,10 @@ import Link from "next/link";
 import { ArrowRight, MapPin, Briefcase, TrendingDown } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
 import { SALARY_CITIES, SALARY_ROLES, getAllCategories } from "./salary-data";
+import { db } from "@/lib/db";
 import type { Metadata } from "next";
+
+export const revalidate = 3600; // 1-hour ISR
 
 export const metadata: Metadata = {
   title: "Salary Guide: 5,000+ Role & City Benchmarks — KiteHR",
@@ -22,11 +25,28 @@ const CATEGORY_ICONS: Record<string, string> = {
   Legal: "⚖️",
 };
 
-export default function SalariesIndexPage() {
+export default async function SalariesIndexPage() {
+  // Only link to cities/roles that have at least one published entry,
+  // so Google never follows a link that leads to a 404.
+  let publishedCitySlugs = new Set<string>();
+  let publishedRoleSlugs = new Set<string>();
+  try {
+    const published = await db.salaryEntry.findMany({
+      where: { publishedAt: { not: null } },
+      select: { citySlug: true, roleSlug: true },
+    });
+    for (const e of published) {
+      publishedCitySlugs.add(e.citySlug);
+      publishedRoleSlugs.add(e.roleSlug);
+    }
+  } catch {
+    // Table not yet migrated — fall through with empty sets (show no links)
+  }
+
   const categories = getAllCategories();
-  const tier1Cities = SALARY_CITIES.filter((c) => c.tier === 1);
-  const tier2Cities = SALARY_CITIES.filter((c) => c.tier === 2);
-  const tier3Cities = SALARY_CITIES.filter((c) => c.tier === 3);
+  const tier1Cities = SALARY_CITIES.filter((c) => c.tier === 1 && publishedCitySlugs.has(c.slug));
+  const tier2Cities = SALARY_CITIES.filter((c) => c.tier === 2 && publishedCitySlugs.has(c.slug));
+  const tier3Cities = SALARY_CITIES.filter((c) => c.tier === 3 && publishedCitySlugs.has(c.slug));
 
   return (
     <div className="min-h-screen bg-[#080c10] text-white">
@@ -40,7 +60,7 @@ export default function SalariesIndexPage() {
         <div className="relative mx-auto max-w-5xl px-6 pt-20 pb-14 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-6">
             <TrendingDown className="h-3.5 w-3.5" />
-            {SALARY_CITIES.length} Cities · {SALARY_ROLES.length} Roles
+            {publishedCitySlugs.size} Cities · {publishedRoleSlugs.size} Roles
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-5">
             Salary Benchmarks &{" "}
@@ -67,7 +87,7 @@ export default function SalariesIndexPage() {
         <div className="mx-auto max-w-5xl px-6">
           <h2 className="text-xl font-bold mb-2">Browse by City</h2>
           <p className="text-sm text-white/40 mb-8">
-            Select a city to see all {SALARY_ROLES.length} role benchmarks and savings data.
+            Select a city to see all {publishedRoleSlugs.size} role benchmarks and savings data.
           </p>
 
           {/* Tier 1 */}
@@ -140,11 +160,12 @@ export default function SalariesIndexPage() {
         <div className="mx-auto max-w-5xl px-6">
           <h2 className="text-xl font-bold mb-2">Browse by Role</h2>
           <p className="text-sm text-white/40 mb-8">
-            {SALARY_ROLES.length} roles across {categories.length} categories.
+            {publishedRoleSlugs.size} roles across {categories.length} categories.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {categories.map((category) => {
-              const roles = SALARY_ROLES.filter((r) => r.category === category);
+              const roles = SALARY_ROLES.filter((r) => r.category === category && publishedRoleSlugs.has(r.slug));
+              if (roles.length === 0) return null;
               return (
                 <div
                   key={category}
