@@ -120,6 +120,16 @@ export function LinkedInPostTrigger({ posts }: LinkedInPostTriggerProps) {
             <XCircle className="h-4 w-4 shrink-0 mt-0.5" />
             <span>{errorMsg}</span>
           </div>
+          {errorMsg.includes("No active LinkedIn integration") && (
+            <p className="mt-2 text-xs text-red-600 dark:text-red-500">
+              Connect LinkedIn from the KiteHR org&apos;s{" "}
+              <a href="/settings" className="underline underline-offset-2">
+                Settings page
+              </a>
+              , then ensure <code className="font-mono">KITEHR_ORGANIZATION_ID</code> matches
+              the DB org ID or the LinkedIn org numeric ID.
+            </p>
+          )}
         </div>
       )}
     </div>

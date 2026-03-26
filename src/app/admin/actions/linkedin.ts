@@ -15,8 +15,19 @@ export async function triggerLinkedInPost(postId: string) {
   const post = await db.generatedBlogPost.findUnique({ where: { id: postId } });
   if (!post) throw new Error("Blog post not found");
 
+  // KITEHR_ORGANIZATION_ID can be either the internal DB org ID or the LinkedIn
+  // organization numeric ID (e.g. 112314616). Try both so a misconfigured env
+  // var still finds the integration via its LinkedIn URN.
+  const kitehrLinkedInUrn = `urn:li:organization:${kitehrOrgId}`;
   const linkedInIntegration = await db.integration.findFirst({
-    where: { organizationId: kitehrOrgId, platform: "linkedin", enabled: true },
+    where: {
+      platform: "linkedin",
+      enabled: true,
+      OR: [
+        { organizationId: kitehrOrgId },
+        { externalId: kitehrLinkedInUrn },
+      ],
+    },
   });
 
   if (!linkedInIntegration?.accessToken || !linkedInIntegration.externalId) {
@@ -30,8 +41,9 @@ export async function triggerLinkedInPost(postId: string) {
       `All LinkedIn integrations in DB: ${JSON.stringify(allLinkedIn)}`
     );
     throw new Error(
-      `No active LinkedIn integration found for KiteHR (org=${kitehrOrgId}). ` +
-      `Found ${allLinkedIn.length} LinkedIn integration(s) in DB — check Vercel logs for details.`
+      `No active LinkedIn integration found for KiteHR (org=${kitehrOrgId} / URN=${kitehrLinkedInUrn}). ` +
+      `Found ${allLinkedIn.length} LinkedIn integration(s) in DB — ` +
+      `connect LinkedIn from the KiteHR org's Settings page, then verify KITEHR_ORGANIZATION_ID matches the DB org ID or the LinkedIn org number.`
     );
   }
 

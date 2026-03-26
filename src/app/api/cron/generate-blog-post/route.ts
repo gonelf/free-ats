@@ -151,7 +151,14 @@ Write the full post following the outline in the brief. Target the word count sp
   if (kitehrOrgId) {
     try {
       const linkedInIntegration = await db.integration.findFirst({
-        where: { organizationId: kitehrOrgId, platform: "linkedin", enabled: true },
+        where: {
+          platform: "linkedin",
+          enabled: true,
+          OR: [
+            { organizationId: kitehrOrgId },
+            { externalId: `urn:li:organization:${kitehrOrgId}` },
+          ],
+        },
       });
 
       if (linkedInIntegration?.accessToken && linkedInIntegration.externalId) {
