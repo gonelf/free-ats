@@ -207,7 +207,7 @@ export function IndexingClient({ pages }: IndexingClientProps) {
                           {result.status === "success" ? (
                             <CheckCircle2 className="h-4 w-4 text-green-500" />
                           ) : (
-                            <XCircle className="h-4 w-4 text-red-500" title={result.errorMessage ?? ""} />
+                            <XCircle className="h-4 w-4 text-red-500" aria-label={result.errorMessage ?? ""} />
                           )}
                         </span>
                       )}
