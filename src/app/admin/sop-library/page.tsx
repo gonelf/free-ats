@@ -7,7 +7,8 @@ export default async function SopLibraryPage() {
 
   let totalInDb = 0;
   let publishedCount = 0;
-  let byPhase: { phase: number; _count: { _all: number } }[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let byPhase: any[] = [];
 
   try {
     totalInDb = await db.generatedSop.count();
