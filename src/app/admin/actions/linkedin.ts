@@ -97,16 +97,21 @@ export async function getLinkedInStatus() {
 
   const integration = await db.platformIntegration.findUnique({
     where: { platform: "linkedin_blog" },
-    select: { enabled: true, externalId: true, tokenExpiresAt: true },
+    select: { enabled: true, externalId: true, tokenExpiresAt: true, accessToken: true },
   });
 
   if (!integration) return { connected: false } as const;
 
+  const hasToken = !!integration.accessToken;
+  const hasOrgId = !!integration.externalId;
+
   return {
     connected: true,
+    ready: hasToken && hasOrgId && integration.enabled,
     enabled: integration.enabled,
     externalId: integration.externalId,
     tokenExpiresAt: integration.tokenExpiresAt,
+    missingOrgId: !hasOrgId,
   } as const;
 }
 

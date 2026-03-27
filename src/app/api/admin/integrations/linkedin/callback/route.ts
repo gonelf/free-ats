@@ -59,14 +59,31 @@ export async function GET(request: NextRequest) {
   const expiresIn: number = tokens.expires_in ?? 5183944;
   const tokenExpiresAt = new Date(Date.now() + expiresIn * 1000);
 
-  // Derive the LinkedIn organization URN.
-  // KITEHR_LINKEDIN_ORG_ID should be the numeric LinkedIn org ID (e.g. 112314616).
-  // We can't auto-fetch it without the r_organization_admin scope, so it must be
-  // configured as an env var.
-  const kitehrLinkedInOrgId = process.env.KITEHR_LINKEDIN_ORG_ID;
-  const linkedinOrgUrn = kitehrLinkedInOrgId
-    ? `urn:li:organization:${kitehrLinkedInOrgId}`
-    : undefined;
+  // Auto-fetch the LinkedIn organization URN via the ACL API (requires r_organization_admin scope).
+  // Fall back to KITEHR_LINKEDIN_ORG_ID env var if the API call fails.
+  let linkedinOrgUrn: string | undefined;
+  try {
+    const aclRes = await fetch(
+      "https://api.linkedin.com/v2/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&projection=(elements*(organization~(id,localizedName)))",
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (aclRes.ok) {
+      const aclData = await aclRes.json();
+      const firstOrg = aclData?.elements?.[0];
+      if (firstOrg?.organization?.id) {
+        linkedinOrgUrn = `urn:li:organization:${firstOrg.organization.id}`;
+      }
+    }
+  } catch {
+    // Non-fatal — fall back to env var below
+  }
+
+  if (!linkedinOrgUrn) {
+    const kitehrLinkedInOrgId = process.env.KITEHR_LINKEDIN_ORG_ID;
+    if (kitehrLinkedInOrgId) {
+      linkedinOrgUrn = `urn:li:organization:${kitehrLinkedInOrgId}`;
+    }
+  }
 
   await db.platformIntegration.upsert({
     where: { platform: "linkedin_blog" },
