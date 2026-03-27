@@ -22,6 +22,11 @@ import {
   Mail,
   Globe,
   TrendingUp,
+  ExternalLink,
+  BookOpen,
+  HelpCircle,
+  Newspaper,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -47,6 +52,16 @@ const navItems = [
 const pseoItems = [
   { href: "/admin/salary-data", label: "Salary Data", icon: DollarSign, exact: false },
   { href: "/admin/sop-library", label: "SOP Library", icon: FileText, exact: false },
+];
+
+const pseoLivePages = [
+  { href: "/salaries", label: "Salaries", icon: DollarSign },
+  { href: "/hr-sop", label: "HR SOP Library", icon: FileText },
+  { href: "/hr-email-templates", label: "Email Templates", icon: Mail },
+  { href: "/interview-questions", label: "Interview Questions", icon: HelpCircle },
+  { href: "/job-descriptions", label: "Job Descriptions", icon: Briefcase },
+  { href: "/how-to-hire", label: "How to Hire", icon: GraduationCap },
+  { href: "/blog", label: "Blog", icon: Newspaper },
 ];
 
 interface AdminSidebarProps {
@@ -138,6 +153,34 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
                     <Icon className="h-4 w-4 shrink-0" />
                     {item.label}
                   </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Live public pages */}
+          <div className="flex items-center gap-2 px-3 mt-3 mb-1">
+            <ExternalLink className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+            <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              Live Pages
+            </span>
+          </div>
+          <ul className="space-y-1">
+            {pseoLivePages.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    <span className="flex-1">{item.label}</span>
+                    <ExternalLink className="h-3 w-3 shrink-0 opacity-50" />
+                  </a>
                 </li>
               );
             })}
