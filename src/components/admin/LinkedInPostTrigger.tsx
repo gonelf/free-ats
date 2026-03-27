@@ -14,9 +14,11 @@ interface Post {
 
 interface LinkedInStatus {
   connected: boolean;
+  ready?: boolean;
   enabled?: boolean;
   externalId?: string | null;
   tokenExpiresAt?: Date | null;
+  missingOrgId?: boolean;
 }
 
 interface LinkedInPostTriggerProps {
@@ -77,10 +79,17 @@ export function LinkedInPostTrigger({ posts, linkedInStatus }: LinkedInPostTrigg
         </div>
 
         {isConnected ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-            Connected
-          </span>
+          linkedInStatus.ready ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              Connected
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
+              Incomplete
+            </span>
+          )
         ) : (
           <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
             Not connected
@@ -98,6 +107,11 @@ export function LinkedInPostTrigger({ posts, linkedInStatus }: LinkedInPostTrigg
         </a>
       ) : (
         <div className="space-y-3">
+          {linkedInStatus.missingOrgId && (
+            <div className="rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 p-3 text-xs text-yellow-700 dark:text-yellow-400">
+              LinkedIn organization ID not found. Disconnect and reconnect — make sure you are logged into LinkedIn as an admin of the KiteHR company page. If the issue persists, set <code className="font-mono">KITEHR_LINKEDIN_ORG_ID</code> in your environment variables.
+            </div>
+          )}
           {linkedInStatus.externalId && (
             <p className="text-xs text-gray-500 dark:text-gray-400 font-mono truncate">
               {linkedInStatus.externalId}
