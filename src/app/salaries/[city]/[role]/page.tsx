@@ -121,6 +121,9 @@ export default async function SalaryLeafPage({ params }: Props) {
         },
         employmentType: "FULL_TIME",
         datePosted: entry.publishedAt?.toISOString().split("T")[0],
+        validThrough: entry.publishedAt
+          ? new Date(new Date(entry.publishedAt).setFullYear(new Date(entry.publishedAt).getFullYear() + 1)).toISOString().split("T")[0]
+          : undefined,
         hiringOrganization: {
           "@type": "Organization",
           name: "KiteHR",
