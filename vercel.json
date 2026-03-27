@@ -8,6 +8,9 @@
     },
     "src/app/api/cron/generate-blog-post": {
       "maxDuration": 60
+    },
+    "src/app/api/admin/sop-populate": {
+      "maxDuration": 300
     }
   },
   "crons": [
@@ -42,6 +45,10 @@
     {
       "path": "/api/cron/scrape-yc-companies",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/cron/publish-sop-pages",
+      "schedule": "0 10 */2 * *"
     }
   ]
 }

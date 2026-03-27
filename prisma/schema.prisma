@@ -331,6 +331,30 @@ model GeneratedBlogPost {
   @@index([publishedAt])
 }
 
+model GeneratedSop {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  category         String    // "hiring" | "hr-ops" | "compliance" | "onboarding" | "manager" | "benefits" | "international"
+  phase            Int
+  metaTitle        String
+  metaDescription  String
+  description      String    @db.Text
+  purpose          String    @db.Text
+  scope            String    @db.Text
+  steps            Json      // SopStep[]
+  responsibleRoles String[]
+  frequency        String
+  estimatedTime    String
+  relatedSlugs     String[]
+  publishedAt      DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([publishedAt])
+  @@index([phase])
+  @@index([category])
+}
+
 enum EmailType {
   OUTREACH
   INTERVIEW_INVITE
