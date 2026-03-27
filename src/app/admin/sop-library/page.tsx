@@ -5,14 +5,21 @@ import { SopPopulateForm } from "@/components/admin/SopPopulateForm";
 export default async function SopLibraryPage() {
   await requireAdmin();
 
-  const totalInDb = await db.generatedSop.count();
-  const publishedCount = await db.generatedSop.count({ where: { publishedAt: { not: null } } });
+  let totalInDb = 0;
+  let publishedCount = 0;
+  let byPhase: { phase: number; _count: { _all: number } }[] = [];
 
-  const byPhase = await db.generatedSop.groupBy({
-    by: ["phase"],
-    _count: { _all: true },
-    orderBy: { phase: "asc" },
-  });
+  try {
+    totalInDb = await db.generatedSop.count();
+    publishedCount = await db.generatedSop.count({ where: { publishedAt: { not: null } } });
+    byPhase = await db.generatedSop.groupBy({
+      by: ["phase"],
+      _count: { _all: true },
+      orderBy: { phase: "asc" },
+    });
+  } catch {
+    // Table not yet migrated — show zero state
+  }
 
   const TOTAL_PLANNED = 95; // phases 2–6
 
