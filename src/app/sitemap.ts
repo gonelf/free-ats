@@ -193,6 +193,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // on the first successful build after `prisma migrate deploy` runs.
   }
 
+  // ── SOP library ────────────────────────────────────────────────
+  const hrSopIndexRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/hr-sop`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+  ];
+
+  let hrSopRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const publishedSops = await db.generatedSop.findMany({
+      where: { publishedAt: { not: null } },
+      select: { slug: true, publishedAt: true },
+      orderBy: { publishedAt: "desc" },
+    });
+    hrSopRoutes = publishedSops.map((sop) => ({
+      url: `${BASE_URL}/hr-sop/${sop.slug}`,
+      lastModified: sop.publishedAt ?? new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
+  } catch {
+    // Table not yet migrated — SOP routes added on first build after migration
+  }
+
   const jobs = await db.job.findMany({
     where: {
       status: "OPEN",
@@ -231,6 +253,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...howToHireRoutes,
     ...hrEmailTemplatesIndexRoute,
     ...hrEmailTemplatesRoutes,
+    ...hrSopIndexRoute,
+    ...hrSopRoutes,
     ...jobRoutes,
     ...salaryIndexRoute,
     ...salaryCityRoutes,
