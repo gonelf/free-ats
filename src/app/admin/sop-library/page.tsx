@@ -13,7 +13,8 @@ export default async function SopLibraryPage() {
   try {
     totalInDb = await db.generatedSop.count();
     publishedCount = await db.generatedSop.count({ where: { publishedAt: { not: null } } });
-    byPhase = await db.generatedSop.groupBy({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    byPhase = await (db.generatedSop as any).groupBy({
       by: ["phase"],
       _count: { _all: true },
       orderBy: { phase: "asc" },
