@@ -49,6 +49,14 @@
     {
       "path": "/api/cron/publish-sop-pages",
       "schedule": "0 10 */2 * *"
+    },
+    {
+      "path": "/api/cron/scrape-wellfound",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/scrape-techcrunch-funding",
+      "schedule": "0 14 * * *"
     }
   ]
 }
