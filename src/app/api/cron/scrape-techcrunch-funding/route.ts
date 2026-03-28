@@ -15,7 +15,7 @@ const MAX_NEW = 30;
 const MIN_FUNDING_USD = 500_000;
 const MAX_FUNDING_USD = 20_000_000;
 
-const TC_FUNDING_RSS = "https://techcrunch.com/category/funding/feed/";
+const TC_FUNDING_RSS = "https://techcrunch.com/fundings-exits/feed/";
 
 /**
  * Daily cron that reads TechCrunch's funding RSS feed and extracts companies
