@@ -11,6 +11,9 @@
     },
     "src/app/api/admin/sop-populate": {
       "maxDuration": 300
+    },
+    "src/app/api/cron/send-outreach-emails": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -57,6 +60,10 @@
     {
       "path": "/api/cron/scrape-techcrunch-funding",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/send-outreach-emails",
+      "schedule": "0 15 * * *"
     }
   ]
 }
