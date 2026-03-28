@@ -45,7 +45,8 @@ async function getAccessToken(): Promise<string> {
     body: new URLSearchParams({
       grant_type: "urn:ietf:params:oauth2:grant-type:jwt-bearer",
       assertion: jwt,
-    }),
+    }).toString(),
+    cache: "no-store",
   });
 
   const data = await res.json();
