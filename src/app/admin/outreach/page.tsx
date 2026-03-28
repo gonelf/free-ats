@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Mail, ExternalLink, FlaskConical } from "lucide-react";
 import { OutreachStatusBadge } from "@/components/admin/OutreachStatusBadge";
 import { AddLeadButton } from "@/components/admin/AddLeadButton";
-import { RunScraperButton } from "@/components/admin/RunScraperButton";
 import { BulkSendButton } from "@/components/admin/BulkSendButton";
 import { FindContactsButton } from "@/components/admin/FindContactsButton";
 import { RunSourceScraperButton } from "@/components/admin/RunSourceScraperButton";
@@ -94,7 +93,6 @@ export default async function OutreachPage({ searchParams }: Props) {
           <FindContactsButton missingCount={missingContactCount} sourceFilter={sourceFilter} stageFilter={stageFilter} />
           <BulkSendButton eligibleCount={bulkEligibleCount} sourceFilter={sourceFilter} stageFilter={stageFilter} />
           <RunSourceScraperButton />
-          <RunScraperButton />
           <AddLeadButton />
         </div>
       </div>
@@ -175,11 +173,8 @@ export default async function OutreachPage({ searchParams }: Props) {
             <Mail className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">No leads yet</p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-              Run the HN scraper or add leads manually to get started.
+              Run a scraper or add leads manually to get started.
             </p>
-            <div className="mt-4">
-              <RunScraperButton />
-            </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
