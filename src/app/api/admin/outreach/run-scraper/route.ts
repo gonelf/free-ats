@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminUser } from "@/lib/admin";
 
-const VALID_SOURCES = ["reddit", "product_hunt", "yc"] as const;
+const VALID_SOURCES = ["reddit", "product_hunt", "yc", "wellfound", "techcrunch_funding"] as const;
 type ScraperSource = (typeof VALID_SOURCES)[number];
 
 const CRON_PATHS: Record<ScraperSource, string> = {
   reddit: "/api/cron/scrape-reddit-hiring",
   product_hunt: "/api/cron/scrape-product-hunt",
   yc: "/api/cron/scrape-yc-companies",
+  wellfound: "/api/cron/scrape-wellfound",
+  techcrunch_funding: "/api/cron/scrape-techcrunch-funding",
 };
 
 /**

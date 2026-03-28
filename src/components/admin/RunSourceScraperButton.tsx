@@ -8,6 +8,8 @@ const SOURCES = [
   { key: "reddit", label: "Reddit" },
   { key: "product_hunt", label: "Product Hunt" },
   { key: "yc", label: "YC companies" },
+  { key: "wellfound", label: "Wellfound" },
+  { key: "techcrunch_funding", label: "TechCrunch Funding" },
 ] as const;
 
 type Source = (typeof SOURCES)[number]["key"];
