@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ArrowLeft, Sparkles, FileText, Clock, Users, RefreshCw } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, FileText, Clock, Users, RefreshCw, Lock } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
@@ -27,6 +27,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   benefits: "Benefits & Payroll",
   international: "International & Scaling",
 };
+
+const FREE_STEPS = 2; // number of steps shown before the gate
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -72,6 +74,9 @@ export default async function HrSopDetailPage({ params }: Props) {
   if (!sop || !sop.publishedAt) return notFound();
 
   const steps = sop.steps as SopStep[];
+  const visibleSteps = steps.slice(0, FREE_STEPS);
+  const lockedSteps = steps.slice(FREE_STEPS);
+  const signupHref = `/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`;
 
   // Fetch related SOPs
   let relatedSops: { slug: string; title: string }[] = [];
@@ -135,7 +140,7 @@ export default async function HrSopDetailPage({ params }: Props) {
           </div>
 
           <Link
-            href={`/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`}
+            href={signupHref}
             className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
           >
             <Sparkles className="h-4 w-4" />
@@ -168,7 +173,8 @@ export default async function HrSopDetailPage({ params }: Props) {
                 Steps ({steps.length})
               </p>
 
-              {steps.map((step) => (
+              {/* Visible steps */}
+              {visibleSteps.map((step) => (
                 <div
                   key={step.step}
                   className="rounded-2xl border border-white/8 bg-white/3 p-5"
@@ -194,6 +200,63 @@ export default async function HrSopDetailPage({ params }: Props) {
                   </div>
                 </div>
               ))}
+
+              {/* Gate — locked steps + signup wall */}
+              {lockedSteps.length > 0 && (
+                <div className="relative">
+                  {/* Blurred steps — still in HTML for SEO */}
+                  <div className="space-y-4 select-none" aria-hidden="true">
+                    {lockedSteps.map((step) => (
+                      <div
+                        key={step.step}
+                        className="rounded-2xl border border-white/8 bg-white/3 p-5 blur-sm"
+                      >
+                        <div className="flex gap-4">
+                          <div className="flex-shrink-0 w-7 h-7 rounded-full bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center">
+                            <span className="text-xs font-bold text-cyan-400">{step.step}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-white text-sm mb-1">{step.title}</h3>
+                            <p className="text-sm text-white/50 leading-relaxed">{step.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Gradient fade + CTA overlay */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#080c10]/80 to-[#080c10]" />
+                    <div className="relative z-10 flex flex-col items-center text-center px-6 py-8 mt-8">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-500/20 bg-cyan-500/10 mb-4">
+                        <Lock className="h-5 w-5 text-cyan-400" />
+                      </div>
+                      <p className="text-base font-semibold text-white mb-1">
+                        {lockedSteps.length} more step{lockedSteps.length !== 1 ? "s" : ""} in this SOP
+                      </p>
+                      <p className="text-sm text-white/40 mb-5 max-w-xs">
+                        Create a free KiteHR account to access the full process and keep your team aligned.
+                      </p>
+                      <Link
+                        href={signupHref}
+                        className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        Unlock all steps — free
+                      </Link>
+                      <p className="mt-3 text-xs text-white/25">
+                        Already have an account?{" "}
+                        <Link
+                          href={`/login?redirectTo=${encodeURIComponent(`/sop/${sop.slug}`)}`}
+                          className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                        >
+                          Sign in
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
@@ -236,7 +299,7 @@ export default async function HrSopDetailPage({ params }: Props) {
                   Access all 125+ HR SOPs inside your KiteHR account. Keep your team aligned on every process — completely free.
                 </p>
                 <Link
-                  href={`/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`}
+                  href={signupHref}
                   className="flex items-center justify-center gap-1.5 rounded-lg bg-cyan-500 px-4 py-2.5 text-xs font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors w-full"
                 >
                   Create free account
@@ -287,7 +350,7 @@ export default async function HrSopDetailPage({ params }: Props) {
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <Link
-                href={`/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`}
+                href={signupHref}
                 className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
               >
                 Create free account

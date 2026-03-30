@@ -86,6 +86,9 @@ export function PublicNav() {
               </div>
             )}
           </div>
+          <Link href="/hr-sop" className="text-sm text-white/50 hover:text-white transition-colors">
+            SOP Library
+          </Link>
           <Link href="/pricing" className="text-sm text-white/50 hover:text-white transition-colors">
             Pricing
           </Link>
