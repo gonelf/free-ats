@@ -17,6 +17,7 @@ import {
   Shield,
   Menu,
   X,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/pipelines", label: "Pipelines", icon: GitBranch },
   { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/email-templates", label: "Email Templates", icon: Mail },
+  { href: "/sop", label: "SOP Library", icon: BookOpen },
   { href: "/team", label: "Team", icon: Users2 },
 ];
 
