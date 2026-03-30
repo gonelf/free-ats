@@ -14,7 +14,6 @@ import {
   FileText,
   Mail,
   BarChart3,
-  Infinity,
   UserPlus,
   Building2,
 } from "lucide-react";
@@ -39,25 +38,7 @@ const unlimitedItems = [
   { icon: Building2, label: "Unlimited Orgs", desc: "Manage multiple companies" },
 ];
 
-const freeFeatures = [
-  "Kanban drag-and-drop board",
-  "Custom pipeline stages",
-  "Team collaboration & roles",
-  "Resume uploads & storage",
-  "Candidate notes & tags",
-  "Email templates",
-  "No credit card required",
-  "No time limits",
-];
 
-const aiFeatures = [
-  { icon: Brain, text: "AI resume parsing" },
-  { icon: Zap, text: "Candidate scoring (0–100)" },
-  { icon: FileText, text: "Job description generator" },
-  { icon: Mail, text: "AI email drafting" },
-  { icon: BarChart3, text: "Pipeline bottleneck insights" },
-  { icon: Sparkles, text: "Interview question generator" },
-];
 
 const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
@@ -103,7 +84,7 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
+    <div className="min-h-screen bg-[#080c10] text-white selection:bg-cyan-500/30">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
@@ -114,325 +95,223 @@ export default async function HomePage() {
       />
       <PublicNav />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full" />
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[400px] h-[300px] bg-green-500/8 blur-[80px] rounded-full" />
+      {/* Hero Section */}
+      <section className="relative pt-12 pb-12 lg:pt-16 lg:pb-16 overflow-hidden min-h-[calc(100vh-80px)] flex items-center">
+        {/* Abstract background elements */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 blur-[120px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[30%] bg-green-500/10 blur-[100px] rounded-full" />
         </div>
-        <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-28 text-center">
-          {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150" />
-              <Image
-                src="/logo.png"
-                alt="KiteHR"
-                width={80}
-                height={80}
-                className="relative rounded-2xl"
-              />
-            </div>
-          </div>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-8">
-            <Infinity className="h-3.5 w-3.5" />
-            Truly unlimited. Truly free.
-          </div>
-
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto leading-tight">
-            The Free{" "}
-            <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
-              Applicant Tracking System
-            </span>{" "}
-            for Modern Hiring Teams
-          </h1>
-          <p className="text-lg text-white/60 mb-6 max-w-2xl mx-auto leading-relaxed">
-            KiteHR is a free applicant tracking system (ATS) built for startups, small businesses,
-            and growing teams. Studies show that companies using an ATS reduce time-to-hire by up to
-            40% and cut cost-per-hire by 30% (SHRM, 2024). Unlike legacy ATS platforms that charge
-            per user or per job post, KiteHR gives you unlimited everything — users, job posts, and
-            candidates — at zero cost. Over 500 hiring teams use KiteHR to manage their entire
-            recruitment pipeline from job posting to offer letter.
-          </p>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Start for free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/pricing"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-semibold text-white/80 hover:bg-white/10 transition-colors"
-            >
-              View pricing
-            </Link>
-          </div>
-          <p className="mt-5 text-sm text-white/30">
-            No credit card required · Set up in minutes · No time limits
-          </p>
-
-          {/* Social proof metrics bar */}
-          <div className="mt-10 flex items-center justify-center gap-6 flex-wrap text-sm">
-            <div className="flex items-center gap-2 text-white/50">
-              <Check className="h-4 w-4 text-green-400 shrink-0" />
-              <span>500+ hiring teams</span>
-            </div>
-            <div className="w-px h-4 bg-white/10 hidden sm:block" />
-            <div className="flex items-center gap-2 text-white/50">
-              <Check className="h-4 w-4 text-green-400 shrink-0" />
-              <span>10,000+ candidates tracked</span>
-            </div>
-            <div className="w-px h-4 bg-white/10 hidden sm:block" />
-            <div className="flex items-center gap-2 text-white/50">
-              <Check className="h-4 w-4 text-green-400 shrink-0" />
-              <span>Free forever</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Unlimited Everything */}
-      <section className="py-24 border-t border-white/5">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-sm text-green-400 mb-5">
-              <Infinity className="h-3.5 w-3.5" />
-              No limits. No tiers. No gotchas.
-            </div>
-            <h2 className="text-4xl font-bold mb-4">
-              Unlimited everything,{" "}
-              <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
-                free
-              </span>
-            </h2>
-            <p className="text-lg text-white/40 max-w-xl mx-auto">
-              Most ATS tools charge per user or per job post. We don&apos;t.
-              Everything below is included in the free plan — forever.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {unlimitedItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.label}
-                  className="group rounded-2xl border border-white/8 bg-white/3 p-6 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-500/10 mb-4 group-hover:bg-cyan-500/15 transition-colors">
-                    <Icon className="h-5 w-5 text-cyan-400" />
-                  </div>
-                  <div className="text-base font-semibold text-white mb-1">{item.label}</div>
-                  <div className="text-sm text-white/40">{item.desc}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Why ATS Matters */}
-      <section className="py-24 border-t border-white/5">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6">
-              Why Modern Teams Use an{" "}
-              <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
-                Applicant Tracking System
-              </span>
-            </h2>
-            <p className="text-white/50 mb-6 leading-relaxed">
-              Research from LinkedIn&apos;s 2024 Future of Recruiting report found that 78% of
-              recruiters say ATS software is essential to managing high-volume hiring. An applicant
-              tracking system centralizes candidate data, automates repetitive tasks, and ensures no
-              qualified applicant falls through the cracks.
-            </p>
-            <p className="text-white/40 mb-10 leading-relaxed">
-              KiteHR&apos;s ATS gives every team — from first hire to enterprise-scale recruiting —
-              the infrastructure to run a consistent, fair, and fast hiring process.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {[
-                {
-                  title: "Kanban hiring pipeline",
-                  desc: "Visualize every candidate's stage at a glance",
-                },
-                {
-                  title: "AI resume parsing",
-                  desc: "Extract skills and experience in under 3 seconds",
-                },
-                {
-                  title: "Candidate scoring",
-                  desc: "Rank applicants by fit score automatically",
-                },
-                {
-                  title: "Team collaboration",
-                  desc: "Leave notes, assign reviewers, make decisions together",
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-xl border border-white/8 bg-white/3 p-5"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/15 mt-0.5">
-                      <Check className="h-3 w-3 text-cyan-400" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white text-sm mb-1">{item.title}</div>
-                      <div className="text-xs text-white/40">{item.desc}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Features */}
-      <section className="py-24 border-t border-white/5">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Free Features */}
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-xs text-green-400 mb-6">
-                FREE PLAN
+        <div className="container mx-auto max-w-7xl px-6 relative z-10 font-sans">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left Column: Content */}
+            <div className="text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 text-[10px] font-medium mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]" />
+                Designed for modern HR teams
               </div>
-              <h2 className="text-3xl font-bold mb-4">
-                The full ATS experience,{" "}
-                <span className="text-white/40">at zero cost</span>
-              </h2>
-              <p className="text-white/40 mb-8 leading-relaxed">
-                This isn&apos;t a trial or a watered-down version. It&apos;s the complete ATS
-                — unlimited everything, team collaboration, and the tools you need to hire well.
+              
+              <h1 className="text-4xl md:text-5xl xl:text-6xl font-black tracking-tight mb-6 leading-[1.05]">
+                The Hub for{" "}
+                <span className="bg-gradient-to-r from-cyan-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+                  High-Performance
+                </span>{" "}
+                Recruiting
+              </h1>
+              
+              <p className="text-base md:text-lg text-white/70 mb-8 max-w-lg leading-relaxed">
+                KiteHR is the first truly unlimited applicant tracking system. 
+                Centralize your entire hiring process, from first applied to offer accepted, 
+                with professional-grade tools and AI insights.
               </p>
-              <ul className="space-y-3 mb-8">
-                {freeFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-white/70">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15">
-                      <Check className="h-3 w-3 text-green-400" />
-                    </div>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors"
-              >
-                Get started free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
 
-            {/* Feature Cards */}
-            <div className="space-y-4">
-              <DarkFeatureCard
-                icon={<Briefcase className="h-5 w-5 text-cyan-400" />}
-                title="Job Management"
-                description="Create unlimited job postings with descriptions, requirements, and salary ranges. No posting fees."
-                badge="Unlimited"
-              />
-              <DarkFeatureCard
-                icon={<Users className="h-5 w-5 text-cyan-400" />}
-                title="Team Collaboration"
-                description="Invite every recruiter, hiring manager, and stakeholder. No per-seat pricing."
-                badge="Unlimited users"
-              />
-              <DarkFeatureCard
-                icon={<GitBranch className="h-5 w-5 text-cyan-400" />}
-                title="Kanban Pipeline"
-                description="Drag-and-drop candidates through fully custom stages — from applied to hired."
-                badge="Custom stages"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Upgrade */}
-      <section className="py-24 border-t border-white/5">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="rounded-3xl border border-white/8 bg-gradient-to-br from-white/5 to-white/2 p-10 md:p-14 relative overflow-hidden">
-            {/* Glow */}
-            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-cyan-500/8 blur-[80px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-green-500/6 blur-[80px] rounded-full pointer-events-none" />
-
-            <div className="relative grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-400 mb-6">
-                  <Sparkles className="h-3 w-3" />
-                  PRO — $49/MO
-                </div>
-                <h2 className="text-3xl font-bold mb-4">
-                  Supercharge hiring{" "}
-                  <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
-                    with AI
-                  </span>
-                </h2>
-                <p className="text-white/40 mb-8 leading-relaxed">
-                  When you&apos;re ready to save hours each week, unlock the full AI suite.
-                  Still unlimited users and jobs — now with intelligence on top.
-                </p>
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <Link
-                  href="/pricing"
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                  href="/signup"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-bold text-[#080c10] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all active:scale-95"
                 >
-                  See all Pro features
+                  Start for free
                   <ArrowRight className="h-4 w-4" />
                 </Link>
+                <Link
+                  href="/pricing"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-bold text-white hover:bg-white/10 transition-all active:scale-95"
+                >
+                  View features
+                </Link>
               </div>
-              <div>
-                <ul className="space-y-3">
-                  {aiFeatures.map((f) => {
-                    const Icon = f.icon;
-                    return (
-                      <li key={f.text} className="flex items-center gap-3 text-sm text-white/70">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10">
-                          <Icon className="h-4 w-4 text-cyan-400" />
-                        </div>
-                        {f.text}
-                      </li>
-                    );
-                  })}
-                </ul>
+
+              <div className="mt-8 flex items-center gap-6 text-[10px] text-white/45 font-bold uppercase tracking-widest whitespace-nowrap overflow-hidden">
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> Unlimited Jobs</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> Unlimited Users</span>
+              </div>
+            </div>
+
+            {/* Right Column: Product Preview */}
+            <div className="relative group max-w-[600px] lg:max-w-none mx-auto lg:mx-0 w-full">
+              {/* Glowing frame decoration */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/10 via-emerald-500/10 to-green-500/10 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-700" />
+              
+              <div className="relative rounded-[1.5rem] border border-white/10 bg-[#0c1219] overflow-hidden shadow-2xl transition-all duration-500 group-hover:translate-y-[-4px]">
+                {/* Browser chrome headers */}
+                <div className="flex items-center gap-2 px-5 py-3.5 bg-white/[0.03] border-b border-white/5">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                  </div>
+                  <div className="ml-4 px-3 py-1 rounded-md bg-black/20 text-[9px] text-white/45 font-mono border border-white/5 min-w-[120px] overflow-hidden truncate">
+                    kitehr.co/pipelines/default
+                  </div>
+                </div>
+
+                {/* Main App Image */}
+                <Image 
+                  src="/showcase-pipeline.png" 
+                  alt="KiteHR Pipeline Dashboard" 
+                  width={1000} 
+                  height={562}
+                  className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                  priority
+                />
+              </div>
+
+              {/* Decorative mini-cards (visible on xl screens) */}
+              <div className="absolute -right-4 -bottom-4 hidden xl:block animate-pulse duration-[4000ms]">
+                <div className="rounded-xl border border-white/10 bg-[#080c10]/95 backdrop-blur-md p-3.5 shadow-2xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                      <Check className="h-4 w-4 text-green-400" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">Candidate Hired</div>
+                      <div className="text-[9px] text-white/50 truncate max-w-[100px]">Sarah Miller · Product Designer</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Main product feature focus */}
+      <section className="py-24 bg-[#080c10] border-t border-white/5">
+        <div className="container mx-auto max-w-6xl px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Built for fast-moving teams</h2>
+          <p className="text-lg text-white/60 max-w-2xl mx-auto mb-16">
+            KiteHR isn&apos;t just an ATS. It&apos;s a productivity tool designed to reduce time-to-hire 
+            by centralizing every candidate interaction in one sleek, unified interface.
+          </p>
+        </div>
+      </section>
+
+      {/* AI Features Section */}
       <section className="py-24 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <div className="flex justify-center mb-6">
-              <Image src="/logo.png" alt="KiteHR" width={52} height={52} className="rounded-xl opacity-90" />
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="relative rounded-[2rem] border border-white/10 bg-[#0c1219] overflow-hidden shadow-2xl">
+                <Image 
+                  src="/showcase-ai.png" 
+                  alt="AI Analysis Mockup" 
+                  width={800} 
+                  height={600}
+                  className="w-full h-auto object-cover"
+                />
+              </div>
             </div>
-            <h2 className="text-4xl font-bold mb-4">
-              Start hiring smarter today
-            </h2>
-            <p className="text-white/40 mb-8 text-lg">
-              Unlimited everything. No credit card. No tricks.
+            <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold mb-6">
+                <Sparkles className="h-3 w-3" />
+                AI-POWERED INTELLIGENCE
+              </div>
+              <h2 className="text-4xl font-bold mb-6 leading-tight text-white">
+                Hire with data, <br />
+                <span className="text-white/60">not just intuition</span>
+              </h2>
+              <p className="text-lg text-white/60 mb-10 leading-relaxed">
+                Our Pro suite adds a layer of intelligence to your hiring. Parse resumes instantly, score candidates 
+                against job criteria, and generate custom interview questions in seconds.
+              </p>
+              
+              <div className="grid gap-6">
+                {[
+                  { icon: Brain, title: "AI Resume Parsing", desc: "Extract skills and details automatically." },
+                  { icon: Zap, title: "Candidate Scoring", desc: "Rank applicants based on job fit." },
+                  { icon: Mail, title: "Smart Outreach", desc: "Generate personalized emails in one click." }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-1">
+                      <item.icon className="h-5 w-5 text-cyan-400" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-lg mb-1 text-white">{item.title}</div>
+                      <div className="text-sm text-white/60 leading-relaxed">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Unlimited Features Grid */}
+      <section className="py-24 border-t border-white/5 relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white text-center">Built for scale, free for everyone</h2>
+            <p className="text-lg text-white/60 max-w-2xl mx-auto">
+              We believe in removing barriers to hiring. That&apos;s why our core features 
+              are unlimited for everyone.
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {unlimitedItems.map((item, i) => (
+              <div 
+                key={i} 
+                className="group p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <item.icon className="h-6 w-6 text-cyan-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">{item.label}</h3>
+                <p className="text-white/60 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-32 relative overflow-hidden">
+        {/* Massive glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
+        
+        <div className="container mx-auto max-w-4xl px-6 relative z-10 text-center">
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight text-white">
+            Ready to upgrade your team&apos;s hiring process?
+          </h2>
+          <p className="text-xl text-white/70 mb-12">
+            Join over 500 teams already hiring better with KiteHR. 
+            No cost, no limits, no credit card required.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-9 py-4 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-black text-[#080c10] hover:bg-white/90 hover:scale-105 transition-all shadow-2xl"
             >
-              Create your free account
-              <ArrowRight className="h-4 w-4" />
+              Get Started for Free
+              <ArrowRight className="h-5 w-5" />
             </Link>
-            <p className="mt-4 text-sm text-white/25">
-              Free forever · Unlimited users, jobs & candidates
-            </p>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-white/60 font-medium">
+            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-green-500/70" /> Unlimited Jobs</span>
+            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-green-500/70" /> Unlimited Users</span>
+            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-green-500/70" /> No Card Required</span>
           </div>
         </div>
       </section>
@@ -442,35 +321,4 @@ export default async function HomePage() {
   );
 }
 
-function DarkFeatureCard({
-  icon,
-  title,
-  description,
-  badge,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  badge?: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 p-5 hover:border-cyan-500/20 hover:bg-white/5 transition-all">
-      <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10">
-          {icon}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-white">{title}</h3>
-            {badge && (
-              <span className="rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-xs text-green-400">
-                {badge}
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-white/40">{description}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+

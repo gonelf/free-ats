@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 const SOURCES = [
   { key: "hn_hiring", label: "HN Hiring" },
+  { key: "linkedin", label: "LinkedIn Posts" },
   { key: "reddit", label: "Reddit" },
   { key: "product_hunt", label: "Product Hunt" },
   { key: "yc", label: "YC companies" },

@@ -10,7 +10,7 @@ import { RunSourceScraperButton } from "@/components/admin/RunSourceScraperButto
 
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
 const STAGE_FILTERS = ["all", "startup", "smb", "enterprise"] as const;
-const SOURCE_FILTERS = ["all", "yc", "hn_hiring", "product_hunt", "reddit", "wellfound", "techcrunch_funding", "manual"] as const;
+const SOURCE_FILTERS = ["all", "linkedin", "yc", "hn_hiring", "product_hunt", "reddit", "wellfound", "techcrunch_funding", "manual"] as const;
 
 interface Props {
   searchParams: Promise<{ status?: string; page?: string; stage?: string; source?: string }>;
