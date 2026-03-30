@@ -27,15 +27,16 @@ model Organization {
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
 
-  members        Member[]
-  jobs           Job[]
-  candidates     Candidate[]
-  pipelines      Pipeline[]
-  emailTemplates EmailTemplate[]
-  invitations    Invitation[]
-  feedbacks      Feedback[]
-  communications Communication[]
-  integrations   Integration[]
+  members         Member[]
+  jobs            Job[]
+  candidates      Candidate[]
+  pipelines       Pipeline[]
+  emailTemplates  EmailTemplate[]
+  invitations     Invitation[]
+  feedbacks       Feedback[]
+  communications  Communication[]
+  integrations    Integration[]
+  extensionTokens ExtensionToken[]
 }
 
 enum Plan {
@@ -438,6 +439,22 @@ model JobDistribution {
   @@index([status])
 }
 
+
+// ============ CHROME EXTENSION ============
+
+model ExtensionToken {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String       // Supabase auth user ID — used as authorId on notes
+  label          String       @default("Chrome Extension")
+  tokenHash      String       @unique // SHA-256 of the raw token; raw never stored
+  lastUsedAt     DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([tokenHash])
+}
 
 // ============ OUTREACH ============
 
