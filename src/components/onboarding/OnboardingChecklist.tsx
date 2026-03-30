@@ -69,47 +69,53 @@ export function OnboardingChecklist({
 
   if (dismissed || allDone) return null;
 
+  const progressPercent = Math.round((completedCount / steps.length) * 100);
+
   return (
-    <div className="rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 overflow-hidden mb-6">
-      <div className="flex items-center justify-between px-5 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-            {completedCount}/{steps.length}
-          </div>
+    <div className="rounded-xl border border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950/40 overflow-hidden mb-6">
+      <div className="px-5 pt-4 pb-3">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
+            <p className="text-sm font-semibold text-teal-900 dark:text-teal-200">
               Getting started
             </p>
-            <p className="text-xs text-indigo-600 dark:text-indigo-400">
-              {steps.length - completedCount} step
-              {steps.length - completedCount !== 1 ? "s" : ""} remaining
+            <p className="text-xs text-teal-600 dark:text-teal-400">
+              {completedCount} of {steps.length} complete
             </p>
           </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCollapsed((c) => !c)}
+              className="p-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900/40 text-teal-600 dark:text-teal-400 transition-colors"
+              aria-label={collapsed ? "Expand" : "Collapse"}
+            >
+              {collapsed ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronUp className="h-4 w-4" />
+              )}
+            </button>
+            <button
+              onClick={() => setDismissed(true)}
+              className="p-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900/40 text-teal-400 dark:text-teal-500 transition-colors"
+              aria-label="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setCollapsed((c) => !c)}
-            className="p-1.5 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 transition-colors"
-            aria-label={collapsed ? "Expand" : "Collapse"}
-          >
-            {collapsed ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronUp className="h-4 w-4" />
-            )}
-          </button>
-          <button
-            onClick={() => setDismissed(true)}
-            className="p-1.5 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-400 dark:text-indigo-500 transition-colors"
-            aria-label="Dismiss"
-          >
-            <X className="h-4 w-4" />
-          </button>
+
+        {/* Progress bar */}
+        <div className="h-1.5 bg-teal-100 dark:bg-teal-900/50 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-teal-600 dark:bg-teal-500 rounded-full transition-all duration-500"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       </div>
 
       {!collapsed && (
-        <div className="border-t border-indigo-200 dark:border-indigo-800 bg-white dark:bg-gray-900 divide-y divide-gray-50 dark:divide-gray-800">
+        <div className="border-t border-teal-200 dark:border-teal-800 bg-white dark:bg-gray-900 divide-y divide-gray-50 dark:divide-gray-800">
           {steps.map((step) => (
             <div
               key={step.id}
@@ -145,7 +151,7 @@ export function OnboardingChecklist({
               {!step.done && (
                 <Link
                   href={step.href}
-                  className="shrink-0 text-xs font-medium text-indigo-600 hover:text-indigo-700"
+                  className="shrink-0 text-xs font-medium text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 transition-colors"
                 >
                   Start →
                 </Link>

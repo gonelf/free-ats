@@ -85,7 +85,7 @@ export function Sidebar({
             {orgName}
           </span>
           {isPro ? (
-            <span className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+            <span className="flex items-center gap-1 text-xs text-teal-600 dark:text-teal-400 font-medium">
               <Sparkles className="h-3 w-3" />
               Pro
             </span>
@@ -117,7 +117,7 @@ export function Sidebar({
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                     isActive
-                      ? "bg-indigo-50 text-indigo-700 font-medium dark:bg-indigo-900/30 dark:text-indigo-400"
+                      ? "bg-teal-50 text-teal-700 font-medium dark:bg-teal-900/30 dark:text-teal-400"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
                   )}
                 >
@@ -134,7 +134,7 @@ export function Sidebar({
           <div className="mt-6 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5">
-                <Zap className={cn("h-3.5 w-3.5", creditsLow ? "text-red-500" : "text-indigo-500 dark:text-indigo-400")} />
+                <Zap className={cn("h-3.5 w-3.5", creditsLow ? "text-red-500" : "text-teal-600 dark:text-teal-400")} />
                 <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                   {isPro ? "AI Credits" : "Trial Credits"}
                 </span>
@@ -147,7 +147,7 @@ export function Sidebar({
               <div
                 className={cn(
                   "h-full rounded-full transition-all",
-                  creditsLow ? "bg-red-500" : creditsPercent <= 50 ? "bg-amber-500" : "bg-indigo-500"
+                  creditsLow ? "bg-red-500" : creditsPercent <= 50 ? "bg-amber-500" : "bg-teal-600"
                 )}
                 style={{ width: `${creditsPercent}%` }}
               />
@@ -171,20 +171,20 @@ export function Sidebar({
         ) : null}
 
         {!isPro && (
-          <div className="mt-6 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 p-4">
+          <div className="mt-6 rounded-lg bg-teal-50 dark:bg-teal-900/30 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-              <span className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
+              <Sparkles className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+              <span className="text-sm font-semibold text-teal-900 dark:text-teal-200">
                 Upgrade to Pro
               </span>
             </div>
-            <p className="text-xs text-indigo-700 dark:text-indigo-300 mb-3">
+            <p className="text-xs text-teal-700 dark:text-teal-300 mb-3">
               Unlock AI features: resume parsing, candidate scoring, email drafting, and more.
             </p>
             <Link
               href="/upgrade"
               onClick={() => setMobileOpen(false)}
-              className="block w-full rounded-md bg-indigo-600 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-indigo-700 dark:hover:bg-indigo-500"
+              className="block w-full rounded-md bg-teal-700 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-teal-800 dark:hover:bg-teal-600"
             >
               Upgrade Now
             </Link>
@@ -206,7 +206,7 @@ export function Sidebar({
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                     isActive
-                      ? "bg-indigo-50 text-indigo-700 font-medium dark:bg-indigo-900/30 dark:text-indigo-400"
+                      ? "bg-teal-50 text-teal-700 font-medium dark:bg-teal-900/30 dark:text-teal-400"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
                   )}
                 >

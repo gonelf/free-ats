@@ -35,9 +35,11 @@ export default async function CandidatesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Candidates</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {candidates.length} total candidates
+          <h1 className="font-heading text-2xl font-bold text-gray-900 dark:text-gray-100">Candidates</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            {candidates.length === 0
+              ? "Your talent pool lives here"
+              : `${candidates.length} candidate${candidates.length !== 1 ? "s" : ""} in your talent pool`}
           </p>
         </div>
         <Button asChild>
@@ -49,11 +51,15 @@ export default async function CandidatesPage() {
       </div>
 
       {candidates.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16">
-          <Users className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No candidates yet</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6">
-            Add candidates manually or through job applications
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 py-20 px-8 text-center">
+          <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-5">
+            <Users className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+          </div>
+          <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-gray-100 mb-1">
+            Build your talent pool
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6 leading-relaxed">
+            Add candidates manually, upload resumes, or they&apos;ll appear automatically when they apply to your jobs.
           </p>
           <Button asChild>
             <Link href="/candidates/new">
@@ -81,7 +87,7 @@ export default async function CandidatesPage() {
                     <td className="px-5 py-3">
                       <Link
                         href={`/candidates/${c.id}`}
-                        className="font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        className="font-medium text-gray-900 dark:text-gray-100 hover:text-teal-700 dark:hover:text-teal-400"
                       >
                         {c.firstName} {c.lastName}
                       </Link>

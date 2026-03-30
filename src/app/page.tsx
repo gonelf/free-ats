@@ -13,7 +13,6 @@ import {
   Zap,
   FileText,
   Mail,
-  BarChart3,
   UserPlus,
   Building2,
 } from "lucide-react";
@@ -37,8 +36,6 @@ const unlimitedItems = [
   { icon: GitBranch, label: "Unlimited Pipelines", desc: "Custom stages per role" },
   { icon: Building2, label: "Unlimited Orgs", desc: "Manage multiple companies" },
 ];
-
-
 
 const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
@@ -84,7 +81,7 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c10] text-white selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-white text-slate-900 selection:bg-teal-100">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
@@ -93,100 +90,94 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      <PublicNav />
+      <PublicNav variant="light" />
 
       {/* Hero Section */}
       <section className="relative pt-12 pb-12 lg:pt-16 lg:pb-16 overflow-hidden min-h-[calc(100vh-80px)] flex items-center">
-        {/* Abstract background elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none overflow-hidden">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 blur-[120px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[30%] bg-green-500/10 blur-[100px] rounded-full" />
-        </div>
-
-        <div className="container mx-auto max-w-7xl px-6 relative z-10 font-sans">
+        <div className="container mx-auto max-w-7xl px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Column: Content */}
             <div className="text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 text-[10px] font-medium mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-semibold tracking-wider uppercase mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <span className="w-2 h-2 rounded-full bg-teal-500" />
                 Designed for modern HR teams
               </div>
-              
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-black tracking-tight mb-6 leading-[1.05]">
+
+              <h1
+                className="font-heading font-black tracking-tight mb-6 leading-[1.05] text-slate-900"
+                style={{ fontSize: "clamp(2.5rem, 4vw + 1.25rem, 4.5rem)" }}
+              >
                 The Hub for{" "}
-                <span className="bg-gradient-to-r from-cyan-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+                <span className="text-teal-700">
                   High-Performance
                 </span>{" "}
                 Recruiting
               </h1>
-              
-              <p className="text-base md:text-lg text-white/70 mb-8 max-w-lg leading-relaxed">
-                KiteHR is the first truly unlimited applicant tracking system. 
-                Centralize your entire hiring process, from first applied to offer accepted, 
+
+              <p className="text-base md:text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
+                KiteHR is the first truly unlimited applicant tracking system.
+                Centralize your entire hiring process, from first applied to offer accepted,
                 with professional-grade tools and AI insights.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <Link
                   href="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-bold text-[#080c10] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-7 py-3.5 text-base font-bold text-white hover:bg-teal-800 transition-all active:scale-95"
                 >
                   Start for free
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/pricing"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-bold text-white hover:bg-white/10 transition-all active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-base font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-95"
                 >
                   View features
                 </Link>
               </div>
 
-              <div className="mt-8 flex items-center gap-6 text-[10px] text-white/45 font-bold uppercase tracking-widest whitespace-nowrap overflow-hidden">
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> Unlimited Jobs</span>
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> Unlimited Users</span>
+              <div className="mt-8 flex items-center gap-6 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden">
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Unlimited Jobs</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Unlimited Users</span>
               </div>
             </div>
 
             {/* Right Column: Product Preview */}
             <div className="relative group max-w-[600px] lg:max-w-none mx-auto lg:mx-0 w-full">
-              {/* Glowing frame decoration */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/10 via-emerald-500/10 to-green-500/10 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-700" />
-              
-              <div className="relative rounded-[1.5rem] border border-white/10 bg-[#0c1219] overflow-hidden shadow-2xl transition-all duration-500 group-hover:translate-y-[-4px]">
-                {/* Browser chrome headers */}
-                <div className="flex items-center gap-2 px-5 py-3.5 bg-white/[0.03] border-b border-white/5">
+              <div className="relative rounded-[1.5rem] border border-slate-200 bg-white overflow-hidden shadow-2xl transition-all duration-500 group-hover:translate-y-[-4px] group-hover:shadow-[0_32px_64px_-12px_rgba(15,118,110,0.1)]">
+                {/* Browser chrome */}
+                <div className="flex items-center gap-2 px-5 py-3.5 bg-slate-100 border-b border-slate-200">
                   <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
                   </div>
-                  <div className="ml-4 px-3 py-1 rounded-md bg-black/20 text-[9px] text-white/45 font-mono border border-white/5 min-w-[120px] overflow-hidden truncate">
+                  <div className="ml-4 px-3 py-1 rounded-md bg-slate-200 text-[9px] text-slate-500 border border-slate-300 min-w-[120px] overflow-hidden truncate">
                     kitehr.co/pipelines/default
                   </div>
                 </div>
 
                 {/* Main App Image */}
-                <Image 
-                  src="/showcase-pipeline.png" 
-                  alt="KiteHR Pipeline Dashboard" 
-                  width={1000} 
+                <Image
+                  src="/showcase-pipeline.png"
+                  alt="KiteHR Pipeline Dashboard"
+                  width={1000}
                   height={562}
-                  className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                  className="w-full h-auto object-cover"
                   priority
                 />
               </div>
 
-              {/* Decorative mini-cards (visible on xl screens) */}
-              <div className="absolute -right-4 -bottom-4 hidden xl:block animate-pulse duration-[4000ms]">
-                <div className="rounded-xl border border-white/10 bg-[#080c10]/95 backdrop-blur-md p-3.5 shadow-2xl">
+              {/* Decorative mini-card */}
+              <div className="absolute -right-3 -bottom-5 hidden lg:block">
+                <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                      <Check className="h-4 w-4 text-green-400" />
+                    <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                      <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white">Candidate Hired</div>
-                      <div className="text-[9px] text-white/50 truncate max-w-[100px]">Sarah Miller · Product Designer</div>
+                      <div className="text-xs font-bold text-slate-800">Candidate Hired</div>
+                      <div className="text-[9px] text-slate-400 truncate max-w-[100px]">Sarah Miller · Product Designer</div>
                     </div>
                   </div>
                 </div>
@@ -196,46 +187,38 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Main product feature focus */}
-      <section className="py-24 bg-[#080c10] border-t border-white/5">
-        <div className="container mx-auto max-w-6xl px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Built for fast-moving teams</h2>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto mb-16">
-            KiteHR isn&apos;t just an ATS. It&apos;s a productivity tool designed to reduce time-to-hire 
-            by centralizing every candidate interaction in one sleek, unified interface.
-          </p>
-        </div>
-      </section>
-
       {/* AI Features Section */}
-      <section className="py-24 border-t border-white/5">
+      <section className="py-20 border-t border-slate-100">
         <div className="container mx-auto max-w-6xl px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
-              <div className="relative rounded-[2rem] border border-white/10 bg-[#0c1219] overflow-hidden shadow-2xl">
-                <Image 
-                  src="/showcase-ai.png" 
-                  alt="AI Analysis Mockup" 
-                  width={800} 
+              <div className="relative rounded-[2rem] border border-slate-200 bg-white overflow-hidden shadow-xl">
+                <Image
+                  src="/showcase-ai.png"
+                  alt="AI Analysis Mockup"
+                  width={800}
                   height={600}
                   className="w-full h-auto object-cover"
                 />
               </div>
             </div>
             <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold mb-6">
+              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-semibold tracking-wider uppercase mb-6">
                 <Sparkles className="h-3 w-3" />
-                AI-POWERED INTELLIGENCE
+                AI-powered intelligence
               </div>
-              <h2 className="text-4xl font-bold mb-6 leading-tight text-white">
+              <h2
+                className="font-heading font-bold mb-6 text-slate-900"
+                style={{ fontSize: "clamp(1.75rem, 2.5vw + 1rem, 3rem)", lineHeight: 1.1 }}
+              >
                 Hire with data, <br />
-                <span className="text-white/60">not just intuition</span>
+                <span className="text-slate-400">not just intuition</span>
               </h2>
-              <p className="text-lg text-white/60 mb-10 leading-relaxed">
-                Our Pro suite adds a layer of intelligence to your hiring. Parse resumes instantly, score candidates 
+              <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                Our Pro suite adds a layer of intelligence to your hiring. Parse resumes instantly, score candidates
                 against job criteria, and generate custom interview questions in seconds.
               </p>
-              
+
               <div className="grid gap-6">
                 {[
                   { icon: Brain, title: "AI Resume Parsing", desc: "Extract skills and details automatically." },
@@ -243,12 +226,12 @@ export default async function HomePage() {
                   { icon: Mail, title: "Smart Outreach", desc: "Generate personalized emails in one click." }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-1">
-                      <item.icon className="h-5 w-5 text-cyan-400" />
+                    <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 mt-1">
+                      <item.icon className="h-5 w-5 text-teal-600" />
                     </div>
                     <div>
-                      <div className="font-bold text-lg mb-1 text-white">{item.title}</div>
-                      <div className="text-sm text-white/60 leading-relaxed">{item.desc}</div>
+                      <div className="font-heading font-semibold text-lg mb-1 text-slate-900">{item.title}</div>
+                      <div className="text-sm text-slate-600 leading-relaxed">{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -258,60 +241,63 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Unlimited Features Grid */}
-      <section className="py-24 border-t border-white/5 relative overflow-hidden">
-        <div className="container mx-auto max-w-6xl px-6 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white text-center">Built for scale, free for everyone</h2>
-            <p className="text-lg text-white/60 max-w-2xl mx-auto">
-              We believe in removing barriers to hiring. That&apos;s why our core features 
-              are unlimited for everyone.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {unlimitedItems.map((item, i) => (
-              <div 
-                key={i} 
-                className="group p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300"
+      {/* Unlimited Features */}
+      <section className="py-20 border-t border-slate-100 bg-slate-50">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid lg:grid-cols-[2fr_3fr] gap-12 lg:gap-20 items-start">
+            {/* Left: heading */}
+            <div className="lg:pt-1">
+              <h2
+                className="font-heading font-bold mb-5 text-slate-900"
+                style={{ fontSize: "clamp(1.75rem, 2.5vw + 1rem, 3rem)", lineHeight: 1.1 }}
               >
-                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <item.icon className="h-6 w-6 text-cyan-400" />
+                Built for scale,<br />free for everyone
+              </h2>
+              <p className="text-lg text-slate-600 leading-relaxed">
+                We believe in removing barriers to hiring. Core features are unlimited — no seat limits, no posting caps, no expiry.
+              </p>
+            </div>
+
+            {/* Right: feature list */}
+            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+              {unlimitedItems.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                    <item.icon className="h-4 w-4 text-teal-600" />
+                  </div>
+                  <span className="font-heading font-semibold text-slate-800">{item.label}</span>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">{item.label}</h3>
-                <p className="text-white/60 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 relative overflow-hidden">
-        {/* Massive glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
-        
+      <section className="py-32 bg-teal-700 relative overflow-hidden">
         <div className="container mx-auto max-w-4xl px-6 relative z-10 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight text-white">
+          <h2
+            className="font-heading font-bold mb-8 tracking-tight text-white"
+            style={{ fontSize: "clamp(2rem, 3.5vw + 1.25rem, 4rem)", lineHeight: 1.05 }}
+          >
             Ready to upgrade your team&apos;s hiring process?
           </h2>
-          <p className="text-xl text-white/70 mb-12">
-            Join over 500 teams already hiring better with KiteHR. 
-            No cost, no limits, no credit card required.
+          <p className="text-xl text-teal-100 mb-12">
+            Trusted by startups, nonprofits, and growing teams worldwide — free forever, with no seat limits or hidden fees.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
               href="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-black text-[#080c10] hover:bg-white/90 hover:scale-105 transition-all shadow-2xl"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-4 text-lg font-black text-teal-700 hover:bg-teal-50 hover:scale-105 transition-all shadow-lg"
             >
-              Get Started for Free
+              Get started for free
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-white/60 font-medium">
-            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-green-500/70" /> Unlimited Jobs</span>
-            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-green-500/70" /> Unlimited Users</span>
-            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-green-500/70" /> No Card Required</span>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-teal-200 font-medium">
+            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-teal-300" /> Unlimited Jobs</span>
+            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-teal-300" /> Unlimited Users</span>
+            <span className="flex items-center gap-2"><Check className="h-4 w-4 text-teal-300" /> No Card Required</span>
           </div>
         </div>
       </section>
@@ -320,5 +306,3 @@ export default async function HomePage() {
     </div>
   );
 }
-
-
