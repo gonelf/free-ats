@@ -15,7 +15,12 @@ const MAX_NEW = 30;
 const MIN_FUNDING_USD = 500_000;
 const MAX_FUNDING_USD = 20_000_000;
 
-const TC_FUNDING_RSS = "https://techcrunch.com/fundings-exits/feed/";
+// The old "fundings-exits" category was retired by TechCrunch.
+// Primary: tag/funding feed; fallback: category/venture feed.
+const TC_FUNDING_RSS_URLS = [
+  "https://techcrunch.com/tag/funding/feed/",
+  "https://techcrunch.com/category/venture/feed/",
+];
 
 /**
  * Daily cron that reads TechCrunch's funding RSS feed and extracts companies
@@ -40,15 +45,24 @@ export async function GET(request: NextRequest) {
   let errors = 0;
 
   try {
-    const res = await fetch(TC_FUNDING_RSS, {
-      headers: { "User-Agent": "KiteHR-Outreach/1.0" },
-    });
-
-    if (!res.ok) {
-      throw new Error(`TechCrunch RSS fetch failed: ${res.status}`);
+    let xml = "";
+    let fetchedUrl = "";
+    for (const url of TC_FUNDING_RSS_URLS) {
+      const res = await fetch(url, {
+        headers: { "User-Agent": "KiteHR-Outreach/1.0" },
+      });
+      if (res.ok) {
+        xml = await res.text();
+        fetchedUrl = url;
+        break;
+      }
     }
-
-    const xml = await res.text();
+    if (!xml) {
+      throw new Error(
+        `TechCrunch RSS fetch failed: all URLs returned non-2xx (tried: ${TC_FUNDING_RSS_URLS.join(", ")})`
+      );
+    }
+    void fetchedUrl; // used for debugging via logs
     const items = parseRssItems(xml);
 
     for (const item of items) {
