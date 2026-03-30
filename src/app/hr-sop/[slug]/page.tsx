@@ -135,7 +135,7 @@ export default async function HrSopDetailPage({ params }: Props) {
           </div>
 
           <Link
-            href="/signup"
+            href={`/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`}
             className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
           >
             <Sparkles className="h-4 w-4" />
@@ -236,7 +236,7 @@ export default async function HrSopDetailPage({ params }: Props) {
                   Access all 125+ HR SOPs inside your KiteHR account. Keep your team aligned on every process — completely free.
                 </p>
                 <Link
-                  href="/signup"
+                  href={`/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`}
                   className="flex items-center justify-center gap-1.5 rounded-lg bg-cyan-500 px-4 py-2.5 text-xs font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors w-full"
                 >
                   Create free account
@@ -287,7 +287,7 @@ export default async function HrSopDetailPage({ params }: Props) {
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <Link
-                href="/signup"
+                href={`/signup?redirect=${encodeURIComponent(`/sop/${sop.slug}`)}`}
                 className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
               >
                 Create free account
