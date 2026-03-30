@@ -26,6 +26,7 @@ function SignupForm() {
   const searchParams = useSearchParams();
   const invitationToken = searchParams.get("invitation_token");
   const claimToken = searchParams.get("claim_token");
+  const redirectTo = searchParams.get("redirect");
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -54,7 +55,7 @@ function SignupForm() {
         router.push(`/invitations/accept?token=${encodeURIComponent(invitationToken)}`);
         router.refresh();
       } else {
-        router.push("/jobs");
+        router.push(redirectTo ?? "/jobs");
         router.refresh();
       }
     }
@@ -174,7 +175,7 @@ function SignupForm() {
 
             <p className="mt-6 text-center text-sm text-white/35">
               Already have an account?{" "}
-              <Link href="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+              <Link href={redirectTo ? `/login?redirectTo=${encodeURIComponent(redirectTo)}` : "/login"} className="text-cyan-400 hover:text-cyan-300 transition-colors">
                 Sign in
               </Link>
             </p>
