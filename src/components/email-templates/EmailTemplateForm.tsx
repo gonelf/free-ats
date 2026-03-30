@@ -64,7 +64,7 @@ export function EmailTemplateForm({ initialData }: EmailTemplateFormProps) {
               defaultValue={initialData?.name}
               required
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Only visible to your team.
             </p>
           </div>
@@ -100,7 +100,7 @@ export function EmailTemplateForm({ initialData }: EmailTemplateFormProps) {
                 </span>
               ))}
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Use the tags above to personalize your emails.
             </p>
           </div>
@@ -108,8 +108,8 @@ export function EmailTemplateForm({ initialData }: EmailTemplateFormProps) {
       </Card>
 
       {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+          <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
         </div>
       )}
 

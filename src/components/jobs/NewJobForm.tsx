@@ -87,7 +87,7 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
 
   return (
     <form action={action} onSubmit={handleSubmit} className="space-y-6">
-      <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-5">
         <div className="space-y-2">
           <Label htmlFor="title">Job title *</Label>
           <div className="flex gap-2">
@@ -194,20 +194,20 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
         </div>
 
         {biasResult && (
-          <div className={`rounded-lg p-4 ${biasResult.hasBias ? "bg-yellow-50 border border-yellow-200" : "bg-green-50 border border-green-200"}`}>
+          <div className={`rounded-lg p-4 ${biasResult.hasBias ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800" : "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium dark:text-gray-200">
                 Inclusivity Score: {biasResult.score}/100
               </span>
               {!biasResult.hasBias && (
-                <span className="text-xs text-green-700 font-medium">✓ Looks good!</span>
+                <span className="text-xs text-green-700 dark:text-green-400 font-medium">✓ Looks good!</span>
               )}
             </div>
             {biasResult.issues.map((issue, i) => (
               <div key={i} className="mt-2 text-xs">
-                <span className="font-medium text-yellow-800">"{issue.text}"</span>
-                <span className="text-yellow-700"> → {issue.suggestion}</span>
-                <span className="text-yellow-600 block">{issue.reason}</span>
+                <span className="font-medium text-yellow-800 dark:text-yellow-300">"{issue.text}"</span>
+                <span className="text-yellow-700 dark:text-yellow-400"> → {issue.suggestion}</span>
+                <span className="text-yellow-600 dark:text-yellow-500 block">{issue.reason}</span>
               </div>
             ))}
           </div>

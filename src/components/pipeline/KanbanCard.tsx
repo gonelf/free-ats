@@ -28,9 +28,9 @@ interface KanbanCardProps {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-green-700 bg-green-50";
-  if (score >= 60) return "text-yellow-700 bg-yellow-50";
-  return "text-red-700 bg-red-50";
+  if (score >= 80) return "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
+  if (score >= 60) return "text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30";
+  return "text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30";
 }
 
 export function KanbanCard({

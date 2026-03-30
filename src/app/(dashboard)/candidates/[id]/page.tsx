@@ -77,13 +77,13 @@ export default async function CandidateDetailPage({
 
   return (
     <div>
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link href="/candidates" className="hover:text-gray-900">
+      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <Link href="/candidates" className="hover:text-gray-900 dark:hover:text-gray-100">
           <ChevronLeft className="inline h-4 w-4" />
           Candidates
         </Link>
         <span>/</span>
-        <span className="text-gray-900">
+        <span className="text-gray-900 dark:text-gray-100">
           {candidate.firstName} {candidate.lastName}
         </span>
       </div>

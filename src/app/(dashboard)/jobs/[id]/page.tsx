@@ -109,27 +109,27 @@ export default async function JobDetailPage({
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
         <div>
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <Link href="/jobs" className="hover:text-gray-900">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+            <Link href="/jobs" className="hover:text-gray-900 dark:hover:text-gray-100">
               Jobs
             </Link>
             <span>/</span>
-            <span className="text-gray-900">{job.title}</span>
+            <span className="text-gray-900 dark:text-gray-100">{job.title}</span>
           </div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{job.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{job.title}</h1>
             <Badge variant={statusVariant[job.status]}>
               {job.status.charAt(0) + job.status.slice(1).toLowerCase()}
             </Badge>
           </div>
           <div className="flex items-center gap-3 mt-2">
             {job.location && (
-              <span className="flex items-center gap-1 text-sm text-gray-500">
+              <span className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                 <MapPin className="h-3.5 w-3.5" />
                 {job.location}
               </span>
             )}
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-gray-400 dark:text-gray-500">
               Created {formatDate(job.createdAt)}
             </span>
           </div>

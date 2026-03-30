@@ -132,7 +132,7 @@ export default async function SettingsPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-gray-900 dark:text-gray-100 text-sm">LinkedIn</span>
                     {linkedinIntegration && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-900/30 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
                         <CheckCircle2 className="h-3 w-3" />
                         Connected
                       </span>

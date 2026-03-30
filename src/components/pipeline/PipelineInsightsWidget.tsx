@@ -76,16 +76,16 @@ export function PipelineInsightsWidget({ jobId, hasAiAccess }: PipelineInsightsW
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Bottlenecks */}
           {insights.bottlenecks.length > 0 && (
-            <div className="rounded-lg bg-red-50 border border-red-100 p-3">
+            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 p-3">
               <div className="flex items-center gap-1.5 mb-2">
-                <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
-                <p className="text-[10px] font-bold text-red-600 uppercase tracking-wider">
+                <AlertTriangle className="h-3.5 w-3.5 text-red-500 dark:text-red-400" />
+                <p className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
                   Bottlenecks
                 </p>
               </div>
               <ul className="space-y-1.5">
                 {insights.bottlenecks.map((b, i) => (
-                  <li key={i} className="text-xs text-red-700 leading-relaxed">
+                  <li key={i} className="text-xs text-red-700 dark:text-red-400 leading-relaxed">
                     {b}
                   </li>
                 ))}
@@ -117,16 +117,16 @@ export function PipelineInsightsWidget({ jobId, hasAiAccess }: PipelineInsightsW
 
           {/* Recommendations */}
           {insights.recommendations.length > 0 && (
-            <div className="rounded-lg bg-indigo-50 border border-indigo-100 p-3">
+            <div className="rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 p-3">
               <div className="flex items-center gap-1.5 mb-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500" />
-                <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">
+                <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                <p className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
                   Recommendations
                 </p>
               </div>
               <ul className="space-y-1.5">
                 {insights.recommendations.map((r, i) => (
-                  <li key={i} className="text-xs text-indigo-700 leading-relaxed">
+                  <li key={i} className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed">
                     {r}
                   </li>
                 ))}
