@@ -28,16 +28,16 @@ export default async function NewJobPage() {
       <div className="flex items-center gap-3 mb-8">
         <Link
           href="/jobs"
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900"
+          className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
         >
           <ChevronLeft className="h-4 w-4" />
           Jobs
         </Link>
-        <span className="text-gray-300">/</span>
-        <span className="text-sm text-gray-900 font-medium">New Job</span>
+        <span className="text-gray-300 dark:text-gray-600">/</span>
+        <span className="text-sm text-gray-900 dark:text-gray-100 font-medium">New Job</span>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Create Job</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">Create Job</h1>
 
       <NewJobForm action={createJob} hasAiAccess={hasAiAccess} />
     </div>

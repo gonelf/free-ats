@@ -15,7 +15,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 function StatusBadge({ status }: { status: string }) {
   if (status === "distributed") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-900/30 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
         <CheckCircle2 className="h-3 w-3" />
         Posted
       </span>
@@ -23,7 +23,7 @@ function StatusBadge({ status }: { status: string }) {
   }
   if (status === "pending") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-0.5 text-xs font-medium text-yellow-700">
+      <span className="inline-flex items-center gap-1 rounded-full bg-yellow-50 dark:bg-yellow-900/30 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-400">
         <Clock className="h-3 w-3" />
         Pending
       </span>
@@ -31,7 +31,7 @@ function StatusBadge({ status }: { status: string }) {
   }
   if (status === "failed") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">
+      <span className="inline-flex items-center gap-1 rounded-full bg-red-50 dark:bg-red-900/30 px-2 py-0.5 text-xs font-medium text-red-700 dark:text-red-400">
         <XCircle className="h-3 w-3" />
         Failed
       </span>
@@ -39,7 +39,7 @@ function StatusBadge({ status }: { status: string }) {
   }
   if (status === "closed") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-400">
         <WifiOff className="h-3 w-3" />
         Closed
       </span>
@@ -61,8 +61,8 @@ export function DistributionStatus({
   ];
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 mb-6">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 mb-6">
+      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
         Distribution
       </p>
       <div className="flex flex-wrap gap-4">
@@ -70,9 +70,9 @@ export function DistributionStatus({
           const dist = distByPlatform[key];
           return (
             <div key={key} className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">{PLATFORM_LABELS[key] ?? key}</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">{PLATFORM_LABELS[key] ?? key}</span>
               {!connected ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400">
+                <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-400 dark:text-gray-500">
                   <WifiOff className="h-3 w-3" />
                   Not connected
                 </span>
@@ -99,7 +99,7 @@ export function DistributionStatus({
                   )}
                 </div>
               ) : (
-                <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">
                   <Clock className="h-3 w-3" />
                   Not posted
                 </span>

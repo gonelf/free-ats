@@ -127,7 +127,7 @@ export default async function JobsPage() {
                 </div>
               </div>
               <div className="ml-3 flex items-center justify-end gap-1 md:gap-2 shrink-0">
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900 hidden sm:flex" asChild title="View Public Page">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hidden sm:flex" asChild title="View Public Page">
                   <a href={`/${job.organization.slug}/jobs/${job.slug}`} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4" />
                   </a>

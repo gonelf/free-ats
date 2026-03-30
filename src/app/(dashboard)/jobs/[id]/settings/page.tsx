@@ -34,19 +34,19 @@ export default async function JobSettingsPage({
 
   return (
     <div>
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link href={`/jobs/${id}`} className="hover:text-gray-900">
+      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <Link href={`/jobs/${id}`} className="hover:text-gray-900 dark:hover:text-gray-100">
           <ChevronLeft className="inline h-4 w-4" />
           {job.title}
         </Link>
         <span>/</span>
-        <span className="text-gray-900">Settings</span>
+        <span className="text-gray-900 dark:text-gray-100">Settings</span>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Job Settings</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">Job Settings</h1>
 
       <form className="space-y-6">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-5">
           <div className="space-y-2">
             <Label>Job title</Label>
             <Input name="title" defaultValue={job.title} required />
@@ -70,7 +70,7 @@ export default async function JobSettingsPage({
             <select
               name="status"
               defaultValue={job.status}
-              className="flex h-9 w-full rounded-md border border-gray-200 bg-white px-3 py-1 text-sm text-gray-900"
+              className="flex h-9 w-full rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1 text-sm text-gray-900 dark:text-gray-100"
             >
               <option value="DRAFT">Draft</option>
               <option value="OPEN">Open</option>

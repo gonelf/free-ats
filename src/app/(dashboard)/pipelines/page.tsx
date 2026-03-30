@@ -67,8 +67,8 @@ export default async function PipelinesPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Pipelines</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Pipelines</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Track and manage candidates across all active jobs.
           </p>
         </div>

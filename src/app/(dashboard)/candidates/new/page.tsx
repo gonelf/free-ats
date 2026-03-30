@@ -60,17 +60,17 @@ function NewCandidateContent() {
       <div className="flex items-center gap-3 mb-8">
         <Link
           href={jobId ? `/jobs/${jobId}` : "/candidates"}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900"
+          className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
         >
           <ChevronLeft className="h-4 w-4" />
           {jobId ? "Back to Job" : "Candidates"}
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Add Candidate</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">Add Candidate</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name *</Label>
@@ -128,7 +128,7 @@ function NewCandidateContent() {
             <div className="flex items-center gap-3">
               <label
                 htmlFor="resume"
-                className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-gray-300 px-4 py-2.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
               >
                 <Upload className="h-4 w-4" />
                 {resumeFile ? resumeFile.name : "Upload PDF"}
