@@ -16,6 +16,7 @@ import {
   BarChart3,
   UserPlus,
   Building2,
+  MessageSquare,
 } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
 import type { Metadata } from "next";
@@ -37,8 +38,6 @@ const unlimitedItems = [
   { icon: GitBranch, label: "Unlimited Pipelines", desc: "Custom stages per role" },
   { icon: Building2, label: "Unlimited Orgs", desc: "Manage multiple companies" },
 ];
-
-
 
 const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
@@ -129,22 +128,23 @@ export default async function HomePage() {
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <Link
                   href="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-bold text-[#080c10] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-bold text-[#080c10] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080c10]"
                 >
-                  Start for free
+                  Get started free
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/pricing"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-bold text-white hover:bg-white/10 transition-all active:scale-95"
+                  href="/features/hiring-pipeline"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-bold text-white hover:bg-white/10 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080c10]"
                 >
-                  View features
+                  See all features
                 </Link>
               </div>
 
-              <div className="mt-8 flex items-center gap-6 text-[10px] text-white/45 font-bold uppercase tracking-widest whitespace-nowrap overflow-hidden">
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] text-white/45 font-bold uppercase tracking-widest">
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> Unlimited Jobs</span>
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> Unlimited Users</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500/50" /> No Card Required</span>
               </div>
             </div>
 
@@ -178,7 +178,7 @@ export default async function HomePage() {
               </div>
 
               {/* Decorative mini-cards (visible on xl screens) */}
-              <div className="absolute -right-4 -bottom-4 hidden xl:block animate-pulse duration-[4000ms]">
+              <div className="absolute -right-4 -bottom-4 hidden xl:block animate-pulse">
                 <div className="rounded-xl border border-white/10 bg-[#080c10]/95 backdrop-blur-md p-3.5 shadow-2xl">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -198,12 +198,43 @@ export default async function HomePage() {
 
       {/* Main product feature focus */}
       <section className="py-24 bg-[#080c10] border-t border-white/5">
-        <div className="container mx-auto max-w-6xl px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Built for fast-moving teams</h2>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto mb-16">
-            KiteHR isn&apos;t just an ATS. It&apos;s a productivity tool designed to reduce time-to-hire 
-            by centralizing every candidate interaction in one sleek, unified interface.
-          </p>
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Built for fast-moving teams</h2>
+            <p className="text-lg text-white/60 max-w-2xl mx-auto">
+              KiteHR centralizes your entire hiring process in one place — from first application
+              to offer letter — so your team can focus on finding great people, not managing spreadsheets.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: GitBranch,
+                title: "Visual Kanban Pipeline",
+                desc: "Drag and drop candidates through fully customizable stages. Create separate pipelines for every role, tailored to your hiring process.",
+              },
+              {
+                icon: MessageSquare,
+                title: "Collaborative Reviews",
+                desc: "Invite your entire hiring team, assign interviewers, share structured scorecards, and keep all candidate feedback in one thread.",
+              },
+              {
+                icon: BarChart3,
+                title: "Hiring Analytics",
+                desc: "Track time-to-hire, stage conversion rates, and pipeline health at a glance. Spot bottlenecks before they slow your search.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-5">
+                <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <item.icon className="h-5 w-5 text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -232,15 +263,15 @@ export default async function HomePage() {
                 <span className="text-white/60">not just intuition</span>
               </h2>
               <p className="text-lg text-white/60 mb-10 leading-relaxed">
-                Our Pro suite adds a layer of intelligence to your hiring. Parse resumes instantly, score candidates 
-                against job criteria, and generate custom interview questions in seconds.
+                Our Pro suite adds a layer of intelligence to your hiring. Parse resumes instantly, score candidates
+                against job criteria, and generate tailored interview questions in seconds.
               </p>
               
               <div className="grid gap-6">
                 {[
-                  { icon: Brain, title: "AI Resume Parsing", desc: "Extract skills and details automatically." },
-                  { icon: Zap, title: "Candidate Scoring", desc: "Rank applicants based on job fit." },
-                  { icon: Mail, title: "Smart Outreach", desc: "Generate personalized emails in one click." }
+                  { icon: Brain, title: "AI Resume Parsing", desc: "Instantly extract skills, experience, and key details from any resume format." },
+                  { icon: Zap, title: "Candidate Scoring", desc: "Automatically rank applicants against your job criteria so you focus on the best fits." },
+                  { icon: Mail, title: "Smart Outreach", desc: "Generate personalized, on-brand candidate emails and interview questions in one click." }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-1">
@@ -252,6 +283,16 @@ export default async function HomePage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-10">
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  Explore Pro features
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
@@ -299,13 +340,19 @@ export default async function HomePage() {
             Join over 500 teams already hiring better with KiteHR. 
             No cost, no limits, no credit card required.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-black text-[#080c10] hover:bg-white/90 hover:scale-105 transition-all shadow-2xl"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-black text-[#080c10] hover:bg-white/90 hover:scale-105 transition-all shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#080c10]"
             >
-              Get Started for Free
+              Get started free
               <ArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/pricing"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-8 py-5 text-base font-bold text-white hover:bg-white/10 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080c10]"
+            >
+              View pricing
             </Link>
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-white/60 font-medium">
@@ -320,5 +367,3 @@ export default async function HomePage() {
     </div>
   );
 }
-
-
