@@ -40,7 +40,11 @@ async function getJob(jobId: string, orgId: string) {
         },
       },
       applications: {
-        include: {
+        select: {
+          id: true,
+          stageId: true,
+          aiScore: true,
+          aiScoreSummary: true,
           candidate: {
             select: {
               id: true,

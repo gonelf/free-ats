@@ -199,11 +199,15 @@ model Application {
   stageId              String
   stage                Stage     @relation(fields: [stageId], references: [id])
   aiScore              Int?
+  aiScoreSummary       Json?     // { strengths: string[], gaps: string[], recommendation: string }
   aiGapAnalysis        Json?
   aiInterviewQuestions Json?
   aiReferenceQuestions String[]  @default([])
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
+
+  interviews           Interview[]
+  screening            Screening?
 
   @@unique([jobId, candidateId])
   @@index([stageId])
@@ -513,4 +517,71 @@ model Communication {
 
   @@index([candidateId])
   @@index([organizationId])
+}
+
+// ============ INTERVIEWS ============
+
+model Interview {
+  id            String          @id @default(cuid())
+  applicationId String
+  application   Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  title         String          @default("Interview")
+  scheduledAt   DateTime?
+  duration      Int             @default(60) // minutes
+  meetingLink   String?
+  timezone      String          @default("UTC")
+  status        InterviewStatus @default(SCHEDULED)
+  notes         String?         @db.Text
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  feedbacks     InterviewFeedback[]
+
+  @@index([applicationId])
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model InterviewFeedback {
+  id             String             @id @default(cuid())
+  interviewId    String
+  interview      Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  authorId       String
+  rubricScores   Json               // { criterion: string, score: number, notes: string }[]
+  overallRating  Int                // 1-5
+  recommendation HireRecommendation
+  notes          String?            @db.Text
+  aiDrafted      Boolean            @default(false)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([interviewId])
+}
+
+enum HireRecommendation {
+  STRONG_YES
+  YES
+  MAYBE
+  NO
+  STRONG_NO
+}
+
+// ============ SCREENING ============
+
+model Screening {
+  id            String      @id @default(cuid())
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  questions     Json        // { id: string, question: string, type: "initial" | "followup" }[]
+  responses     Json?       // { questionId: string, answer: string, answeredAt: string }[]
+  flagged       Boolean     @default(false)
+  flagReason    String?
+  completedAt   DateTime?
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
 }

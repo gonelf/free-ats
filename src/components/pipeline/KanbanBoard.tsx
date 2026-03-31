@@ -11,6 +11,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import Link from "next/link";
 import { KanbanColumn } from "./KanbanColumn";
 import { KanbanCard } from "./KanbanCard";
 
@@ -21,10 +22,17 @@ interface Stage {
   order: number;
 }
 
+interface ScoreSummary {
+  strengths: string[];
+  gaps: string[];
+  recommendation: string;
+}
+
 interface Application {
   id: string;
   stageId: string;
   aiScore: number | null;
+  aiScoreSummary?: ScoreSummary | null;
   candidate: {
     id: string;
     firstName: string;
@@ -41,6 +49,12 @@ interface KanbanBoardProps {
   hasAiAccess: boolean;
 }
 
+const REJECTION_STAGE_NAMES = ["rejected", "declined", "not a fit", "no hire"];
+
+function isRejectionStage(stageName: string) {
+  return REJECTION_STAGE_NAMES.some((n) => stageName.toLowerCase().includes(n));
+}
+
 export function KanbanBoard({
   stages,
   applications: initialApplications,
@@ -49,6 +63,11 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
   const [applications, setApplications] = useState(initialApplications);
   const [activeApp, setActiveApp] = useState<Application | null>(null);
+  const [rejectionPrompt, setRejectionPrompt] = useState<{
+    applicationId: string;
+    candidateName: string;
+    candidateId: string;
+  } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -104,6 +123,19 @@ export function KanbanBoard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ stageId: targetStageId }),
       });
+
+      // Show rejection prompt if moved to a rejection-named stage
+      const targetStage = stages.find((s) => s.id === targetStageId);
+      if (targetStage && isRejectionStage(targetStage.name) && hasAiAccess) {
+        const movedApp = applications.find((a) => a.id === activeId);
+        if (movedApp) {
+          setRejectionPrompt({
+            applicationId: activeId,
+            candidateName: `${movedApp.candidate.firstName} ${movedApp.candidate.lastName}`,
+            candidateId: movedApp.candidate.id,
+          });
+        }
+      }
     } catch {
       // Revert on error
       setApplications(initialApplications);
@@ -119,6 +151,7 @@ export function KanbanBoard({
   );
 
   return (
+    <>
     <DndContext
       sensors={sensors}
       onDragStart={onDragStart}
@@ -154,5 +187,43 @@ export function KanbanBoard({
         )}
       </DragOverlay>
     </DndContext>
+
+    {/* Rejection prompt toast */}
+    {rejectionPrompt && (
+      <div className="fixed bottom-6 right-6 z-50 w-80 rounded-xl border border-red-200 dark:border-red-800 bg-white dark:bg-gray-900 shadow-xl p-4 animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              Send rejection to {rejectionPrompt.candidateName}?
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Generate a constructive, AI-personalized rejection email.
+            </p>
+          </div>
+          <button
+            onClick={() => setRejectionPrompt(null)}
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg leading-none"
+          >
+            ×
+          </button>
+        </div>
+        <div className="flex gap-2 mt-3">
+          <Link
+            href={`/candidates/${rejectionPrompt.candidateId}?compose=rejection&applicationId=${rejectionPrompt.applicationId}`}
+            onClick={() => setRejectionPrompt(null)}
+            className="flex-1 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 px-3 py-1.5 text-xs font-semibold text-red-700 dark:text-red-400 text-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
+          >
+            Open & Draft Email
+          </Link>
+          <button
+            onClick={() => setRejectionPrompt(null)}
+            className="rounded-lg border border-gray-200 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

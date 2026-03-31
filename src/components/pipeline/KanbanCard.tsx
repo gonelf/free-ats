@@ -4,13 +4,20 @@ import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
-import { GripVertical, Sparkles } from "lucide-react";
+import { GripVertical, Sparkles, TrendingUp, AlertTriangle, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface ScoreSummary {
+  strengths: string[];
+  gaps: string[];
+  recommendation: string;
+}
 
 interface Application {
   id: string;
   stageId: string;
   aiScore: number | null;
+  aiScoreSummary?: ScoreSummary | null;
   candidate: {
     id: string;
     firstName: string;
@@ -39,7 +46,11 @@ export function KanbanCard({
   hasAiAccess,
 }: KanbanCardProps) {
   const [score, setScore] = useState<number | null>(application.aiScore);
+  const [summary, setSummary] = useState<ScoreSummary | null>(
+    application.aiScoreSummary ?? null
+  );
   const [scoring, setScoring] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   const {
     attributes,
@@ -72,6 +83,13 @@ export function KanbanCard({
       if (res.ok) {
         const data = await res.json();
         setScore(data.score);
+        if (data.strengths && data.gaps && data.recommendation) {
+          setSummary({
+            strengths: data.strengths,
+            gaps: data.gaps,
+            recommendation: data.recommendation,
+          });
+        }
       }
     } finally {
       setScoring(false);
@@ -104,9 +122,14 @@ export function KanbanCard({
           {hasAiAccess && score !== null ? (
             <button
               onPointerDown={(e) => e.stopPropagation()}
-              onClick={handleScore}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (summary) setShowSummary((v) => !v);
+                else handleScore(e);
+              }}
               disabled={scoring}
-              title="Re-score candidate"
+              title={summary ? "Toggle score summary" : "Re-score candidate"}
               className={cn(
                 "shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-opacity hover:opacity-75",
                 getScoreColor(score)
@@ -153,6 +176,59 @@ export function KanbanCard({
                 +{candidate.tags.length - 3}
               </span>
             )}
+          </div>
+        )}
+
+        {/* AI Score Summary Panel */}
+        {showSummary && summary && (
+          <div
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            className="mt-3 rounded-lg border border-indigo-100 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-900/20 p-3 space-y-2 text-xs"
+          >
+            {summary.strengths.length > 0 && (
+              <div className="flex gap-2">
+                <TrendingUp className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-green-700 dark:text-green-400 mb-0.5">Match</p>
+                  <ul className="space-y-0.5 text-gray-600 dark:text-gray-300">
+                    {summary.strengths.map((s, i) => (
+                      <li key={i}>• {s}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+            {summary.gaps.length > 0 && (
+              <div className="flex gap-2">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-amber-700 dark:text-amber-400 mb-0.5">Gaps</p>
+                  <ul className="space-y-0.5 text-gray-600 dark:text-gray-300">
+                    {summary.gaps.map((g, i) => (
+                      <li key={i}>• {g}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+            {summary.recommendation && (
+              <div className="flex gap-2">
+                <MessageSquare className="h-3.5 w-3.5 text-indigo-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-indigo-700 dark:text-indigo-400 mb-0.5">Recommendation</p>
+                  <p className="text-gray-600 dark:text-gray-300">{summary.recommendation}</p>
+                </div>
+              </div>
+            )}
+            <button
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleScore(e); }}
+              disabled={scoring}
+              className="text-[10px] text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors disabled:opacity-50"
+            >
+              {scoring ? "Re-scoring…" : "Re-score →"}
+            </button>
           </div>
         )}
       </div>
