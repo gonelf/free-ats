@@ -62,42 +62,37 @@ function SignupForm() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#080c10] text-white">
-      {/* Glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-cyan-500/8 blur-[120px] rounded-full" />
-      </div>
-
+    <div className="flex min-h-screen bg-slate-50 text-slate-900 selection:bg-teal-100">
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 mb-10">
           <Image src="/logo.png" alt="KiteHR" width={36} height={36} className="rounded-xl" />
-          <span className="font-semibold text-lg text-white">KiteHR</span>
+          <span className="font-semibold text-lg text-slate-900">KiteHR</span>
         </Link>
 
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold">Create your account</h1>
-            <p className="text-sm text-white/40 mt-1">Free forever. No credit card needed.</p>
+            <h1 className="text-2xl font-bold text-slate-900">Create your account</h1>
+            <p className="text-sm text-slate-500 mt-1">Free forever. No credit card needed.</p>
           </div>
 
           {/* Perks */}
           <ul className="space-y-2 mb-7">
             {perks.map((p) => (
-              <li key={p} className="flex items-center gap-2.5 text-sm text-white/50">
-                <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500/15">
-                  <Check className="h-2.5 w-2.5 text-green-400" />
+              <li key={p} className="flex items-center gap-2.5 text-sm text-slate-600">
+                <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 border border-teal-100">
+                  <Check className="h-2.5 w-2.5 text-teal-600" />
                 </div>
                 {p}
               </li>
             ))}
           </ul>
 
-          <div className="rounded-2xl border border-white/8 bg-white/3 p-8">
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label htmlFor="name" className="block text-sm font-medium text-white/70">
+                  <label htmlFor="name" className="block text-sm font-medium text-slate-700">
                     Your name
                   </label>
                   <input
@@ -106,11 +101,11 @@ function SignupForm() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label htmlFor="company" className="block text-sm font-medium text-white/70">
+                  <label htmlFor="company" className="block text-sm font-medium text-slate-700">
                     Company
                   </label>
                   <input
@@ -119,13 +114,13 @@ function SignupForm() {
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-colors"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="email" className="block text-sm font-medium text-white/70">
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700">
                   Work email
                 </label>
                 <input
@@ -135,12 +130,12 @@ function SignupForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-colors"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="password" className="block text-sm font-medium text-white/70">
+                <label htmlFor="password" className="block text-sm font-medium text-slate-700">
                   Password
                 </label>
                 <input
@@ -151,12 +146,12 @@ function SignupForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   minLength={8}
                   required
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-colors"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-colors"
                 />
               </div>
 
               {error && (
-                <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   {error}
                 </div>
@@ -165,7 +160,7 @@ function SignupForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-4 py-2.5 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 mt-1"
               >
                 {loading ? "Creating account…" : (
                   <>Create free account <ArrowRight className="h-4 w-4" /></>
@@ -173,15 +168,15 @@ function SignupForm() {
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-white/35">
+            <p className="mt-6 text-center text-sm text-slate-500">
               Already have an account?{" "}
-              <Link href={redirectTo ? `/login?redirectTo=${encodeURIComponent(redirectTo)}` : "/login"} className="text-cyan-400 hover:text-cyan-300 transition-colors">
+              <Link href={redirectTo ? `/login?redirectTo=${encodeURIComponent(redirectTo)}` : "/login"} className="text-teal-700 font-medium hover:text-teal-800 transition-colors">
                 Sign in
               </Link>
             </p>
           </div>
 
-          <p className="mt-4 text-center text-xs text-white/20">
+          <p className="mt-4 text-center text-xs text-slate-400">
             By signing up you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>
@@ -193,8 +188,8 @@ function SignupForm() {
 export default function SignupPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-[#080c10]">
-        <div className="text-sm text-white/30">Loading…</div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="text-sm text-slate-400">Loading…</div>
       </div>
     }>
       <SignupForm />
