@@ -8,6 +8,7 @@ import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
 import { getAdminUser } from "@/lib/admin";
 import { LinkedInDisconnectButton } from "@/components/integrations/LinkedInDisconnectButton";
 import { CopyFeedUrl } from "@/components/integrations/CopyFeedUrl";
+import { ExtensionTokenManager } from "@/components/settings/ExtensionTokenManager";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -39,6 +40,12 @@ export default async function SettingsPage() {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const indeedFeedUrl = `${appUrl}/${org.slug}/jobs.xml`;
+
+  const extensionTokens = await db.extensionToken.findMany({
+    where: { organizationId: org.id },
+    select: { id: true, label: true, lastUsedAt: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div>
@@ -173,6 +180,15 @@ export default async function SettingsPage() {
             </div>
           </div>
         )}
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
+          <ExtensionTokenManager
+            initialTokens={extensionTokens.map((t) => ({
+              ...t,
+              lastUsedAt: t.lastUsedAt?.toISOString() ?? null,
+              createdAt: t.createdAt.toISOString(),
+            }))}
+          />
+        </div>
       </div>
     </div>
   );
