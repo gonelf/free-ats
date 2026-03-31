@@ -68,30 +68,27 @@ export default async function CityHubPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
-      <PublicNav />
+    <div className="min-h-screen bg-white text-slate-900">
+      <PublicNav variant="light" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-cyan-500/8 blur-[100px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-5xl px-6 pt-16 pb-10">
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-5xl px-6 pt-16 pb-10">
           <Link
             href="/salaries"
-            className="inline-flex items-center gap-1.5 text-sm text-white/30 hover:text-white/60 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-700 transition-colors mb-8"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Salary Guide
           </Link>
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="h-4 w-4 text-cyan-400" />
-            <span className="text-sm text-cyan-400">{getCityLabel(city)}</span>
+            <MapPin className="h-4 w-4 text-teal-600" />
+            <span className="text-sm text-teal-700">{getCityLabel(city)}</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+          <h1 className="font-heading font-bold text-3xl md:text-4xl tracking-tight text-slate-900 mb-4">
             {city.name} Salary Guide 2025
           </h1>
-          <p className="text-base text-white/50 max-w-2xl mb-8">
+          <p className="text-base text-slate-500 max-w-2xl mb-8">
             Salary benchmarks for {entries.length} roles in {city.name}.
             See what you&apos;re paying locally vs. what a remote hire costs — and
             calculate your exact savings.
@@ -99,46 +96,46 @@ export default async function CityHubPage({ params }: Props) {
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 max-w-lg">
-            <div className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
-              <p className="text-2xl font-bold text-white">{entries.length}</p>
-              <p className="text-xs text-white/40 mt-1">Roles covered</p>
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-center">
+              <p className="text-2xl font-bold text-slate-900">{entries.length}</p>
+              <p className="text-xs text-slate-400 mt-1">Roles covered</p>
             </div>
-            <div className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
-              <p className="text-2xl font-bold text-cyan-400">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-center">
+              <p className="text-2xl font-bold text-teal-700">
                 {formatSalary(avgSalary, city.currency)}
               </p>
-              <p className="text-xs text-white/40 mt-1">Avg local median</p>
+              <p className="text-xs text-slate-400 mt-1">Avg local median</p>
             </div>
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-center">
-              <p className="text-2xl font-bold text-emerald-400">{avgSavings}%</p>
-              <p className="text-xs text-white/40 mt-1">Avg remote savings</p>
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-center">
+              <p className="text-2xl font-bold text-emerald-600">{avgSavings}%</p>
+              <p className="text-xs text-slate-400 mt-1">Avg remote savings</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Role Tables by Category */}
-      <section className="py-10 border-t border-white/5">
+      <section className="py-10">
         <div className="mx-auto max-w-5xl px-6 space-y-10">
           {categories
             .filter((cat) => byCategory[cat]?.length > 0)
             .map((cat) => (
               <div key={cat}>
-                <h2 className="text-base font-semibold text-white mb-4">{cat}</h2>
-                <div className="rounded-2xl border border-white/8 overflow-hidden">
+                <h2 className="text-base font-semibold text-slate-900 mb-4">{cat}</h2>
+                <div className="rounded-2xl border border-slate-200 overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-white/8 bg-white/3">
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wide">
+                      <tr className="border-b border-slate-200 bg-slate-50">
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
                           Role
                         </th>
-                        <th className="text-right px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wide">
+                        <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
                           Local Median
                         </th>
-                        <th className="text-right px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wide">
+                        <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
                           Remote
                         </th>
-                        <th className="text-right px-4 py-3 text-xs font-semibold text-emerald-400/60 uppercase tracking-wide">
+                        <th className="text-right px-4 py-3 text-xs font-semibold text-emerald-600 uppercase tracking-wide">
                           Savings
                         </th>
                         <th className="px-4 py-3" />
@@ -148,21 +145,21 @@ export default async function CityHubPage({ params }: Props) {
                       {byCategory[cat].map((entry, i) => (
                         <tr
                           key={entry.roleSlug}
-                          className={`border-b border-white/5 hover:bg-white/3 transition-colors ${
+                          className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${
                             i === byCategory[cat].length - 1 ? "border-b-0" : ""
                           }`}
                         >
-                          <td className="px-4 py-3 font-medium text-white/80">
+                          <td className="px-4 py-3 font-medium text-slate-800">
                             {entry.roleName}
                           </td>
-                          <td className="px-4 py-3 text-right text-white/60">
+                          <td className="px-4 py-3 text-right text-slate-600">
                             {formatSalary(entry.localSalaryMedian, entry.currency as "USD" | "GBP")}
                           </td>
-                          <td className="px-4 py-3 text-right text-emerald-400/70">
+                          <td className="px-4 py-3 text-right text-emerald-600">
                             {formatSalary(entry.remoteSalaryMedian, entry.currency as "USD" | "GBP")}
                           </td>
                           <td className="px-4 py-3 text-right">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-400">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-xs font-semibold text-emerald-600">
                               <TrendingDown className="h-3 w-3" />
                               {entry.savingsPercent}%
                             </span>
@@ -170,7 +167,7 @@ export default async function CityHubPage({ params }: Props) {
                           <td className="px-4 py-3 text-right">
                             <Link
                               href={`/salaries/${citySlug}/${entry.roleSlug}`}
-                              className="text-xs text-cyan-400/60 hover:text-cyan-400 transition-colors flex items-center justify-end gap-1"
+                              className="text-xs text-teal-500 hover:text-teal-700 transition-colors flex items-center justify-end gap-1"
                             >
                               Details
                               <ArrowRight className="h-3 w-3" />
@@ -187,18 +184,18 @@ export default async function CityHubPage({ params }: Props) {
       </section>
 
       {/* CTA */}
-      <section className="py-16 border-t border-white/5">
+      <section className="bg-teal-700 py-20">
         <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-2xl font-bold mb-3">
+          <h2 className="font-heading font-bold text-2xl md:text-3xl text-white mb-3">
             Hiring in {city.name}? Cut costs with remote talent.
           </h2>
-          <p className="text-white/40 text-sm mb-6 max-w-lg mx-auto">
+          <p className="text-teal-100 text-base mb-8 max-w-lg mx-auto">
             KiteHR gives you the tools to post roles, track candidates, and hire
             remote workers — completely free.
           </p>
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition-all shadow-lg"
           >
             Post your first remote role free
             <ArrowRight className="h-4 w-4" />

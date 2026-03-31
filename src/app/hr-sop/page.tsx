@@ -40,28 +40,25 @@ export default async function HrSopPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
-      <PublicNav />
+    <div className="min-h-screen bg-white text-slate-900">
+      <PublicNav variant="light" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-cyan-500/8 blur-[100px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-5">
-            <FileText className="h-3.5 w-3.5" />
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-[11px] font-semibold tracking-wider uppercase text-teal-700 mb-5">
+            <FileText className="h-3 w-3" />
             Free SOP templates
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+          <h1 className="font-heading font-black tracking-tight text-slate-900 text-4xl md:text-5xl mb-4">
             HR Standard Operating Procedures
           </h1>
-          <p className="text-lg text-white/40 max-w-xl mx-auto mb-6">
+          <p className="text-lg text-slate-500 max-w-xl mx-auto mb-8">
             Step-by-step SOPs for every HR and hiring process. Free to use — or track them inside KiteHR so your whole team follows the same playbook.
           </p>
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-bold text-white hover:bg-teal-800 transition-colors"
           >
             <Sparkles className="h-4 w-4" />
             Use SOPs in KiteHR — free
@@ -73,7 +70,7 @@ export default async function HrSopPage() {
       <section className="py-8 pb-24">
         <div className="mx-auto max-w-5xl px-6 space-y-12">
           {sops.length === 0 ? (
-            <div className="text-center py-16 text-white/30">
+            <div className="text-center py-16 text-slate-400">
               <FileText className="h-10 w-10 mx-auto mb-4 opacity-30" />
               <p className="text-sm">SOPs are being generated. Check back soon.</p>
             </div>
@@ -82,7 +79,7 @@ export default async function HrSopPage() {
               const items = sops.filter((s) => s.category === category);
               return (
                 <div key={category}>
-                  <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider mb-4">
+                  <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
                     {CATEGORY_LABELS[category] ?? category}
                   </h2>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -90,18 +87,18 @@ export default async function HrSopPage() {
                       <Link
                         key={sop.slug}
                         href={`/hr-sop/${sop.slug}`}
-                        className="group rounded-2xl border border-white/8 bg-white/3 p-5 hover:border-cyan-500/20 hover:bg-cyan-500/3 transition-all"
+                        className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-200 hover:shadow-sm transition-all"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-white text-sm group-hover:text-cyan-400 transition-colors mb-1 leading-snug">
+                            <h3 className="font-medium text-slate-900 text-sm group-hover:text-teal-700 transition-colors mb-1 leading-snug">
                               {sop.title}
                             </h3>
-                            <p className="text-xs text-white/30 line-clamp-2 leading-relaxed">
+                            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                               {sop.description}
                             </p>
                           </div>
-                          <ArrowRight className="h-4 w-4 text-white/15 shrink-0 mt-0.5 group-hover:text-cyan-400 transition-colors" />
+                          <ArrowRight className="h-4 w-4 text-slate-300 shrink-0 mt-0.5 group-hover:text-teal-600 transition-colors" />
                         </div>
                       </Link>
                     ))}
@@ -114,26 +111,21 @@ export default async function HrSopPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-16 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <h2 className="text-2xl font-bold mb-3">
-              Keep your whole team on the same process
-            </h2>
-            <p className="text-white/40 mb-6 text-sm">
-              KiteHR gives your team access to all SOPs in one place. No more processes buried in Google Docs or Notion — completely free.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Create free account
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="bg-teal-700 py-20">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="font-heading font-bold text-2xl md:text-3xl text-white mb-4">
+            Keep your whole team on the same process
+          </h2>
+          <p className="text-teal-100 mb-8 text-base max-w-lg mx-auto">
+            KiteHR gives your team access to all SOPs in one place. No more processes buried in Google Docs or Notion — completely free.
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition-all shadow-lg"
+          >
+            Create free account
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

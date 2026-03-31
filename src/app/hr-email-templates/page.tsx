@@ -14,28 +14,25 @@ const categories = Array.from(new Set(hrEmailTemplatesList.map((t) => t.category
 
 export default function HrEmailTemplatesPage() {
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
-      <PublicNav />
+    <div className="min-h-screen bg-white text-slate-900">
+      <PublicNav variant="light" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-cyan-500/8 blur-[100px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-5">
-            <Mail className="h-3.5 w-3.5" />
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-[11px] font-semibold tracking-wider uppercase text-teal-700 mb-5">
+            <Mail className="h-3 w-3" />
             Free email templates
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+          <h1 className="font-heading font-black tracking-tight text-slate-900 text-4xl md:text-5xl mb-4">
             HR Email Templates
           </h1>
-          <p className="text-lg text-white/40 max-w-xl mx-auto mb-6">
+          <p className="text-lg text-slate-500 max-w-xl mx-auto mb-8">
             Professional templates for every stage of the hiring process. Copy and customise for free — or automate them with KiteHR so you never copy-paste again.
           </p>
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-bold text-white hover:bg-teal-800 transition-colors"
           >
             <Sparkles className="h-4 w-4" />
             Automate hiring emails for free
@@ -50,7 +47,7 @@ export default function HrEmailTemplatesPage() {
             const templates = hrEmailTemplatesList.filter((t) => t.category === category);
             return (
               <div key={category}>
-                <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider mb-4">
+                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
                   {category}
                 </h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -58,18 +55,18 @@ export default function HrEmailTemplatesPage() {
                     <Link
                       key={template.slug}
                       href={`/hr-email-templates/${template.slug}`}
-                      className="group rounded-2xl border border-white/8 bg-white/3 p-5 hover:border-cyan-500/20 hover:bg-cyan-500/3 transition-all"
+                      className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-200 hover:shadow-sm transition-all"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-white text-sm group-hover:text-cyan-400 transition-colors mb-1 leading-snug">
+                          <h3 className="font-medium text-slate-900 text-sm group-hover:text-teal-700 transition-colors mb-1 leading-snug">
                             {template.title}
                           </h3>
-                          <p className="text-xs text-white/30 line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                             {template.description}
                           </p>
                         </div>
-                        <ArrowRight className="h-4 w-4 text-white/15 shrink-0 mt-0.5 group-hover:text-cyan-400 transition-colors" />
+                        <ArrowRight className="h-4 w-4 text-slate-300 shrink-0 mt-0.5 group-hover:text-teal-600 transition-colors" />
                       </div>
                     </Link>
                   ))}
@@ -81,24 +78,21 @@ export default function HrEmailTemplatesPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-16 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <h2 className="text-2xl font-bold mb-3">Stop copying and pasting emails</h2>
-            <p className="text-white/40 mb-6 text-sm">
-              KiteHR lets you automate any of these templates. Send personalised emails to 100 candidates in one click — from application acknowledgement to offer letters.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Try KiteHR email automation — free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="bg-teal-700 py-20">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="font-heading font-bold text-2xl md:text-3xl text-white mb-4">
+            Stop copying and pasting emails
+          </h2>
+          <p className="text-teal-100 mb-8 text-base max-w-lg mx-auto">
+            KiteHR lets you automate any of these templates. Send personalised emails to 100 candidates in one click — from application acknowledgement to offer letters.
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition-all shadow-lg"
+          >
+            Try KiteHR email automation — free
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

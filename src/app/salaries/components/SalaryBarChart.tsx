@@ -30,20 +30,20 @@ function Bar({
   high: number;
   maxValue: number;
   currency: "USD" | "GBP";
-  color: "cyan" | "emerald";
+  color: "teal" | "emerald";
 }) {
   const lowPct = Math.round((low / maxValue) * 100);
   const medianPct = Math.round((median / maxValue) * 100);
   const highPct = Math.round((high / maxValue) * 100);
 
-  const trackColor = color === "cyan" ? "bg-cyan-500/20" : "bg-emerald-500/20";
-  const fillColor = color === "cyan" ? "bg-cyan-500" : "bg-emerald-500";
-  const textColor = color === "cyan" ? "text-cyan-400" : "text-emerald-400";
+  const trackColor = color === "teal" ? "bg-teal-100" : "bg-emerald-100";
+  const fillColor = color === "teal" ? "bg-teal-500" : "bg-emerald-500";
+  const textColor = color === "teal" ? "text-teal-700" : "text-emerald-600";
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-white/60 font-medium">{label}</span>
+        <span className="text-slate-600 font-medium">{label}</span>
         <span className={`font-bold ${textColor}`}>{formatSalary(median, currency)}</span>
       </div>
       {/* Track */}
@@ -60,9 +60,9 @@ function Bar({
         />
       </div>
       {/* Labels */}
-      <div className="flex justify-between text-xs text-white/30">
+      <div className="flex justify-between text-xs text-slate-400">
         <span>{formatSalary(low, currency)}</span>
-        <span className="text-white/40">median</span>
+        <span className="text-slate-500">median</span>
         <span>{formatSalary(high, currency)}</span>
       </div>
     </div>
@@ -89,7 +89,7 @@ export function SalaryBarChart({
         high={localHigh}
         maxValue={maxValue}
         currency={currency}
-        color="cyan"
+        color="teal"
       />
       <Bar
         label="Remote (via KiteHR)"

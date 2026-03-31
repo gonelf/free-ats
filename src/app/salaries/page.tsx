@@ -26,8 +26,6 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default async function SalariesIndexPage() {
-  // Only link to cities/roles that have at least one published entry,
-  // so Google never follows a link that leads to a 404.
   let publishedCitySlugs = new Set<string>();
   let publishedRoleSlugs = new Set<string>();
   try {
@@ -40,7 +38,7 @@ export default async function SalariesIndexPage() {
       publishedRoleSlugs.add(e.roleSlug);
     }
   } catch {
-    // Table not yet migrated — fall through with empty sets (show no links)
+    // Table not yet migrated — fall through with empty sets
   }
 
   const categories = getAllCategories();
@@ -49,50 +47,45 @@ export default async function SalariesIndexPage() {
   const tier3Cities = SALARY_CITIES.filter((c) => c.tier === 3 && publishedCitySlugs.has(c.slug));
 
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
-      <PublicNav />
+    <div className="min-h-screen bg-white text-slate-900">
+      <PublicNav variant="light" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/8 blur-[120px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-5xl px-6 pt-20 pb-14 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-6">
-            <TrendingDown className="h-3.5 w-3.5" />
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-5xl px-6 pt-20 pb-14 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-3 py-1 text-[11px] font-semibold tracking-wider uppercase text-teal-700 mb-6">
+            <TrendingDown className="h-3 w-3" />
             {publishedCitySlugs.size} Cities · {publishedRoleSlugs.size} Roles
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-5">
+          <h1 className="font-heading font-black tracking-tight text-slate-900 text-4xl md:text-5xl mb-5">
             Salary Benchmarks &{" "}
-            <span className="text-cyan-400">Remote Savings Guide</span>
+            <span className="text-teal-700">Remote Savings Guide</span>
           </h1>
-          <p className="text-lg text-white/50 max-w-2xl mx-auto mb-8">
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-8">
             See exactly what each role costs in your city — and how much you could save by
             hiring remote talent through KiteHR. Updated for 2025.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Start hiring remote
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-7 py-3 text-sm font-bold text-white hover:bg-teal-800 transition-colors"
+          >
+            Start hiring remote
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
       {/* City Grid */}
-      <section className="py-12 border-t border-white/5">
+      <section className="py-12 border-b border-slate-100">
         <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-xl font-bold mb-2">Browse by City</h2>
-          <p className="text-sm text-white/40 mb-8">
+          <h2 className="font-heading font-bold text-xl text-slate-900 mb-2">Browse by City</h2>
+          <p className="text-sm text-slate-500 mb-8">
             Select a city to see all {publishedRoleSlugs.size} role benchmarks and savings data.
           </p>
 
           {/* Tier 1 */}
           <div className="mb-8">
-            <p className="text-xs font-semibold text-cyan-400/70 uppercase tracking-wider mb-3">
+            <p className="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-3">
               Top Markets
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -100,13 +93,13 @@ export default async function SalariesIndexPage() {
                 <Link
                   key={city.slug}
                   href={`/salaries/${city.slug}`}
-                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/8 bg-white/3 p-4 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all text-center group"
+                  className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-4 hover:border-teal-200 hover:shadow-sm transition-all text-center group"
                 >
-                  <MapPin className="h-4 w-4 text-cyan-400/50 group-hover:text-cyan-400 transition-colors" />
-                  <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">
+                  <MapPin className="h-4 w-4 text-slate-300 group-hover:text-teal-600 transition-colors" />
+                  <span className="text-sm font-medium text-slate-800 group-hover:text-slate-900 transition-colors">
                     {city.name}
                   </span>
-                  <span className="text-xs text-white/30">{city.state}</span>
+                  <span className="text-xs text-slate-400">{city.state}</span>
                 </Link>
               ))}
             </div>
@@ -114,7 +107,7 @@ export default async function SalariesIndexPage() {
 
           {/* Tier 2 */}
           <div className="mb-8">
-            <p className="text-xs font-semibold text-white/30 uppercase tracking-wider mb-3">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
               Major Markets
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -122,12 +115,12 @@ export default async function SalariesIndexPage() {
                 <Link
                   key={city.slug}
                   href={`/salaries/${city.slug}`}
-                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/8 bg-white/3 p-3 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all text-center group"
+                  className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-3 hover:border-teal-200 hover:shadow-sm transition-all text-center group"
                 >
-                  <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
                     {city.name}
                   </span>
-                  <span className="text-xs text-white/25">
+                  <span className="text-xs text-slate-400">
                     {city.country === "UK" ? "🇬🇧" : "🇺🇸"} {city.state}
                   </span>
                 </Link>
@@ -137,7 +130,7 @@ export default async function SalariesIndexPage() {
 
           {/* Tier 3 */}
           <div>
-            <p className="text-xs font-semibold text-white/20 uppercase tracking-wider mb-3">
+            <p className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
               All Other Markets
             </p>
             <div className="flex flex-wrap gap-2">
@@ -145,7 +138,7 @@ export default async function SalariesIndexPage() {
                 <Link
                   key={city.slug}
                   href={`/salaries/${city.slug}`}
-                  className="rounded-full border border-white/8 bg-white/3 px-3 py-1.5 text-xs text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all"
                 >
                   {city.name}
                 </Link>
@@ -156,10 +149,10 @@ export default async function SalariesIndexPage() {
       </section>
 
       {/* Browse by Role Category */}
-      <section className="py-12 border-t border-white/5">
+      <section className="py-12 border-b border-slate-100">
         <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-xl font-bold mb-2">Browse by Role</h2>
-          <p className="text-sm text-white/40 mb-8">
+          <h2 className="font-heading font-bold text-xl text-slate-900 mb-2">Browse by Role</h2>
+          <p className="text-sm text-slate-500 mb-8">
             {publishedRoleSlugs.size} roles across {categories.length} categories.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -169,25 +162,25 @@ export default async function SalariesIndexPage() {
               return (
                 <div
                   key={category}
-                  className="rounded-2xl border border-white/8 bg-white/3 p-5"
+                  className="rounded-2xl border border-slate-200 bg-white p-5"
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-lg">{CATEGORY_ICONS[category] ?? "📋"}</span>
-                    <h3 className="text-sm font-semibold text-white">{category}</h3>
-                    <span className="ml-auto text-xs text-white/30">{roles.length} roles</span>
+                    <h3 className="text-sm font-semibold text-slate-900">{category}</h3>
+                    <span className="ml-auto text-xs text-slate-400">{roles.length} roles</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {roles.slice(0, 6).map((role) => (
                       <Link
                         key={role.slug}
                         href={`/salaries/roles/${role.slug}`}
-                        className="rounded-full border border-white/8 bg-white/3 px-2.5 py-1 text-xs text-white/50 hover:text-cyan-400 hover:border-cyan-500/30 transition-all"
+                        className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-500 hover:text-teal-700 hover:border-teal-200 transition-all"
                       >
                         {role.title}
                       </Link>
                     ))}
                     {roles.length > 6 && (
-                      <span className="rounded-full border border-white/8 px-2.5 py-1 text-xs text-white/20">
+                      <span className="rounded-full border border-slate-100 px-2.5 py-1 text-xs text-slate-300">
                         +{roles.length - 6} more
                       </span>
                     )}
@@ -200,28 +193,23 @@ export default async function SalariesIndexPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/6 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <Briefcase className="h-8 w-8 text-cyan-400/40 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-3">
-              Ready to reduce your hiring costs?
-            </h2>
-            <p className="text-white/40 mb-6 text-sm max-w-lg mx-auto">
-              KiteHR connects you with vetted remote talent at a fraction of local rates.
-              Generate a job description with AI and post your first role in minutes — free.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Get started free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="bg-teal-700 py-20">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <Briefcase className="h-8 w-8 text-teal-300 mx-auto mb-4" />
+          <h2 className="font-heading font-bold text-2xl md:text-3xl text-white mb-4">
+            Ready to reduce your hiring costs?
+          </h2>
+          <p className="text-teal-100 mb-8 text-base max-w-lg mx-auto">
+            KiteHR connects you with vetted remote talent at a fraction of local rates.
+            Generate a job description with AI and post your first role in minutes — free.
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-teal-700 hover:bg-teal-50 transition-all shadow-lg"
+          >
+            Get started free
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

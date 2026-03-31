@@ -46,20 +46,18 @@ export default async function BlogPage() {
     postMap.set(post.slug, post);
   }
   const allPosts = Array.from(postMap.values());
+
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
-      <PublicNav />
+    <div className="min-h-screen bg-white text-slate-900">
+      <PublicNav variant="light" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/8 blur-[100px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
+          <h1 className="font-heading font-black tracking-tight text-slate-900 text-4xl md:text-5xl mb-4">
             Hiring resources
           </h1>
-          <p className="text-lg text-white/40 max-w-xl mx-auto">
+          <p className="text-lg text-slate-500 max-w-xl mx-auto">
             Guides, tips, and best practices for building great teams.
           </p>
         </div>
@@ -73,22 +71,22 @@ export default async function BlogPage() {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group rounded-2xl border border-white/8 bg-white/3 p-6 hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all"
+                className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-teal-200 hover:shadow-sm transition-all"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-white/40">
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-500">
                         {post.category}
                       </span>
-                      <span className="text-xs text-white/25">{post.readingTime}</span>
+                      <span className="text-xs text-slate-400">{post.readingTime}</span>
                     </div>
-                    <h2 className="text-lg font-semibold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-teal-700 transition-colors">
                       {post.title}
                     </h2>
-                    <p className="text-sm text-white/40 leading-relaxed">{post.description}</p>
+                    <p className="text-sm text-slate-500 leading-relaxed">{post.description}</p>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-white/20 shrink-0 mt-1 group-hover:text-cyan-400 transition-colors" />
+                  <ArrowRight className="h-5 w-5 text-slate-300 shrink-0 mt-1 group-hover:text-teal-600 transition-colors" />
                 </div>
               </Link>
             ))}
