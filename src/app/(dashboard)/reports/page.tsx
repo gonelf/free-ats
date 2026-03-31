@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { BarChart3, Users, Briefcase, TrendingUp, Clock } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -114,7 +115,7 @@ export default async function ReportsPage() {
       <div className="flex items-center gap-3 mb-8">
         <BarChart3 className="h-6 w-6 text-gray-400 dark:text-gray-500" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
+          <h1 className="font-heading text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Hiring pipeline at a glance</p>
         </div>
       </div>
@@ -122,13 +123,13 @@ export default async function ReportsPage() {
       {/* Summary stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <StatCard
-          icon={<Briefcase className="h-5 w-5 text-indigo-600" />}
+          icon={<Briefcase className="h-5 w-5 text-teal-600" />}
           label="Open Jobs"
           value={openJobs}
           sub={`${draftJobs} draft · ${closedJobs} closed`}
         />
         <StatCard
-          icon={<Users className="h-5 w-5 text-indigo-600" />}
+          icon={<Users className="h-5 w-5 text-teal-600" />}
           label="Total Candidates"
           value={candidates.length}
           sub={`${applications.length} active applications`}
@@ -208,13 +209,11 @@ export default async function ReportsPage() {
       )}
 
       {applications.length === 0 && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16 text-center">
-          <BarChart3 className="h-10 w-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">No data yet</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-            Add candidates to jobs and move them through the pipeline to see metrics here.
-          </p>
-        </div>
+        <EmptyState
+          icon={<BarChart3 className="h-6 w-6 text-teal-600 dark:text-teal-400" />}
+          title="No data yet"
+          description="Add candidates to jobs and move them through the pipeline to see metrics here."
+        />
       )}
     </div>
   );

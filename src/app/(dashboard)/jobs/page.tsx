@@ -8,6 +8,8 @@ import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { JobStatusDropdown } from "@/components/jobs/JobStatusDropdown";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = {
   title: "Jobs — KiteHR",
@@ -65,41 +67,37 @@ export default async function JobsPage() {
         hasUsedAi={hasUsedAi}
       />
 
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-gray-900 dark:text-gray-100">Jobs</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            {jobs.length === 0
-              ? "No jobs posted yet"
-              : `${openJobCount} open · ${candidateCount} candidate${candidateCount !== 1 ? "s" : ""}`}
-          </p>
-        </div>
-        <Button asChild size="sm">
-          <Link href="/jobs/new">
-            <Plus className="h-4 w-4" />
-            New Job
-          </Link>
-        </Button>
-      </div>
-
-      {jobs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 py-20 px-8 text-center">
-          <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-5">
-            <Briefcase className="h-6 w-6 text-teal-600 dark:text-teal-400" />
-          </div>
-          <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-gray-100 mb-1">
-            Post your first job
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6 leading-relaxed">
-            Create a job posting to start receiving applications and building your hiring pipeline.
-          </p>
-          <Button asChild>
+      <PageHeader
+        title="Jobs"
+        subtitle={
+          jobs.length === 0
+            ? "No jobs posted yet"
+            : `${openJobCount} open · ${candidateCount} candidate${candidateCount !== 1 ? "s" : ""}`
+        }
+        action={
+          <Button asChild size="sm">
             <Link href="/jobs/new">
               <Plus className="h-4 w-4" />
-              Create Job
+              New Job
             </Link>
           </Button>
-        </div>
+        }
+      />
+
+      {jobs.length === 0 ? (
+        <EmptyState
+          icon={<Briefcase className="h-6 w-6 text-teal-600 dark:text-teal-400" />}
+          title="Post your first job"
+          description="Create a job posting to start receiving applications and building your hiring pipeline."
+          action={
+            <Button asChild>
+              <Link href="/jobs/new">
+                <Plus className="h-4 w-4" />
+                Create Job
+              </Link>
+            </Button>
+          }
+        />
       ) : (
         <div className="grid gap-3">
           {jobs.map((job) => (

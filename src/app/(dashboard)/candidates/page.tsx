@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Users, Briefcase } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = {
   title: "Candidates — KiteHR",
@@ -33,41 +35,37 @@ export default async function CandidatesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-gray-900 dark:text-gray-100">Candidates</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            {candidates.length === 0
-              ? "Your talent pool lives here"
-              : `${candidates.length} candidate${candidates.length !== 1 ? "s" : ""} in your talent pool`}
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/candidates/new">
-            <Plus className="h-4 w-4" />
-            Add Candidate
-          </Link>
-        </Button>
-      </div>
-
-      {candidates.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 py-20 px-8 text-center">
-          <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-5">
-            <Users className="h-6 w-6 text-teal-600 dark:text-teal-400" />
-          </div>
-          <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-gray-100 mb-1">
-            Build your talent pool
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6 leading-relaxed">
-            Add candidates manually, upload resumes, or they&apos;ll appear automatically when they apply to your jobs.
-          </p>
+      <PageHeader
+        title="Candidates"
+        subtitle={
+          candidates.length === 0
+            ? "Your talent pool lives here"
+            : `${candidates.length} candidate${candidates.length !== 1 ? "s" : ""} in your talent pool`
+        }
+        action={
           <Button asChild>
             <Link href="/candidates/new">
               <Plus className="h-4 w-4" />
               Add Candidate
             </Link>
           </Button>
-        </div>
+        }
+      />
+
+      {candidates.length === 0 ? (
+        <EmptyState
+          icon={<Users className="h-6 w-6 text-teal-600 dark:text-teal-400" />}
+          title="Build your talent pool"
+          description="Add candidates manually, upload resumes, or they'll appear automatically when they apply to your jobs."
+          action={
+            <Button asChild>
+              <Link href="/candidates/new">
+                <Plus className="h-4 w-4" />
+                Add Candidate
+              </Link>
+            </Button>
+          }
+        />
       ) : (
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
           <div className="overflow-x-auto">

@@ -41,9 +41,11 @@ export async function POST(request: NextRequest) {
   const host = request.headers.get("host") ?? "localhost:3000";
   const baseUrl = `${proto}://${host}`;
 
-  const cronUrl = `${baseUrl}${CRON_PATHS[source]}`;
+  const num = request.nextUrl.searchParams.get("num");
+  const cronUrl = new URL(`${baseUrl}${CRON_PATHS[source]}`);
+  if (num) cronUrl.searchParams.set("num", num);
 
-  const cronRes = await fetch(cronUrl, {
+  const cronRes = await fetch(cronUrl.toString(), {
     headers: { Authorization: `Bearer ${process.env.CRON_SECRET}` },
   });
 

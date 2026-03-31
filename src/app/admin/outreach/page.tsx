@@ -11,15 +11,22 @@ import { RunSourceScraperButton } from "@/components/admin/RunSourceScraperButto
 const STATUS_FILTERS = ["all", "new", "contacted", "responded", "converted", "bounced", "unsubscribed"] as const;
 const STAGE_FILTERS = ["all", "startup", "smb", "enterprise"] as const;
 const SOURCE_FILTERS = ["all", "linkedin", "yc", "hn_hiring", "product_hunt", "reddit", "wellfound", "techcrunch_funding", "manual"] as const;
+const ENGAGEMENT_FILTERS = ["all", "opened", "clicked"] as const;
 
 interface Props {
-  searchParams: Promise<{ status?: string; page?: string; stage?: string; source?: string }>;
+  searchParams: Promise<{ status?: string; page?: string; stage?: string; source?: string; engagement?: string }>;
 }
 
 export default async function OutreachPage({ searchParams }: Props) {
   await requireAdmin();
 
-  const { status: statusFilter = "all", page: pageStr = "1", stage: stageFilter = "all", source: sourceFilter = "all" } = await searchParams;
+  const { 
+    status: statusFilter = "all", 
+    page: pageStr = "1", 
+    stage: stageFilter = "all", 
+    source: sourceFilter = "all",
+    engagement: engagementFilter = "all"
+  } = await searchParams;
   const page = Math.max(1, parseInt(pageStr, 10));
   const pageSize = 50;
 
@@ -27,15 +34,24 @@ export default async function OutreachPage({ searchParams }: Props) {
     ...(statusFilter !== "all" ? { status: statusFilter } : {}),
     ...(stageFilter !== "all" ? { companyStage: stageFilter } : {}),
     ...(sourceFilter !== "all" ? { source: sourceFilter } : {}),
+    ...(engagementFilter === "opened" ? { emails: { some: { openedAt: { not: null } } } } : {}),
+    ...(engagementFilter === "clicked" ? { emails: { some: { clickedAt: { not: null } } } } : {}),
   };
 
-  const [leads, total, stats, bulkEligibleCount, missingContactCount] = await Promise.all([
+  const [leads, total, stats, bulkEligibleCount, missingContactCount, totalOpens, totalClicks] = await Promise.all([
     db.outreachLead.findMany({
       where,
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: { _count: { select: { emails: true } } },
+      include: { 
+        emails: {
+          select: {
+            openedAt: true,
+            clickedAt: true,
+          }
+        }
+      },
     }),
     db.outreachLead.count({ where }),
     db.outreachLead.groupBy({
@@ -59,6 +75,19 @@ export default async function OutreachPage({ searchParams }: Props) {
         ...(stageFilter !== "all" ? { companyStage: stageFilter } : {}),
         ...(sourceFilter !== "all" ? { source: sourceFilter } : {}),
       },
+    }),
+    // Total opens and clicks across ALL filtered leads (not just page 1)
+    db.outreachEmail.count({
+      where: {
+        lead: where,
+        openedAt: { not: null },
+      }
+    }),
+    db.outreachEmail.count({
+      where: {
+        lead: where,
+        clickedAt: { not: null },
+      }
     }),
   ]);
 
@@ -98,11 +127,13 @@ export default async function OutreachPage({ searchParams }: Props) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         {[
           { label: "Total leads", value: totalLeads, color: "text-gray-900 dark:text-gray-100" },
           { label: "Contacted", value: contacted, color: "text-blue-600 dark:text-blue-400" },
           { label: "Converted", value: converted, color: "text-green-600 dark:text-green-400" },
+          { label: "Opens", value: totalOpens, color: "text-orange-600 dark:text-orange-400" },
+          { label: "Clicks", value: totalClicks, color: "text-blue-600 dark:text-blue-400" },
           { label: "Conversion rate", value: `${responseRate}%`, color: "text-indigo-600 dark:text-indigo-400" },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
@@ -120,7 +151,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             return (
               <Link
                 key={s}
-                href={`/admin/outreach?status=${s}&stage=${stageFilter}&source=${sourceFilter}`}
+                href={`/admin/outreach?status=${s}&stage=${stageFilter}&source=${sourceFilter}&engagement=${engagementFilter}`}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
                   statusFilter === s
                     ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
@@ -137,7 +168,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           {STAGE_FILTERS.map((s) => (
             <Link
               key={s}
-              href={`/admin/outreach?status=${statusFilter}&stage=${s}&source=${sourceFilter}`}
+              href={`/admin/outreach?status=${statusFilter}&stage=${s}&source=${sourceFilter}&engagement=${engagementFilter}`}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
                 stageFilter === s
                   ? "bg-indigo-600 text-white"
@@ -153,7 +184,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           {SOURCE_FILTERS.map((s) => (
             <Link
               key={s}
-              href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${s}`}
+              href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${s}&engagement=${engagementFilter}`}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
                 sourceFilter === s
                   ? "bg-violet-600 text-white"
@@ -161,6 +192,22 @@ export default async function OutreachPage({ searchParams }: Props) {
               }`}
             >
               {s.replace(/_/g, " ")}
+            </Link>
+          ))}
+        </div>
+        <div className="flex gap-2 flex-wrap items-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">Engagement:</span>
+          {ENGAGEMENT_FILTERS.map((s) => (
+            <Link
+              key={s}
+              href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&engagement=${s}`}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
+                engagementFilter === s
+                  ? "bg-orange-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              {s}
             </Link>
           ))}
         </div>
@@ -187,8 +234,8 @@ export default async function OutreachPage({ searchParams }: Props) {
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Stage</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Source</th>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
-                  <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Emails</th>
-                  <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Added</th>
+                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Emails</th>
+                   <th className="px-5 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Added</th>
                   <th className="px-5 py-3" />
                 </tr>
               </thead>
@@ -258,7 +305,7 @@ export default async function OutreachPage({ searchParams }: Props) {
                       <OutreachStatusBadge status={lead.status} />
                     </td>
                     <td className="px-5 py-3.5 text-gray-500 dark:text-gray-400 text-xs">
-                      {lead._count.emails}
+                      {lead.emails.length}
                     </td>
                     <td className="px-5 py-3.5 text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
                       {new Date(lead.createdAt).toLocaleDateString()}
@@ -288,7 +335,7 @@ export default async function OutreachPage({ searchParams }: Props) {
           <div className="flex gap-2">
             {page > 1 && (
               <Link
-                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&page=${page - 1}`}
+                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&engagement=${engagementFilter}&page=${page - 1}`}
                 className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Previous
@@ -296,7 +343,7 @@ export default async function OutreachPage({ searchParams }: Props) {
             )}
             {page < totalPages && (
               <Link
-                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&page=${page + 1}`}
+                href={`/admin/outreach?status=${statusFilter}&stage=${stageFilter}&source=${sourceFilter}&engagement=${engagementFilter}&page=${page + 1}`}
                 className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Next

@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { Mail } from "lucide-react";
+import { Mail, Users2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { InviteDialog } from "@/components/team/InviteDialog";
 import type { Metadata } from "next";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = {
   title: "Team — KiteHR",
@@ -41,15 +43,11 @@ export default async function TeamPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Team</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {org.members.length} member{org.members.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-        {canInvite && <InviteDialog />}
-      </div>
+      <PageHeader
+        title="Team"
+        subtitle={`${org.members.length} member${org.members.length !== 1 ? "s" : ""}`}
+        action={canInvite ? <InviteDialog /> : undefined}
+      />
 
       {/* Members */}
       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden mb-6">
@@ -113,13 +111,11 @@ export default async function TeamPage() {
       )}
 
       {org.invitations.length === 0 && org.members.length === 1 && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center">
-          <Mail className="h-8 w-8 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Invite your team</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500">
-            Collaborators can view jobs, manage candidates, and move them through the pipeline.
-          </p>
-        </div>
+        <EmptyState
+          icon={<Users2 className="h-6 w-6 text-teal-600 dark:text-teal-400" />}
+          title="Invite your team"
+          description="Collaborators can view jobs, manage candidates, and move them through the pipeline."
+        />
       )}
     </div>
   );

@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
-import { ArrowRight, FileText, Search } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import Link from "next/link";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const CATEGORY_LABELS: Record<string, string> = {
   hiring: "Hiring Process",
@@ -38,42 +40,38 @@ export default async function SopLibraryDashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">SOP Library</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Standard operating procedures for every hiring and HR process
-          </p>
-        </div>
-        {sops.length > 0 && (
-          <span className="text-sm text-gray-400 dark:text-gray-500">
-            {sops.length} SOPs
-          </span>
-        )}
-      </div>
+      <PageHeader
+        title="SOP Library"
+        subtitle="Standard operating procedures for every hiring and HR process"
+        action={
+          sops.length > 0 ? (
+            <span className="text-sm text-gray-400 dark:text-gray-500">{sops.length} SOPs</span>
+          ) : undefined
+        }
+      />
 
       {sops.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16">
-          <FileText className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">SOPs coming soon</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6 text-center max-w-sm">
-            Our SOP library is being built. Check back soon — or browse our free templates in the meantime.
-          </p>
-          <div className="flex gap-3">
-            <Link
-              href="/hr-email-templates"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Email templates
-            </Link>
-            <Link
-              href="/interview-questions"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Interview questions
-            </Link>
-          </div>
-        </div>
+        <EmptyState
+          icon={<FileText className="h-6 w-6 text-teal-600 dark:text-teal-400" />}
+          title="SOPs coming soon"
+          description="Our SOP library is being built. Check back soon — or browse our free templates in the meantime."
+          action={
+            <div className="flex gap-3">
+              <Link
+                href="/hr-email-templates"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Email templates
+              </Link>
+              <Link
+                href="/interview-questions"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Interview questions
+              </Link>
+            </div>
+          }
+        />
       ) : (
         <div className="space-y-10">
           {categories.map((category) => {

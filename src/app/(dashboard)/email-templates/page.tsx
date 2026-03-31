@@ -5,6 +5,8 @@ import { Plus, Mail, Edit2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { DeleteTemplateButton } from "@/components/email-templates/DeleteTemplateButton";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function EmailTemplatesPage() {
   const supabase = await createClient();
@@ -24,35 +26,33 @@ export default async function EmailTemplatesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Email Templates</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Reusable templates for candidate communications
-          </p>
-        </div>
-        <Link href="/email-templates/new">
-          <Button size="sm">
-            <Plus className="h-4 w-4" />
-            New Template
-          </Button>
-        </Link>
-      </div>
-
-      {templates.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16">
-          <Mail className="h-10 w-10 text-gray-300 dark:text-gray-600 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No templates yet</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6">
-            Create reusable email templates for outreach, rejections, and offers
-          </p>
+      <PageHeader
+        title="Email Templates"
+        subtitle="Reusable templates for candidate communications"
+        action={
           <Link href="/email-templates/new">
-            <Button>
+            <Button size="sm">
               <Plus className="h-4 w-4" />
-              Create Template
+              New Template
             </Button>
           </Link>
-        </div>
+        }
+      />
+
+      {templates.length === 0 ? (
+        <EmptyState
+          icon={<Mail className="h-6 w-6 text-teal-600 dark:text-teal-400" />}
+          title="No templates yet"
+          description="Create reusable email templates for outreach, rejections, and offers."
+          action={
+            <Link href="/email-templates/new">
+              <Button>
+                <Plus className="h-4 w-4" />
+                Create Template
+              </Button>
+            </Link>
+          }
+        />
       ) : (
         <div className="space-y-3">
           {templates.map((t) => (

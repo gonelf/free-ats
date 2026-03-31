@@ -54,6 +54,7 @@ type RunState =
 export function RunSourceScraperButton() {
   const [state, setState] = useState<RunState>({ phase: "idle" });
   const [open, setOpen] = useState(false);
+  const [limit, setLimit] = useState(20);
   const router = useRouter();
 
   async function handleRun(source: Source) {
@@ -164,7 +165,7 @@ export function RunSourceScraperButton() {
     setState({ phase: "running", source });
 
     try {
-      const res = await fetch(`/api/admin/outreach/run-scraper?source=${source}`, { method: "POST" });
+      const res = await fetch(`/api/admin/outreach/run-scraper?source=${source}&num=${limit}`, { method: "POST" });
       const data = await res.json();
 
       if (!res.ok) {
@@ -202,8 +203,8 @@ export function RunSourceScraperButton() {
           </span>
         )}
         {state.phase === "error" && (
-          <span className="flex items-center gap-1.5 text-xs text-red-500">
-            <XCircle className="h-3.5 w-3.5" />
+          <span className="flex items-start gap-1.5 text-xs text-red-500 max-w-[300px] leading-tight">
+            <XCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             {state.message}
           </span>
         )}
@@ -221,6 +222,20 @@ export function RunSourceScraperButton() {
 
           {open && (
             <div className="absolute right-0 top-full mt-1 z-10 w-48 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
+              <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5 block">
+                  Results Limit
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={limit}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setLimit(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
+                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
+                />
+              </div>
               {SOURCES.map((s) => (
                 <button
                   key={s.key}
