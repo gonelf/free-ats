@@ -20,9 +20,9 @@ import { PublicNav, PublicFooter } from "@/components/public-layout";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "KiteHR — Applicant Tracking System with AI Features",
+  title: "KiteHR — Free ATS with AI Superpowers",
   description:
-    "Free applicant tracking system for modern hiring teams. Unlimited users, job posts & candidates — forever free. AI resume parsing available.",
+    "Free applicant tracking system with AI built in. Parse resumes, score candidates, and write job posts instantly — unlimited users, jobs & candidates, forever free.",
   alternates: {
     canonical: "/",
   },
@@ -99,25 +99,23 @@ export default async function HomePage() {
             {/* Left Column: Content */}
             <div className="text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-semibold tracking-wider uppercase mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <span className="w-2 h-2 rounded-full bg-teal-500" />
-                Designed for modern HR teams
+                <Sparkles className="w-3 h-3 text-teal-500" />
+                Free forever · AI built-in
               </div>
 
               <h1
                 className="font-heading font-black tracking-tight mb-6 leading-[1.05] text-slate-900"
                 style={{ fontSize: "clamp(2.5rem, 4vw + 1.25rem, 4.5rem)" }}
               >
-                The Hub for{" "}
+                The Free ATS with{" "}
                 <span className="text-teal-700">
-                  High-Performance
-                </span>{" "}
-                Recruiting
+                  AI Superpowers
+                </span>
               </h1>
 
               <p className="text-base md:text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
-                KiteHR is the first truly unlimited applicant tracking system.
-                Centralize your entire hiring process, from first applied to offer accepted,
-                with professional-grade tools and AI insights.
+                KiteHR is a professional-grade ATS — completely free, with no seat limits or posting caps.
+                AI is built in as your assistant: it speeds up the work, you make the calls.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -139,6 +137,7 @@ export default async function HomePage() {
               <div className="mt-8 flex items-center gap-6 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden">
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Unlimited Jobs</span>
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Unlimited Users</span>
+                <span className="flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-teal-500" /> AI Built-In</span>
               </div>
             </div>
 
@@ -205,25 +204,25 @@ export default async function HomePage() {
             <div className="order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-semibold tracking-wider uppercase mb-6">
                 <Sparkles className="h-3 w-3" />
-                AI-powered intelligence
+                AI that works for you
               </div>
               <h2
                 className="font-heading font-bold mb-6 text-slate-900"
                 style={{ fontSize: "clamp(1.75rem, 2.5vw + 1rem, 3rem)", lineHeight: 1.1 }}
               >
-                Hire with data, <br />
-                <span className="text-slate-400">not just intuition</span>
+                You know what good <br />
+                <span className="text-teal-700">looks like. AI helps you move faster.</span>
               </h2>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                Our Pro suite adds a layer of intelligence to your hiring. Parse resumes instantly, score candidates
-                against job criteria, and generate custom interview questions in seconds.
+                KiteHR's AI doesn't get in your way — it handles the repetitive work so you can focus on people.
+                Parse resumes, score candidates, and draft outreach in seconds. You stay in control.
               </p>
 
               <div className="grid gap-6">
                 {[
-                  { icon: Brain, title: "AI Resume Parsing", desc: "Extract skills and details automatically." },
-                  { icon: Zap, title: "Candidate Scoring", desc: "Rank applicants based on job fit." },
-                  { icon: Mail, title: "Smart Outreach", desc: "Generate personalized emails in one click." }
+                  { icon: Brain, title: "AI Resume Parsing", desc: "Instantly extract skills, experience, and fit — no manual data entry." },
+                  { icon: Zap, title: "Candidate Scoring", desc: "Surface your strongest applicants first, ranked against your own criteria." },
+                  { icon: Mail, title: "Smart Outreach", desc: "Draft personalized emails in one click, then send or edit as you see fit." }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 mt-1">
@@ -280,10 +279,10 @@ export default async function HomePage() {
             className="font-heading font-bold mb-8 tracking-tight text-white"
             style={{ fontSize: "clamp(2rem, 3.5vw + 1.25rem, 4rem)", lineHeight: 1.05 }}
           >
-            Ready to upgrade your team&apos;s hiring process?
+            A free ATS with AI superpowers — yours today.
           </h2>
           <p className="text-xl text-teal-100 mb-12">
-            Trusted by startups, nonprofits, and growing teams worldwide — free forever, with no seat limits or hidden fees.
+            No credit card. No seat limits. No hidden fees. Just professional hiring tools with AI that actually helps you work faster.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
