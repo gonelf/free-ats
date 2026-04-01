@@ -3,6 +3,7 @@ import { FlagRollout } from "@prisma/client";
 
 export const FLAGS = {
   JOB_DISTRIBUTION: "job_distribution",
+  AI_ASSISTANT: "ai_assistant",
 } as const;
 
 export type FlagKey = (typeof FLAGS)[keyof typeof FLAGS];
@@ -34,6 +35,12 @@ export async function seedDefaultFlags() {
       name: "Job Distribution",
       description:
         "Automatically distribute job postings to LinkedIn and expose an Indeed XML feed.",
+    },
+    {
+      key: FLAGS.AI_ASSISTANT,
+      name: "AI Assistant",
+      description:
+        "Enable the Kite AI chat assistant in the dashboard for all users.",
     },
   ];
 

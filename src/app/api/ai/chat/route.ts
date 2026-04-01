@@ -9,6 +9,7 @@ import {
   ACTION_CREDIT_COSTS,
   type GeminiChatMessage,
 } from "@/lib/ai/chat";
+import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
 
 export const maxDuration = 60;
 
@@ -94,11 +95,21 @@ export async function POST(request: NextRequest) {
   const rateLimitResponse = await checkRateLimit(user.id);
   if (rateLimitResponse) return rateLimitResponse;
 
-  const member = await db.member.findFirst({
-    where: { userId: user.id },
-    include: { organization: true },
-  });
+  const [member, isAdmin] = await Promise.all([
+    db.member.findFirst({
+      where: { userId: user.id },
+      include: { organization: true },
+    }),
+    user.email
+      ? db.appAdmin.findUnique({ where: { email: user.email } }).then(Boolean)
+      : false,
+  ]);
   if (!member) return NextResponse.json({ error: "No organization" }, { status: 403 });
+
+  const aiAssistantEnabled = await isFlagEnabled(FLAGS.AI_ASSISTANT, isAdmin);
+  if (!aiAssistantEnabled) {
+    return NextResponse.json({ error: "AI assistant is not available" }, { status: 403 });
+  }
 
   const { message, history }: { message: string; history: GeminiChatMessage[] } =
     await request.json();
