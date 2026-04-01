@@ -171,7 +171,13 @@ export async function getChatDecision(
     }
   }
 
-  return { text: response.text() };
+  let text: string;
+  try {
+    text = response.text();
+  } catch {
+    text = "I couldn't generate a response. Please try again.";
+  }
+  return { text };
 }
 
 // Execute the tool and return a formatted markdown result
