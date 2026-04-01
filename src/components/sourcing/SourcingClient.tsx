@@ -169,9 +169,11 @@ export function SourcingClient({ hasAiAccess, openJobs }: SourcingClientProps) {
             {(response.criteria?.locations ?? []).map((l) => (
               <span key={l} className="rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 px-2.5 py-0.5 text-xs font-medium">{l}</span>
             ))}
-            <span className="rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-2.5 py-0.5 text-xs font-medium capitalize">
-              {response.criteria.experienceLevel} level
-            </span>
+            {response.criteria?.experienceLevel && (
+              <span className="rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-2.5 py-0.5 text-xs font-medium capitalize">
+                {response.criteria.experienceLevel} level
+              </span>
+            )}
           </div>
         </div>
       )}
