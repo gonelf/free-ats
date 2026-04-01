@@ -35,7 +35,7 @@ export default async function SourcingPage() {
     <div>
       <PageHeader
         title="AI Sourcing Copilot"
-        description={`Search your talent pool of ${totalCandidates} candidate${totalCandidates !== 1 ? "s" : ""} using natural language.`}
+        subtitle={`Search your talent pool of ${totalCandidates} candidate${totalCandidates !== 1 ? "s" : ""} using natural language.`}
       />
       <SourcingClient hasAiAccess={hasAiAccess} openJobs={openJobs} />
     </div>
