@@ -17,6 +17,7 @@ import {
   Building2,
 } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
+import { AiFeaturesPreview } from "@/components/home/AiFeaturesPreview";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -141,7 +142,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Product Preview */}
+            {/* Right Column: Interactive AI Preview */}
             <div className="relative group max-w-[600px] lg:max-w-none mx-auto lg:mx-0 w-full">
               <div className="relative rounded-[1.5rem] border border-slate-200 bg-white overflow-hidden shadow-2xl transition-all duration-500 group-hover:translate-y-[-4px] group-hover:shadow-[0_32px_64px_-12px_rgba(15,118,110,0.1)]">
                 {/* Browser chrome */}
@@ -152,31 +153,24 @@ export default async function HomePage() {
                     <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
                   </div>
                   <div className="ml-4 px-3 py-1 rounded-md bg-slate-200 text-[9px] text-slate-500 border border-slate-300 min-w-[120px] overflow-hidden truncate">
-                    kitehr.co/pipelines/default
+                    kitehr.co/candidates/sarah-chen
                   </div>
                 </div>
 
-                {/* Main App Image */}
-                <Image
-                  src="/showcase-pipeline.png"
-                  alt="KiteHR Pipeline Dashboard"
-                  width={1000}
-                  height={562}
-                  className="w-full h-auto object-cover"
-                  priority
-                />
+                {/* Interactive AI features preview */}
+                <AiFeaturesPreview />
               </div>
 
-              {/* Decorative mini-card */}
+              {/* Decorative AI score badge */}
               <div className="absolute -right-3 -bottom-5 hidden lg:block">
                 <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                      <Check className="h-4 w-4 text-green-600" />
+                    <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center">
+                      <Zap className="h-4 w-4 text-teal-600" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-800">Candidate Hired</div>
-                      <div className="text-[9px] text-slate-400 truncate max-w-[100px]">Sarah Miller · Product Designer</div>
+                      <div className="text-xs font-bold text-slate-800">AI Match Score</div>
+                      <div className="text-[9px] text-slate-400">Alex Johnson · 87 / 100</div>
                     </div>
                   </div>
                 </div>
