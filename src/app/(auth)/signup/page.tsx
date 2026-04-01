@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { analytics } from "@/lib/analytics";
 import { ArrowRight, AlertCircle, Check } from "lucide-react";
 import { Suspense } from "react";
 
@@ -47,7 +46,6 @@ function SignupForm() {
       setError(error.message);
       setLoading(false);
     } else {
-      analytics.signedUp({ has_invitation: !!invitationToken });
       if (claimToken) {
         router.push(`/claim?token=${encodeURIComponent(claimToken)}`);
         router.refresh();

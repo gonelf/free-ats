@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { analytics } from "@/lib/analytics";
 import { ArrowRight, AlertCircle } from "lucide-react";
 
 function LoginForm() {
@@ -29,7 +28,6 @@ function LoginForm() {
       setError(error.message);
       setLoading(false);
     } else {
-      analytics.loggedIn();
       router.push(redirectTo);
       router.refresh();
     }
