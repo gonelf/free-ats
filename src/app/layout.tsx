@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { AmplitudeProvider } from "@/components/amplitude/AmplitudeProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Script from "next/script";
 import "./globals.css";
@@ -100,7 +99,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         >
           {children}
         </ThemeProvider>
-        <AmplitudeProvider />
         <Analytics />
       </body>
     </html>

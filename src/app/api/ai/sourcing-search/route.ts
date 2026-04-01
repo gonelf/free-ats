@@ -19,7 +19,14 @@ export async function POST(request: NextRequest) {
 
   return withProPlanGuard(async (orgId) => {
     // Step 1: Parse natural language query into structured criteria
-    const criteria = await parseNaturalLanguageQuery(query);
+    const rawCriteria = await parseNaturalLanguageQuery(query);
+    const criteria = {
+      ...rawCriteria,
+      roles: rawCriteria.roles ?? [],
+      skills: rawCriteria.skills ?? [],
+      locations: rawCriteria.locations ?? [],
+      experienceLevel: rawCriteria.experienceLevel ?? "any",
+    };
 
     // Step 2: Pre-filter candidates by skills/tags using DB
     const skillFilter = criteria.skills.length > 0

@@ -160,13 +160,13 @@ export function SourcingClient({ hasAiAccess, openJobs }: SourcingClientProps) {
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4">
           <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Parsed Criteria</p>
           <div className="flex flex-wrap gap-2">
-            {response.criteria.roles.map((r) => (
+            {(response.criteria?.roles ?? []).map((r) => (
               <span key={r} className="rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-0.5 text-xs font-medium">{r}</span>
             ))}
-            {response.criteria.skills.map((s) => (
+            {(response.criteria?.skills ?? []).map((s) => (
               <span key={s} className="rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2.5 py-0.5 text-xs font-medium">{s}</span>
             ))}
-            {response.criteria.locations.map((l) => (
+            {(response.criteria?.locations ?? []).map((l) => (
               <span key={l} className="rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 px-2.5 py-0.5 text-xs font-medium">{l}</span>
             ))}
             <span className="rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-2.5 py-0.5 text-xs font-medium capitalize">

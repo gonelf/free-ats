@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AiButton } from "@/components/ai/AiGate";
-import { analytics } from "@/lib/analytics";
 
 interface NewJobFormProps {
   action: (formData: FormData) => Promise<void>;
@@ -46,7 +45,6 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
       });
       if (res.ok) {
         const data = await res.json();
-        analytics.aiJobDescriptionGenerated({ job_title: title });
         setDescription(data.description);
         setRequirements(data.requirements);
         if (data.skills?.length) {
@@ -81,12 +79,8 @@ export function NewJobForm({ action, hasAiAccess, defaultValues }: NewJobFormPro
     }
   }
 
-  function handleSubmit() {
-    analytics.jobCreated({ job_title: title, ...(location ? { location } : {}) });
-  }
-
   return (
-    <form action={action} onSubmit={handleSubmit} className="space-y-6">
+    <form action={action} className="space-y-6">
       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-5">
         <div className="space-y-2">
           <Label htmlFor="title">Job title *</Label>
