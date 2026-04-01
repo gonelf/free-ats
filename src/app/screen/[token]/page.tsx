@@ -76,7 +76,7 @@ export default async function ScreeningPage({
   }
 
   // Strip intent field before sending to candidate
-  const rawQuestions = screening.questions as ScreeningQuestion[];
+  const rawQuestions = screening.questions as unknown as ScreeningQuestion[];
   const questions = rawQuestions.map(({ intent: _intent, ...q }) => q);
 
   const responses = (screening.responses as Array<{ questionId: string }> | null) ?? [];

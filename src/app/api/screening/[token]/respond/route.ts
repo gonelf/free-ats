@@ -50,7 +50,7 @@ export async function POST(
   }
 
   const existingResponses = (screening.responses as ScreeningResponse[] | null) ?? [];
-  const questions = screening.questions as ScreeningQuestion[];
+  const questions = screening.questions as unknown as ScreeningQuestion[];
 
   // Add the new response
   const newResponse: ScreeningResponse = {
