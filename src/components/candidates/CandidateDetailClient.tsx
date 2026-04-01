@@ -230,7 +230,15 @@ export function CandidateDetailClient({
   const [appGaps, setAppGaps] = useState<Record<string, GapResult>>(() => {
     const initial: Record<string, GapResult> = {};
     for (const app of candidate.applications) {
-      if (app.aiGapAnalysis) initial[app.id] = app.aiGapAnalysis as GapResult;
+      if (app.aiGapAnalysis) {
+        const raw = app.aiGapAnalysis as Partial<GapResult>;
+        initial[app.id] = {
+          matched: raw.matched ?? [],
+          partial: raw.partial ?? [],
+          missing: raw.missing ?? [],
+          developmentPlan: raw.developmentPlan ?? "",
+        };
+      }
     }
     return initial;
   });
@@ -252,8 +260,14 @@ export function CandidateDetailClient({
   >(() => {
     const initial: Record<string, { behavioral: string[]; technical: string[]; culture: string[] }> = {};
     for (const app of candidate.applications) {
-      if (app.aiInterviewQuestions)
-        initial[app.id] = app.aiInterviewQuestions as { behavioral: string[]; technical: string[]; culture: string[] };
+      if (app.aiInterviewQuestions) {
+        const raw = app.aiInterviewQuestions as Partial<{ behavioral: string[]; technical: string[]; culture: string[] }>;
+        initial[app.id] = {
+          behavioral: raw.behavioral ?? [],
+          technical: raw.technical ?? [],
+          culture: raw.culture ?? [],
+        };
+      }
     }
     return initial;
   });
@@ -418,7 +432,15 @@ export function CandidateDetailClient({
       });
       if (res.ok) {
         const data = await res.json();
-        setAppScores((prev) => ({ ...prev, [applicationId]: data }));
+        setAppScores((prev) => ({
+          ...prev,
+          [applicationId]: {
+            score: data.score ?? 0,
+            strengths: data.strengths ?? [],
+            gaps: data.gaps ?? [],
+            recommendation: data.recommendation ?? "",
+          },
+        }));
       }
     } finally {
       setScoringAppId(null);
@@ -635,7 +657,15 @@ export function CandidateDetailClient({
       });
       if (res.ok) {
         const data = await res.json();
-        setAppGaps((prev) => ({ ...prev, [applicationId]: data }));
+        setAppGaps((prev) => ({
+          ...prev,
+          [applicationId]: {
+            matched: data.matched ?? [],
+            partial: data.partial ?? [],
+            missing: data.missing ?? [],
+            developmentPlan: data.developmentPlan ?? "",
+          },
+        }));
       }
     } finally {
       setGapAppId(null);
@@ -673,7 +703,14 @@ export function CandidateDetailClient({
       });
       if (res.ok) {
         const data = await res.json();
-        setAppInterviewQuestions((prev) => ({ ...prev, [applicationId]: data }));
+        setAppInterviewQuestions((prev) => ({
+          ...prev,
+          [applicationId]: {
+            behavioral: data.behavioral ?? [],
+            technical: data.technical ?? [],
+            culture: data.culture ?? [],
+          },
+        }));
       }
     } finally {
       setInterviewQAppId(null);
