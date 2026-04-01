@@ -254,36 +254,37 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
                   )}
                 >
                   {msg.role === "assistant" ? (
-                    <ReactMarkdown
-                      className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1"
-                      components={{
-                        a: ({ href, children }) => {
-                          if (href?.startsWith("/")) {
+                    <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ href, children }) => {
+                            if (href?.startsWith("/")) {
+                              return (
+                                <Link
+                                  href={href}
+                                  onClick={handleClose}
+                                  className="text-teal-600 dark:text-teal-400 underline hover:no-underline"
+                                >
+                                  {children}
+                                </Link>
+                              );
+                            }
                             return (
-                              <Link
+                              <a
                                 href={href}
-                                onClick={handleClose}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="text-teal-600 dark:text-teal-400 underline hover:no-underline"
                               >
                                 {children}
-                              </Link>
+                              </a>
                             );
-                          }
-                          return (
-                            <a
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-teal-600 dark:text-teal-400 underline hover:no-underline"
-                            >
-                              {children}
-                            </a>
-                          );
-                        },
-                      }}
-                    >
-                      {msg.content}
-                    </ReactMarkdown>
+                          },
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
                   ) : (
                     <span>{msg.content}</span>
                   )}
@@ -308,23 +309,24 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
               </div>
               <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-gray-100 dark:bg-gray-800 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100">
                 {streamingText ? (
-                  <ReactMarkdown
-                    className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5"
-                    components={{
-                      a: ({ href, children }) =>
-                        href?.startsWith("/") ? (
-                          <Link href={href} onClick={handleClose} className="text-teal-600 dark:text-teal-400 underline">
-                            {children}
-                          </Link>
-                        ) : (
-                          <a href={href} target="_blank" rel="noopener noreferrer" className="text-teal-600 dark:text-teal-400 underline">
-                            {children}
-                          </a>
-                        ),
-                    }}
-                  >
-                    {streamingText}
-                  </ReactMarkdown>
+                  <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+                    <ReactMarkdown
+                      components={{
+                        a: ({ href, children }) =>
+                          href?.startsWith("/") ? (
+                            <Link href={href} onClick={handleClose} className="text-teal-600 dark:text-teal-400 underline">
+                              {children}
+                            </Link>
+                          ) : (
+                            <a href={href} target="_blank" rel="noopener noreferrer" className="text-teal-600 dark:text-teal-400 underline">
+                              {children}
+                            </a>
+                          ),
+                      }}
+                    >
+                      {streamingText}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   <span className="flex gap-1 items-center">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-bounce [animation-delay:0ms]" />
