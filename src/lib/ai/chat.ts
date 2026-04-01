@@ -153,7 +153,7 @@ export async function getChatDecision(
 ): Promise<ChatDecision> {
   const chat = flashModel.startChat({
     history,
-    systemInstruction: buildSystemPrompt(ctx),
+    systemInstruction: { parts: [{ text: buildSystemPrompt(ctx) }] },
     tools: [{ functionDeclarations: chatToolDeclarations }],
   });
 
