@@ -86,6 +86,15 @@ export default async function JobDetailPage({
   const job = await getJob(id, member.organization.id);
   if (!job) notFound();
 
+  type ScoreSummary = { strengths: string[]; gaps: string[]; recommendation: string };
+  const typedJob = {
+    ...job,
+    applications: job.applications.map((app) => ({
+      ...app,
+      aiScoreSummary: app.aiScoreSummary as ScoreSummary | null,
+    })),
+  };
+
   const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;
 
   const isAdmin = !!(await getAdminUser());
@@ -166,7 +175,7 @@ export default async function JobDetailPage({
 
       <KanbanBoard
         stages={job.pipeline.stages}
-        applications={job.applications}
+        applications={typedJob.applications}
         jobId={job.id}
         hasAiAccess={hasAiAccess}
       />
