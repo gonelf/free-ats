@@ -6,6 +6,7 @@ import { FREE_TRIAL_CREDITS, MONTHLY_CREDITS } from "@/lib/ai/credits";
 import { FeedbackSystem } from "@/components/feedback/FeedbackSystem";
 import { getFeedbacks } from "@/app/actions/feedback";
 import { ChatWidget } from "@/components/ai/ChatWidget";
+import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
 
 async function getOrg(userId: string) {
   const membership = await db.member.findFirst({
@@ -40,6 +41,8 @@ export default async function DashboardLayout({
     getFeedbacks(),
   ]);
 
+  const aiAssistantEnabled = await isFlagEnabled(FLAGS.AI_ASSISTANT, isAdmin);
+
   if (!org) {
     redirect("/setup");
   }
@@ -58,11 +61,13 @@ export default async function DashboardLayout({
       <main className="flex-1 overflow-y-auto relative">
         <div className="pt-14 md:pt-6 p-4 md:p-8">{children}</div>
         <FeedbackSystem initialFeedbacks={initialFeedbacks} currentUserId={user.id} />
-        <ChatWidget
-          orgName={org.name}
-          isPro={org.plan === "PRO"}
-          aiCreditsBalance={org.aiCreditsBalance}
-        />
+        {aiAssistantEnabled && (
+          <ChatWidget
+            orgName={org.name}
+            isPro={org.plan === "PRO"}
+            aiCreditsBalance={org.aiCreditsBalance}
+          />
+        )}
       </main>
     </div>
   );
