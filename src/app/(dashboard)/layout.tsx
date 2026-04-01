@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { FREE_TRIAL_CREDITS, MONTHLY_CREDITS } from "@/lib/ai/credits";
 import { FeedbackSystem } from "@/components/feedback/FeedbackSystem";
 import { getFeedbacks } from "@/app/actions/feedback";
+import { ChatWidget } from "@/components/ai/ChatWidget";
 
 async function getOrg(userId: string) {
   const membership = await db.member.findFirst({
@@ -56,6 +57,11 @@ export default async function DashboardLayout({
       <main className="flex-1 overflow-y-auto relative">
         <div className="pt-14 md:pt-6 p-4 md:p-8">{children}</div>
         <FeedbackSystem initialFeedbacks={initialFeedbacks} currentUserId={user.id} />
+        <ChatWidget
+          orgName={org.name}
+          isPro={org.plan === "PRO"}
+          aiCreditsBalance={org.aiCreditsBalance}
+        />
       </main>
     </div>
   );
