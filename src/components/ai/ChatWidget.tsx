@@ -257,7 +257,7 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
                     <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1">
                       <ReactMarkdown
                         components={{
-                          a: ({ href, children }) => {
+                          a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
                             if (href?.startsWith("/")) {
                               return (
                                 <Link
@@ -312,7 +312,7 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
                   <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
                     <ReactMarkdown
                       components={{
-                        a: ({ href, children }) =>
+                        a: ({ href, children }: { href?: string; children?: React.ReactNode }) =>
                           href?.startsWith("/") ? (
                             <Link href={href} onClick={handleClose} className="text-teal-600 dark:text-teal-400 underline">
                               {children}
@@ -344,7 +344,7 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
               {error.includes("[") ? (
                 <ReactMarkdown
                   components={{
-                    a: ({ href, children }) =>
+                    a: ({ href, children }: { href?: string; children?: React.ReactNode }) =>
                       href?.startsWith("/") ? (
                         <Link href={href} onClick={handleClose} className="underline font-medium">
                           {children}

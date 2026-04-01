@@ -7,7 +7,7 @@ import {
 } from "@/lib/ai/job-generator";
 import { draftEmail } from "@/lib/ai/email-drafter";
 import { AI_CREDIT_COSTS } from "@/lib/ai/credits";
-import type { FunctionDeclaration } from "@google/generative-ai";
+import { SchemaType, type FunctionDeclaration } from "@google/generative-ai";
 
 export type GeminiChatMessage = {
   role: "user" | "model";
@@ -38,11 +38,11 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     description:
       "Generate a complete job description for a given role. Use when the user asks to write, create, or draft a job description or job posting.",
     parameters: {
-      type: "object" as const,
+      type: SchemaType.OBJECT,
       properties: {
-        title: { type: "string" as const, description: "Job title" },
+        title: { type: SchemaType.STRING, description: "Job title" },
         context: {
-          type: "string" as const,
+          type: SchemaType.STRING,
           description: "Additional context about the role, team, or requirements",
         },
       },
@@ -54,16 +54,13 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     description:
       "Draft a professional email to a candidate. Use when the user asks to write or draft an outreach, rejection, interview invite, follow-up, or offer email.",
     parameters: {
-      type: "object" as const,
+      type: SchemaType.OBJECT,
       properties: {
-        type: {
-          type: "string" as const,
-          enum: ["outreach", "rejection", "offer", "interview_invite", "follow_up"],
-        },
-        candidateName: { type: "string" as const },
-        jobTitle: { type: "string" as const },
-        companyName: { type: "string" as const },
-        additionalContext: { type: "string" as const },
+        type: { type: SchemaType.STRING },
+        candidateName: { type: SchemaType.STRING },
+        jobTitle: { type: SchemaType.STRING },
+        companyName: { type: SchemaType.STRING },
+        additionalContext: { type: SchemaType.STRING },
       },
       required: ["type", "candidateName", "jobTitle", "companyName"],
     },
@@ -73,11 +70,11 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     description:
       "Generate tailored interview questions for a role and candidate. Use when the user asks for interview questions.",
     parameters: {
-      type: "object" as const,
+      type: SchemaType.OBJECT,
       properties: {
-        jobTitle: { type: "string" as const },
+        jobTitle: { type: SchemaType.STRING },
         candidateBackground: {
-          type: "string" as const,
+          type: SchemaType.STRING,
           description: "Candidate's background or skills (optional)",
         },
       },
@@ -89,12 +86,12 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     description:
       "Suggest a market salary range for a position. Use when the user asks about salary, pay, or compensation for a role.",
     parameters: {
-      type: "object" as const,
+      type: SchemaType.OBJECT,
       properties: {
-        title: { type: "string" as const },
-        location: { type: "string" as const },
+        title: { type: SchemaType.STRING },
+        location: { type: SchemaType.STRING },
         seniority: {
-          type: "string" as const,
+          type: SchemaType.STRING,
           description: "e.g. junior, mid, senior, lead",
         },
       },
@@ -106,10 +103,10 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
     description:
       "Check a job description for biased or exclusionary language. Use when the user asks to review or check a job description for bias.",
     parameters: {
-      type: "object" as const,
+      type: SchemaType.OBJECT,
       properties: {
         jobText: {
-          type: "string" as const,
+          type: SchemaType.STRING,
           description: "The job description text to analyze",
         },
       },
