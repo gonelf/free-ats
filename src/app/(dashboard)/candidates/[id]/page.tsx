@@ -62,11 +62,16 @@ export default async function CandidateDetailPage({
 
   if (!candidateRaw) notFound();
 
-  // Cast Json field to typed array
+  // Cast Json fields to typed shapes
   type WorkExperience = { title: string; company: string; startDate: string; endDate: string; description: string };
+  type AiScoreSummary = { strengths: string[]; gaps: string[]; recommendation: string };
   const candidate = {
     ...candidateRaw,
     workExperience: (candidateRaw.workExperience as WorkExperience[] | null) ?? [],
+    applications: candidateRaw.applications.map((app) => ({
+      ...app,
+      aiScoreSummary: app.aiScoreSummary as AiScoreSummary | null,
+    })),
   };
 
   const hasAiAccess = member.organization.plan === "PRO" || member.organization.aiCreditsBalance > 0;

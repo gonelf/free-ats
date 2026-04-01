@@ -12,10 +12,17 @@ interface Stage {
   order: number;
 }
 
+interface ScoreSummary {
+  strengths: string[];
+  gaps: string[];
+  recommendation: string;
+}
+
 interface Application {
   id: string;
   stageId: string;
   aiScore: number | null;
+  aiScoreSummary?: ScoreSummary | null;
   candidate: {
     id: string;
     firstName: string;

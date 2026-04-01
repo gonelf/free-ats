@@ -91,6 +91,7 @@ interface Candidate {
   applications: Array<{
     id: string;
     aiScore: number | null;
+    aiScoreSummary: { strengths: string[]; gaps: string[]; recommendation: string } | null;
     aiGapAnalysis: unknown;
     aiInterviewQuestions: unknown;
     aiReferenceQuestions: string[];
@@ -197,8 +198,14 @@ export function CandidateDetailClient({
   const [appScores, setAppScores] = useState<Record<string, ScoringResult>>(() => {
     const initial: Record<string, ScoringResult> = {};
     for (const app of candidate.applications) {
-      if (app.aiScore !== null)
-        initial[app.id] = { score: app.aiScore, strengths: [], gaps: [], recommendation: "" };
+      if (app.aiScore !== null) {
+        initial[app.id] = {
+          score: app.aiScore,
+          strengths: app.aiScoreSummary?.strengths ?? [],
+          gaps: app.aiScoreSummary?.gaps ?? [],
+          recommendation: app.aiScoreSummary?.recommendation ?? "",
+        };
+      }
     }
     return initial;
   });
@@ -216,6 +223,7 @@ export function CandidateDetailClient({
   const [emailResult, setEmailResult] = useState<{ subject: string; body: string; communicationId: string } | null>(null);
   const [emailCopied, setEmailCopied] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
+  const [draftingRejection, setDraftingRejection] = useState(false);
 
   // ── Skills gap ────────────────────────────────────────────────────────────
   const [gapAppId, setGapAppId] = useState<string | null>(null);
@@ -254,9 +262,67 @@ export function CandidateDetailClient({
   const [leftTab, setLeftTab] = useState<"profile" | "experience" | "skills">("profile");
 
   // ── Right panel tab ───────────────────────────────────────────────────────
-  const [rightTab, setRightTab] = useState<"resume" | "ai" | "notes" | "comms">(
+  const [rightTab, setRightTab] = useState<"resume" | "ai" | "notes" | "comms" | "interviews">(
     candidate.resumeUrl ? "resume" : "ai"
   );
+
+  // ── Interviews ────────────────────────────────────────────────────────────
+  const [interviews, setInterviews] = useState<Array<{
+    id: string;
+    title: string;
+    scheduledAt: Date | null;
+    duration: number;
+    meetingLink: string | null;
+    timezone: string;
+    status: string;
+    notes: string | null;
+    applicationId: string;
+    feedbacks: Array<{
+      id: string;
+      overallRating: number;
+      recommendation: string;
+      notes: string | null;
+      aiDrafted: boolean;
+    }>;
+  }>>([]);
+  const [loadingInterviews, setLoadingInterviews] = useState(false);
+  const [interviewsLoaded, setInterviewsLoaded] = useState(false);
+  const [schedulingAppId, setSchedulingAppId] = useState<string | null>(null);
+  const [newInterviewForm, setNewInterviewForm] = useState({
+    title: "Interview",
+    scheduledAt: "",
+    duration: 60,
+    meetingLink: "",
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    notes: "",
+  });
+  const [savingInterview, setSavingInterview] = useState(false);
+
+  // ── Screening state ───────────────────────────────────────────────────────
+  const [screenings, setScreenings] = useState<Record<string, {
+    id: string;
+    applicationId: string;
+    screeningToken: string | null;
+    screeningTokenExpiresAt: Date | null;
+    questions: Array<{ id: string; question: string; type: string }>;
+    responses: Array<{ questionId: string; answer: string; answeredAt: string }> | null;
+    flagged: boolean;
+    flagReason: string | null;
+    completedAt: Date | null;
+  }>>({});
+  const [generatingScreening, setGeneratingScreening] = useState<string | null>(null);
+  const [screeningLinkCopied, setScreeningLinkCopied] = useState<string | null>(null);
+
+  // ── Scorecard state ───────────────────────────────────────────────────────
+  const [scorecardInterviewId, setScorecardInterviewId] = useState<string | null>(null);
+  const [scorecardDraft, setScorecardDraft] = useState<{
+    rubricScores: { criterion: string; score: number; notes: string }[];
+    overallRating: number;
+    recommendation: string;
+    notes: string;
+  } | null>(null);
+  const [draftingScorecard, setDraftingScorecard] = useState(false);
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -382,6 +448,24 @@ export function CandidateDetailClient({
     }
   }
 
+  async function handleDraftRejection(applicationId: string) {
+    setDraftingRejection(true);
+    setEmailResult(null);
+    try {
+      const res = await fetch("/api/ai/draft-rejection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicationId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEmailResult(data);
+      }
+    } finally {
+      setDraftingRejection(false);
+    }
+  }
+
   function handleLogAndClose() {
     if (emailResult?.communicationId) {
       const job = candidate.applications.find((a) => a.job.id === composeJobId)?.job ?? null;
@@ -419,6 +503,123 @@ export function CandidateDetailClient({
     const res = await fetch(`/api/communications/${id}`, { method: "DELETE" });
     if (res.ok) {
       setCommunications((prev) => prev.filter((c) => c.id !== id));
+    }
+  }
+
+  async function loadInterviews() {
+    if (interviewsLoaded) return;
+    setLoadingInterviews(true);
+    try {
+      const appIds = candidate.applications.map((a) => a.id);
+      if (appIds.length === 0) { setInterviewsLoaded(true); return; }
+      const res = await fetch(`/api/interviews?applicationIds=${appIds.join(",")}`);
+      if (res.ok) {
+        const data = await res.json();
+        setInterviews(data);
+      }
+    } finally {
+      setLoadingInterviews(false);
+      setInterviewsLoaded(true);
+    }
+  }
+
+  async function handleScheduleInterview(applicationId: string) {
+    setSavingInterview(true);
+    try {
+      const res = await fetch("/api/interviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicationId,
+          title: newInterviewForm.title,
+          scheduledAt: newInterviewForm.scheduledAt || null,
+          duration: newInterviewForm.duration,
+          meetingLink: newInterviewForm.meetingLink || null,
+          timezone: newInterviewForm.timezone,
+          notes: newInterviewForm.notes || null,
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setInterviews((prev) => [{ ...created, feedbacks: [] }, ...prev]);
+        setSchedulingAppId(null);
+        setNewInterviewForm({ title: "Interview", scheduledAt: "", duration: 60, meetingLink: "", timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, notes: "" });
+      }
+    } finally {
+      setSavingInterview(false);
+    }
+  }
+
+  async function handleDraftScorecard(interviewId: string) {
+    setDraftingScorecard(true);
+    setScorecardInterviewId(interviewId);
+    try {
+      const res = await fetch("/api/ai/draft-scorecard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ interviewId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setScorecardDraft(data);
+      }
+    } finally {
+      setDraftingScorecard(false);
+    }
+  }
+
+  async function handleGenerateScreening(applicationId: string) {
+    setGeneratingScreening(applicationId);
+    try {
+      const res = await fetch("/api/ai/generate-screening", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicationId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setScreenings((prev) => ({ ...prev, [applicationId]: data }));
+      }
+    } finally {
+      setGeneratingScreening(null);
+    }
+  }
+
+  function handleCopyScreeningLink(applicationId: string) {
+    const screening = screenings[applicationId];
+    if (!screening?.screeningToken) return;
+    const url = `${window.location.origin}/screen/${screening.screeningToken}`;
+    navigator.clipboard.writeText(url);
+    setScreeningLinkCopied(applicationId);
+    setTimeout(() => setScreeningLinkCopied(null), 2000);
+  }
+
+  async function handleSubmitFeedback(interviewId: string) {
+    if (!scorecardDraft) return;
+    setSubmittingFeedback(true);
+    try {
+      const res = await fetch(`/api/interviews/${interviewId}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...scorecardDraft,
+          aiDrafted: true,
+        }),
+      });
+      if (res.ok) {
+        const feedback = await res.json();
+        setInterviews((prev) =>
+          prev.map((i) =>
+            i.id === interviewId
+              ? { ...i, status: "COMPLETED", feedbacks: [...i.feedbacks, feedback] }
+              : i
+          )
+        );
+        setScorecardInterviewId(null);
+        setScorecardDraft(null);
+      }
+    } finally {
+      setSubmittingFeedback(false);
     }
   }
 
@@ -1304,6 +1505,73 @@ export function CandidateDetailClient({
         )}
       </div>
 
+      {/* Screening */}
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+        <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+          Integrity Screening
+        </h2>
+        {candidate.applications.length === 0 ? (
+          <p className="text-xs text-gray-400 dark:text-gray-500">Add candidate to a job to generate screening questions.</p>
+        ) : (
+          <div className="space-y-3">
+            {candidate.applications.map((app) => {
+              const screening = screenings[app.id];
+              const isGenerating = generatingScreening === app.id;
+              const linkCopied = screeningLinkCopied === app.id;
+              return (
+                <div key={app.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{app.job.title}</p>
+                    <div className="flex items-center gap-2">
+                      {screening && (
+                        <>
+                          {screening.flagged && (
+                            <span className="rounded-full bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-2 py-0.5 text-[10px] font-bold uppercase">
+                              Flagged
+                            </span>
+                          )}
+                          {screening.completedAt && (
+                            <span className="rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 text-[10px] font-bold uppercase">
+                              Complete
+                            </span>
+                          )}
+                          <button
+                            onClick={() => handleCopyScreeningLink(app.id)}
+                            className="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium"
+                          >
+                            {linkCopied ? <><CheckCheck className="h-3.5 w-3.5" /> Copied!</> : <><Copy className="h-3.5 w-3.5" /> Copy Link</>}
+                          </button>
+                        </>
+                      )}
+                      <AiButton
+                        hasAiAccess={hasAiAccess}
+                        onClick={() => handleGenerateScreening(app.id)}
+                        loading={isGenerating}
+                        creditCost={5}
+                      >
+                        {screening ? "Regenerate" : "Generate Questions"}
+                      </AiButton>
+                    </div>
+                  </div>
+                  {screening && !screening.completedAt && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {screening.questions.length} questions · awaiting candidate responses
+                    </p>
+                  )}
+                  {screening?.flagReason && (
+                    <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-2">
+                      <p className="text-xs text-red-700 dark:text-red-400">
+                        <span className="font-semibold">Flag reason: </span>{screening.flagReason}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 
@@ -1405,6 +1673,7 @@ export function CandidateDetailClient({
   const tabs: { key: typeof rightTab; label: string }[] = [
     ...(hasResume ? [{ key: "resume" as const, label: "Resume" }] : []),
     { key: "ai", label: "AI" },
+    { key: "interviews", label: "Interviews" },
     { key: "notes", label: "Notes" },
     { key: "comms", label: "Comms" },
   ];
@@ -1416,7 +1685,7 @@ export function CandidateDetailClient({
         {tabs.map((t) => (
           <button
             key={t.key}
-            onClick={() => setRightTab(t.key)}
+            onClick={() => { setRightTab(t.key); if (t.key === "interviews") loadInterviews(); }}
             className={cn(
               "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
               rightTab === t.key
@@ -1483,6 +1752,217 @@ export function CandidateDetailClient({
       {rightTab === "ai" && (
         <div className="flex-1 min-h-0 overflow-y-auto pr-0.5">
           {aiContent}
+        </div>
+      )}
+
+      {/* Interviews tab */}
+      {rightTab === "interviews" && (
+        <div className="flex-1 min-h-0 overflow-y-auto pr-0.5 space-y-4">
+          {loadingInterviews && (
+            <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-8">Loading interviews…</p>
+          )}
+
+          {/* Schedule new interview */}
+          {schedulingAppId ? (
+            <div className="rounded-xl border border-indigo-200 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/20 p-4 space-y-3">
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Schedule Interview</p>
+              <div className="space-y-2">
+                <Input
+                  placeholder="Interview title"
+                  value={newInterviewForm.title}
+                  onChange={(e) => setNewInterviewForm((f) => ({ ...f, title: e.target.value }))}
+                  className="text-sm"
+                />
+                <Input
+                  type="datetime-local"
+                  value={newInterviewForm.scheduledAt}
+                  onChange={(e) => setNewInterviewForm((f) => ({ ...f, scheduledAt: e.target.value }))}
+                  className="text-sm"
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Duration (min)"
+                    value={newInterviewForm.duration}
+                    onChange={(e) => setNewInterviewForm((f) => ({ ...f, duration: Number(e.target.value) }))}
+                    className="text-sm w-32"
+                  />
+                  <Input
+                    placeholder="Meeting link"
+                    value={newInterviewForm.meetingLink}
+                    onChange={(e) => setNewInterviewForm((f) => ({ ...f, meetingLink: e.target.value }))}
+                    className="text-sm flex-1"
+                  />
+                </div>
+                <Textarea
+                  placeholder="Notes for interviewer (optional)"
+                  value={newInterviewForm.notes}
+                  onChange={(e) => setNewInterviewForm((f) => ({ ...f, notes: e.target.value }))}
+                  rows={2}
+                  className="text-sm"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => handleScheduleInterview(schedulingAppId)} disabled={savingInterview}>
+                  {savingInterview ? "Saving…" : "Save"}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setSchedulingAppId(null)}>Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {candidate.applications.map((app) => (
+                <Button
+                  key={app.id}
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSchedulingAppId(app.id)}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Schedule for {app.job.title}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          {/* Interview list */}
+          {!loadingInterviews && interviews.length === 0 && interviewsLoaded && (
+            <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">No interviews scheduled yet.</p>
+          )}
+          {interviews.map((interview) => {
+            const app = candidate.applications.find((a) => a.id === interview.applicationId);
+            const isScorecarding = scorecardInterviewId === interview.id;
+            return (
+              <div key={interview.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{interview.title}</p>
+                    {app && <p className="text-xs text-indigo-500 dark:text-indigo-400">{app.job.title}</p>}
+                  </div>
+                  <span className={cn(
+                    "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
+                    interview.status === "COMPLETED" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" :
+                    interview.status === "CANCELLED" ? "bg-red-50 dark:bg-red-900/30 text-red-500" :
+                    "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                  )}>
+                    {interview.status}
+                  </span>
+                </div>
+                {interview.scheduledAt && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <Clock className="inline h-3.5 w-3.5 mr-1" />
+                    {new Date(interview.scheduledAt).toLocaleString()} · {interview.duration}min
+                  </p>
+                )}
+                {interview.meetingLink && (
+                  <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-500 hover:underline block truncate">
+                    {interview.meetingLink}
+                  </a>
+                )}
+
+                {/* Feedbacks */}
+                {interview.feedbacks.length > 0 && (
+                  <div className="space-y-2">
+                    {interview.feedbacks.map((fb) => (
+                      <div key={fb.id} className="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                            {"★".repeat(fb.overallRating)}{"☆".repeat(5 - fb.overallRating)}
+                          </span>
+                          <span className={cn(
+                            "rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase",
+                            fb.recommendation.includes("YES") ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                            fb.recommendation === "MAYBE" ? "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                            "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                          )}>
+                            {fb.recommendation.replace("_", " ")}
+                          </span>
+                          {fb.aiDrafted && <span className="text-[10px] text-indigo-400 flex items-center gap-0.5"><Sparkles className="h-3 w-3" />AI</span>}
+                        </div>
+                        {fb.notes && <p className="text-xs text-gray-600 dark:text-gray-400">{fb.notes}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Scorecard */}
+                {isScorecarding && (
+                  <div className="rounded-lg border border-indigo-100 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-900/20 p-3 space-y-3">
+                    {draftingScorecard && <p className="text-xs text-indigo-500 animate-pulse">Drafting scorecard…</p>}
+                    {scorecardDraft && (
+                      <>
+                        <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">Scorecard Draft</p>
+                        <div className="space-y-2">
+                          {scorecardDraft.rubricScores.map((rs, i) => (
+                            <div key={i} className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{rs.criterion}</p>
+                                <div className="flex gap-1">
+                                  {[1,2,3,4,5].map((n) => (
+                                    <button
+                                      key={n}
+                                      onClick={() => setScorecardDraft((d) => d ? { ...d, rubricScores: d.rubricScores.map((r, ri) => ri === i ? { ...r, score: n } : r) } : d)}
+                                      className={cn("w-5 h-5 rounded text-[10px] font-bold border transition-colors", rs.score >= n ? "bg-indigo-500 text-white border-indigo-500" : "border-gray-300 text-gray-400 hover:border-indigo-300")}
+                                    >{n}</button>
+                                  ))}
+                                </div>
+                              </div>
+                              <p className="text-[11px] text-gray-500 dark:text-gray-400 italic">{rs.notes}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs text-gray-600 dark:text-gray-400">Overall:</span>
+                          <div className="flex gap-1">
+                            {[1,2,3,4,5].map((n) => (
+                              <button
+                                key={n}
+                                onClick={() => setScorecardDraft((d) => d ? { ...d, overallRating: n } : d)}
+                                className={cn("w-5 h-5 rounded text-[10px] font-bold border transition-colors", (scorecardDraft.overallRating ?? 0) >= n ? "bg-indigo-500 text-white border-indigo-500" : "border-gray-300 text-gray-400 hover:border-indigo-300")}
+                              >{n}</button>
+                            ))}
+                          </div>
+                          <select
+                            value={scorecardDraft.recommendation}
+                            onChange={(e) => setScorecardDraft((d) => d ? { ...d, recommendation: e.target.value } : d)}
+                            className="text-xs rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1"
+                          >
+                            {["STRONG_YES","YES","MAYBE","NO","STRONG_NO"].map((r) => (
+                              <option key={r} value={r}>{r.replace("_"," ")}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <Textarea
+                          placeholder="Additional notes…"
+                          value={scorecardDraft.notes}
+                          onChange={(e) => setScorecardDraft((d) => d ? { ...d, notes: e.target.value } : d)}
+                          rows={2}
+                          className="text-xs"
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => handleSubmitFeedback(interview.id)} disabled={submittingFeedback}>
+                            {submittingFeedback ? "Saving…" : "Submit Feedback"}
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => { setScorecardInterviewId(null); setScorecardDraft(null); }}>Cancel</Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {!isScorecarding && interview.status !== "COMPLETED" && (
+                  <AiButton
+                    hasAiAccess={hasAiAccess}
+                    onClick={() => handleDraftScorecard(interview.id)}
+                    loading={draftingScorecard && scorecardInterviewId === interview.id}
+                    creditCost={10}
+                  >
+                    Draft Scorecard
+                  </AiButton>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -1672,12 +2152,28 @@ export function CandidateDetailClient({
             )}
           </div>
 
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-2 flex-wrap">
             {emailResult && (
               <Button variant="outline" size="sm" onClick={handleLogAndClose}>
                 Log & Close
               </Button>
             )}
+            {emailType === "rejection" && (() => {
+              const scoredApp = candidate.applications.find(
+                (a) => a.job.id === composeJobId && appScores[a.id]
+              ) ?? candidate.applications.find((a) => appScores[a.id]);
+              if (!scoredApp) return null;
+              return (
+                <AiButton
+                  hasAiAccess={hasAiAccess}
+                  onClick={() => handleDraftRejection(scoredApp.id)}
+                  loading={draftingRejection}
+                  creditCost={3}
+                >
+                  Constructive Rejection
+                </AiButton>
+              );
+            })()}
             <AiButton
               hasAiAccess={hasAiAccess}
               onClick={handleDraftEmail}

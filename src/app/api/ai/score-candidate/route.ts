@@ -74,7 +74,14 @@ export async function POST(request: NextRequest) {
 
     await db.application.update({
       where: { id: applicationId },
-      data: { aiScore: result.score },
+      data: {
+        aiScore: result.score,
+        aiScoreSummary: {
+          strengths: result.strengths,
+          gaps: result.gaps,
+          recommendation: result.recommendation,
+        },
+      },
     });
 
     return result;
