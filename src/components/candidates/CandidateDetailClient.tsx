@@ -230,7 +230,15 @@ export function CandidateDetailClient({
   const [appGaps, setAppGaps] = useState<Record<string, GapResult>>(() => {
     const initial: Record<string, GapResult> = {};
     for (const app of candidate.applications) {
-      if (app.aiGapAnalysis) initial[app.id] = app.aiGapAnalysis as GapResult;
+      if (app.aiGapAnalysis) {
+        const raw = app.aiGapAnalysis as Partial<GapResult>;
+        initial[app.id] = {
+          matched: raw.matched ?? [],
+          partial: raw.partial ?? [],
+          missing: raw.missing ?? [],
+          developmentPlan: raw.developmentPlan ?? "",
+        };
+      }
     }
     return initial;
   });
@@ -252,8 +260,14 @@ export function CandidateDetailClient({
   >(() => {
     const initial: Record<string, { behavioral: string[]; technical: string[]; culture: string[] }> = {};
     for (const app of candidate.applications) {
-      if (app.aiInterviewQuestions)
-        initial[app.id] = app.aiInterviewQuestions as { behavioral: string[]; technical: string[]; culture: string[] };
+      if (app.aiInterviewQuestions) {
+        const raw = app.aiInterviewQuestions as Partial<{ behavioral: string[]; technical: string[]; culture: string[] }>;
+        initial[app.id] = {
+          behavioral: raw.behavioral ?? [],
+          technical: raw.technical ?? [],
+          culture: raw.culture ?? [],
+        };
+      }
     }
     return initial;
   });
