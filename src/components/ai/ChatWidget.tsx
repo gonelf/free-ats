@@ -17,6 +17,8 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  actionUsed?: string;
+  creditsCost?: number;
 }
 
 const SUGGESTED_PROMPTS = [
@@ -126,6 +128,8 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
                 id: crypto.randomUUID(),
                 role: "assistant",
                 content: accumulated,
+                actionUsed: parsed.actionUsed,
+                creditsCost: parsed.creditsCost,
               };
               setMessages((prev) => [...prev, assistantMessage]);
               setGeminiHistory([
@@ -229,62 +233,71 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
 
           {/* Message history */}
           {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn(
-                "flex",
-                msg.role === "user" ? "justify-end" : "justify-start"
-              )}
-            >
-              {msg.role === "assistant" && (
-                <div className="h-6 w-6 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center mr-2 mt-0.5 shrink-0">
-                  <Sparkles className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
-                </div>
-              )}
+            <React.Fragment key={msg.id}>
               <div
                 className={cn(
-                  "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
-                  msg.role === "user"
-                    ? "bg-teal-600 text-white rounded-br-sm"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-sm"
+                  "flex",
+                  msg.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
-                {msg.role === "assistant" ? (
-                  <ReactMarkdown
-                    className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1"
-                    components={{
-                      a: ({ href, children }) => {
-                        if (href?.startsWith("/")) {
+                {msg.role === "assistant" && (
+                  <div className="h-6 w-6 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center mr-2 mt-0.5 shrink-0">
+                    <Sparkles className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                  </div>
+                )}
+                <div
+                  className={cn(
+                    "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
+                    msg.role === "user"
+                      ? "bg-teal-600 text-white rounded-br-sm"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-sm"
+                  )}
+                >
+                  {msg.role === "assistant" ? (
+                    <ReactMarkdown
+                      className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1"
+                      components={{
+                        a: ({ href, children }) => {
+                          if (href?.startsWith("/")) {
+                            return (
+                              <Link
+                                href={href}
+                                onClick={handleClose}
+                                className="text-teal-600 dark:text-teal-400 underline hover:no-underline"
+                              >
+                                {children}
+                              </Link>
+                            );
+                          }
                           return (
-                            <Link
+                            <a
                               href={href}
-                              onClick={handleClose}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="text-teal-600 dark:text-teal-400 underline hover:no-underline"
                             >
                               {children}
-                            </Link>
+                            </a>
                           );
-                        }
-                        return (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-teal-600 dark:text-teal-400 underline hover:no-underline"
-                          >
-                            {children}
-                          </a>
-                        );
-                      },
-                    }}
-                  >
-                    {msg.content}
-                  </ReactMarkdown>
-                ) : (
-                  <span>{msg.content}</span>
-                )}
+                        },
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    <span>{msg.content}</span>
+                  )}
+                </div>
               </div>
-            </div>
+              {msg.role === "assistant" && msg.creditsCost && msg.creditsCost > 0 && (
+                <div className="flex justify-start pl-8 -mt-2">
+                  <span className="inline-flex items-center gap-1 text-xs text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-full px-2 py-0.5">
+                    <Sparkles className="h-3 w-3" />
+                    {msg.creditsCost} credits used
+                  </span>
+                </div>
+              )}
+            </React.Fragment>
           ))}
 
           {/* Streaming response */}
@@ -384,7 +397,7 @@ export function ChatWidget({ orgName: _orgName, isPro: _isPro, aiCreditsBalance 
             </button>
           </div>
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            2 credits/message · {creditsRemaining} remaining · Enter to send, Shift+Enter for newline
+            Q&amp;A is free · Actions cost credits · {creditsRemaining} remaining
           </p>
         </div>
       </div>

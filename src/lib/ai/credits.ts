@@ -49,9 +49,6 @@ export const AI_CREDIT_COSTS = {
 
   // Very light
   "tag-candidate": 2,          // array of tags only
-
-  // Conversational
-  "chat": 2,                   // per chat message (short context, medium output)
 } as const;
 
 export type AiFeature = keyof typeof AI_CREDIT_COSTS;
