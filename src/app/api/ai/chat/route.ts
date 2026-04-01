@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
   // Execute the tool
   let toolResult: string;
   try {
-    toolResult = await executeToolCall(decision.toolName, decision.toolArgs ?? {});
+    toolResult = await executeToolCall(decision.toolName, decision.toolArgs ?? {}, org.id);
   } catch {
     return NextResponse.json({ error: "Action failed. Please try again." }, { status: 500 });
   }
