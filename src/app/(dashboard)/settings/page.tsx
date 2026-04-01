@@ -2,12 +2,13 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Users, Settings, Palette, Share2, CheckCircle2 } from "lucide-react";
+import { CreditCard, Users, Settings, Palette, Share2, CheckCircle2, Shield } from "lucide-react";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { isFlagEnabled, FLAGS } from "@/lib/feature-flags";
 import { getAdminUser } from "@/lib/admin";
 import { LinkedInDisconnectButton } from "@/components/integrations/LinkedInDisconnectButton";
 import { CopyFeedUrl } from "@/components/integrations/CopyFeedUrl";
+import { CookiePreferencesButton } from "@/components/CookiePreferencesButton";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -115,6 +116,21 @@ export default async function SettingsPage() {
             <Button variant="outline" size="sm" asChild>
               <Link href="/team">Manage Team</Link>
             </Button>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+              <div>
+                <h2 className="font-semibold text-gray-900 dark:text-gray-100">Privacy</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Manage your cookie and tracking preferences
+                </p>
+              </div>
+            </div>
+            <CookiePreferencesButton />
           </div>
         </div>
 
