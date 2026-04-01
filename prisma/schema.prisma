@@ -573,15 +573,18 @@ enum HireRecommendation {
 // ============ SCREENING ============
 
 model Screening {
-  id            String      @id @default(cuid())
-  applicationId String      @unique
-  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  questions     Json        // { id: string, question: string, type: "initial" | "followup" }[]
-  responses     Json?       // { questionId: string, answer: string, answeredAt: string }[]
-  flagged       Boolean     @default(false)
-  flagReason    String?
-  completedAt   DateTime?
-  createdAt     DateTime    @default(now())
+  id                      String    @id @default(cuid())
+  applicationId           String    @unique
+  application             Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  questions               Json      // { id: string, question: string, type: "initial" | "followup" }[]
+  responses               Json?     // { questionId: string, answer: string, answeredAt: string }[]
+  flagged                 Boolean   @default(false)
+  flagReason              String?
+  completedAt             DateTime?
+  screeningToken          String?   @unique // cryptographically random token for public URL
+  screeningTokenExpiresAt DateTime?
+  createdAt               DateTime  @default(now())
 
   @@index([applicationId])
+  @@index([screeningToken])
 }

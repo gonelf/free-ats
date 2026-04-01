@@ -5,14 +5,21 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
+interface ScreeningQuestion {
+  id: string;
+  question: string;
+  type: string;
+  intent?: string;
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ applicationId: string }>;
+  params: Promise<{ token: string }>;
 }): Promise<Metadata> {
-  const { applicationId } = await params;
+  const { token } = await params;
   const screening = await db.screening.findUnique({
-    where: { applicationId },
+    where: { screeningToken: token },
     include: { application: { include: { job: { select: { title: true } } } } },
   });
   if (!screening) return { title: "Screening — KiteHR" };
@@ -25,12 +32,12 @@ export async function generateMetadata({
 export default async function ScreeningPage({
   params,
 }: {
-  params: Promise<{ applicationId: string }>;
+  params: Promise<{ token: string }>;
 }) {
-  const { applicationId } = await params;
+  const { token } = await params;
 
   const screening = await db.screening.findUnique({
-    where: { applicationId },
+    where: { screeningToken: token },
     include: {
       application: {
         include: {
@@ -48,13 +55,30 @@ export default async function ScreeningPage({
 
   if (!screening) notFound();
 
-  interface ScreeningQuestion {
-    id: string;
-    question: string;
-    type: string;
+  // Reject expired tokens
+  if (
+    screening.screeningTokenExpiresAt &&
+    screening.screeningTokenExpiresAt < new Date()
+  ) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
+        <div className="max-w-md w-full rounded-2xl border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 p-8 text-center">
+          <div className="text-3xl mb-3">⏰</div>
+          <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-300">
+            Link Expired
+          </h2>
+          <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-2">
+            This screening link has expired. Please contact the hiring team for a new link.
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  const questions = screening.questions as ScreeningQuestion[];
+  // Strip intent field before sending to candidate
+  const rawQuestions = screening.questions as ScreeningQuestion[];
+  const questions = rawQuestions.map(({ intent: _intent, ...q }) => q);
+
   const responses = (screening.responses as Array<{ questionId: string }> | null) ?? [];
   const answeredIds = new Set(responses.map((r) => r.questionId));
   const unansweredQuestions = questions.filter((q) => !answeredIds.has(q.id));
@@ -84,7 +108,7 @@ export default async function ScreeningPage({
           </div>
         ) : (
           <ScreeningClient
-            applicationId={applicationId}
+            token={token}
             candidateName={screening.application.candidate.firstName}
             questions={unansweredQuestions}
             totalQuestions={questions.length}

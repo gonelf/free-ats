@@ -23,18 +23,26 @@ interface FlagAnalysis {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ applicationId: string }> }
+  { params }: { params: Promise<{ token: string }> }
 ) {
-  const { applicationId } = await params;
+  const { token } = await params;
   const { questionId, answer } = await request.json();
 
   if (!answer?.trim()) {
     return NextResponse.json({ error: "Answer is required" }, { status: 400 });
   }
 
-  const screening = await db.screening.findUnique({ where: { applicationId } });
+  const screening = await db.screening.findUnique({ where: { screeningToken: token } });
   if (!screening) {
     return NextResponse.json({ error: "Screening not found" }, { status: 404 });
+  }
+
+  // Reject expired tokens
+  if (
+    screening.screeningTokenExpiresAt &&
+    screening.screeningTokenExpiresAt < new Date()
+  ) {
+    return NextResponse.json({ error: "Screening link has expired" }, { status: 410 });
   }
 
   if (screening.completedAt) {
@@ -79,7 +87,7 @@ Return JSON:
   );
 
   const updated = await db.screening.update({
-    where: { applicationId },
+    where: { screeningToken: token },
     data: {
       responses: updatedResponses as object[],
       flagged: analysis.flagged || screening.flagged,

@@ -302,6 +302,8 @@ export function CandidateDetailClient({
   const [screenings, setScreenings] = useState<Record<string, {
     id: string;
     applicationId: string;
+    screeningToken: string | null;
+    screeningTokenExpiresAt: Date | null;
     questions: Array<{ id: string; question: string; type: string }>;
     responses: Array<{ questionId: string; answer: string; answeredAt: string }> | null;
     flagged: boolean;
@@ -584,7 +586,9 @@ export function CandidateDetailClient({
   }
 
   function handleCopyScreeningLink(applicationId: string) {
-    const url = `${window.location.origin}/screen/${applicationId}`;
+    const screening = screenings[applicationId];
+    if (!screening?.screeningToken) return;
+    const url = `${window.location.origin}/screen/${screening.screeningToken}`;
     navigator.clipboard.writeText(url);
     setScreeningLinkCopied(applicationId);
     setTimeout(() => setScreeningLinkCopied(null), 2000);

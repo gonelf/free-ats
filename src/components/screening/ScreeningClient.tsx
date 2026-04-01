@@ -11,7 +11,7 @@ interface ScreeningQuestion {
 }
 
 interface ScreeningClientProps {
-  applicationId: string;
+  token: string;
   candidateName: string;
   questions: ScreeningQuestion[];
   totalQuestions: number;
@@ -19,7 +19,7 @@ interface ScreeningClientProps {
 }
 
 export function ScreeningClient({
-  applicationId,
+  token,
   candidateName,
   questions: initialQuestions,
   totalQuestions,
@@ -42,7 +42,7 @@ export function ScreeningClient({
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch(`/api/screening/${applicationId}/respond`, {
+      const res = await fetch(`/api/screening/${token}/respond`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ questionId: current.id, answer: answer.trim() }),

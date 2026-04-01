@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withProPlanGuard } from "@/lib/ai/api-helpers";
 import { flashModel, generateJSON } from "@/lib/ai/gemini";
 import { db } from "@/lib/db";
+import { randomUUID } from "crypto";
 
 interface ScreeningQuestion {
   id: string;
@@ -26,9 +27,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Check if screening already exists
+    // Check if screening already exists — backfill token if missing
     const existing = await db.screening.findUnique({ where: { applicationId } });
     if (existing) {
+      if (!existing.screeningToken) {
+        const token = randomUUID().replace(/-/g, "");
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        const updated = await db.screening.update({
+          where: { applicationId },
+          data: { screeningToken: token, screeningTokenExpiresAt: expiresAt },
+        });
+        return NextResponse.json(updated);
+      }
       return NextResponse.json(existing);
     }
 
@@ -54,10 +64,15 @@ Return JSON with:
 - questions: array of { id: string (use "q1", "q2", etc.), question: string, type: "initial", intent: string (what you're assessing) }`
     );
 
+    const token = randomUUID().replace(/-/g, "");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
     const screening = await db.screening.create({
       data: {
         applicationId,
         questions: questions as object[],
+        screeningToken: token,
+        screeningTokenExpiresAt: expiresAt,
       },
     });
 
