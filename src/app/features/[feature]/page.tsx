@@ -36,19 +36,16 @@ export default async function FeaturePage({ params }: Props) {
     .filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <PublicNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-cyan-500/10 blur-[120px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-16 text-center">
-          <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm mb-6 ${
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-4xl px-6 pt-20 pb-16 text-center">
+          <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium mb-6 ${
             data.plan === "pro"
-              ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
-              : "border-green-500/20 bg-green-500/10 text-green-400"
+              ? "border-teal-200 bg-teal-50 text-teal-700"
+              : "border-green-200 bg-green-50 text-green-700"
           }`}>
             {data.plan === "pro" ? (
               <>
@@ -59,17 +56,17 @@ export default async function FeaturePage({ params }: Props) {
               "Free forever"
             )}
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-5 tracking-tight">{data.name}</h1>
-          <p className="text-xl text-white/50 max-w-2xl mx-auto mb-8 leading-relaxed">
+          <h1 className="font-heading font-bold text-4xl md:text-5xl mb-5 tracking-tight text-slate-900">{data.name}</h1>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
             {data.tagline}
           </p>
-          <p className="text-white/40 max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed">
             {data.description}
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-7 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-7 py-3.5 text-base font-bold text-white hover:bg-teal-800 transition-colors"
             >
               Try it free
               <ArrowRight className="h-4 w-4" />
@@ -77,7 +74,7 @@ export default async function FeaturePage({ params }: Props) {
             {data.plan === "pro" && (
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-base font-semibold text-white/80 hover:bg-white/10 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-7 py-3.5 text-base font-bold text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 View Pro pricing
               </Link>
@@ -87,20 +84,20 @@ export default async function FeaturePage({ params }: Props) {
       </section>
 
       {/* Benefits */}
-      <section className="py-20 border-t border-white/5">
+      <section className="py-20 border-b border-slate-100 bg-slate-50">
         <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-2xl font-bold text-center mb-12">Why teams love it</h2>
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-12">Why teams love it</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {data.benefits.map((benefit) => (
               <div
                 key={benefit.title}
-                className="rounded-2xl border border-white/8 bg-white/3 p-6 hover:border-cyan-500/20 transition-colors"
+                className="rounded-2xl border border-slate-200 bg-white p-6 hover:border-teal-200 transition-colors"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 mb-4">
-                  <Check className="h-4 w-4 text-cyan-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 mb-4">
+                  <Check className="h-4 w-4 text-teal-700" />
                 </div>
-                <h3 className="font-semibold text-white mb-2">{benefit.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{benefit.description}</p>
+                <h3 className="font-semibold text-slate-900 mb-2">{benefit.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{benefit.description}</p>
               </div>
             ))}
           </div>
@@ -108,16 +105,16 @@ export default async function FeaturePage({ params }: Props) {
       </section>
 
       {/* How it works */}
-      <section className="py-20 border-t border-white/5">
+      <section className="py-20 border-b border-slate-100">
         <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-2xl font-bold text-center mb-12">How it works</h2>
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-12">How it works</h2>
           <ol className="space-y-4">
             {data.howItWorks.map((step, i) => (
               <li key={i} className="flex gap-4 items-start">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-bold mt-0.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700 text-sm font-bold mt-0.5 border border-teal-100">
                   {i + 1}
                 </div>
-                <p className="text-white/60 leading-relaxed pt-1">{step}</p>
+                <p className="text-slate-600 leading-relaxed pt-1">{step}</p>
               </li>
             ))}
           </ol>
@@ -126,27 +123,27 @@ export default async function FeaturePage({ params }: Props) {
 
       {/* Related features */}
       {relatedFeatures.length > 0 && (
-        <section className="py-20 border-t border-white/5">
+        <section className="py-20 border-b border-slate-100 bg-slate-50">
           <div className="mx-auto max-w-5xl px-6">
-            <h2 className="text-2xl font-bold text-center mb-10">Related features</h2>
+            <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">Related features</h2>
             <div className="grid sm:grid-cols-3 gap-4">
               {relatedFeatures.map((f) => (
                 <Link
                   key={f.slug}
                   href={`/features/${f.slug}`}
-                  className="rounded-2xl border border-white/8 bg-white/3 p-5 hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all group"
+                  className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-200 hover:shadow-sm transition-all group"
                 >
-                  <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs mb-3 ${
+                  <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium mb-3 ${
                     f.plan === "pro"
-                      ? "border-cyan-500/20 bg-cyan-500/10 text-cyan-400"
-                      : "border-green-500/20 bg-green-500/10 text-green-400"
+                      ? "border-teal-200 bg-teal-50 text-teal-700"
+                      : "border-green-200 bg-green-50 text-green-700"
                   }`}>
                     {f.plan === "pro" ? "Pro" : "Free"}
                   </div>
-                  <h3 className="font-semibold text-white mb-1 group-hover:text-cyan-400 transition-colors">
+                  <h3 className="font-semibold text-slate-900 mb-1 group-hover:text-teal-700 transition-colors">
                     {f.name}
                   </h3>
-                  <p className="text-xs text-white/40 leading-relaxed">{f.tagline}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{f.tagline}</p>
                 </Link>
               ))}
             </div>
@@ -155,29 +152,24 @@ export default async function FeaturePage({ params }: Props) {
       )}
 
       {/* CTA */}
-      <section className="py-20 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <h2 className="text-3xl font-bold mb-4">
-              {data.plan === "pro" ? "Unlock " + data.name + " with Pro" : "Start using " + data.name + " for free"}
-            </h2>
-            <p className="text-white/40 mb-8">
-              {data.plan === "pro"
-                ? "Start with the free plan and upgrade to Pro anytime. No credit card required to start."
-                : "Unlimited everything. No credit card. No contracts."}
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Get started free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <p className="mt-4 text-sm text-white/25">No credit card required</p>
-          </div>
+      <section className="py-24 bg-teal-700">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {data.plan === "pro" ? "Unlock " + data.name + " with Pro" : "Start using " + data.name + " for free"}
+          </h2>
+          <p className="text-teal-200 mb-8">
+            {data.plan === "pro"
+              ? "Start with the free plan and upgrade to Pro anytime. No credit card required to start."
+              : "Unlimited everything. No credit card. No contracts."}
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-bold text-teal-700 hover:bg-teal-50 transition-colors"
+          >
+            Get started free
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <p className="mt-4 text-sm text-teal-300">No credit card required</p>
         </div>
       </section>
 

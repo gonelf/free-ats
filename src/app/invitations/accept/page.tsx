@@ -57,11 +57,11 @@ export default async function AcceptInvitationPage({ searchParams }: PageProps) 
     return (
       <PageShell>
         <StatusCard
-          icon={<AlertCircle className="h-8 w-8 text-red-400" />}
-          iconBg="bg-red-500/10"
+          icon={<AlertCircle className="h-8 w-8 text-red-500" />}
+          iconBg="bg-red-50 border border-red-100"
           title="Invalid invitation"
           message="Missing invitation token. Please use the link from your email."
-          action={<Link href="/" className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">Back to home</Link>}
+          action={<Link href="/" className="text-sm text-teal-700 hover:text-teal-800 transition-colors font-medium">Back to home</Link>}
         />
       </PageShell>
     );
@@ -83,11 +83,11 @@ export default async function AcceptInvitationPage({ searchParams }: PageProps) 
     return (
       <PageShell>
         <StatusCard
-          icon={<AlertCircle className="h-8 w-8 text-red-400" />}
-          iconBg="bg-red-500/10"
+          icon={<AlertCircle className="h-8 w-8 text-red-500" />}
+          iconBg="bg-red-50 border border-red-100"
           title="Invalid invitation"
           message={result.error}
-          action={<Link href="/" className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">Back to home</Link>}
+          action={<Link href="/" className="text-sm text-teal-700 hover:text-teal-800 transition-colors font-medium">Back to home</Link>}
         />
       </PageShell>
     );
@@ -97,14 +97,14 @@ export default async function AcceptInvitationPage({ searchParams }: PageProps) 
     return (
       <PageShell>
         <StatusCard
-          icon={<Check className="h-8 w-8 text-cyan-400" />}
-          iconBg="bg-cyan-500/10"
+          icon={<Check className="h-8 w-8 text-teal-700" />}
+          iconBg="bg-teal-50 border border-teal-100"
           title="Already a member"
           message={`You're already a member of ${result.orgName}.`}
           action={
             <Link
               href="/jobs"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-bold text-white hover:bg-teal-800 transition-colors"
             >
               Go to dashboard
             </Link>
@@ -117,14 +117,14 @@ export default async function AcceptInvitationPage({ searchParams }: PageProps) 
   return (
     <PageShell>
       <StatusCard
-        icon={<Check className="h-8 w-8 text-green-400" />}
-        iconBg="bg-green-500/10"
+        icon={<Check className="h-8 w-8 text-green-700" />}
+        iconBg="bg-green-50 border border-green-100"
         title={`Welcome to ${result.orgName}!`}
         message="You've successfully joined the team. Start collaborating on hiring."
         action={
           <Link
             href="/jobs"
-            className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-bold text-white hover:bg-teal-800 transition-colors"
           >
             Go to dashboard
           </Link>
@@ -136,7 +136,7 @@ export default async function AcceptInvitationPage({ searchParams }: PageProps) 
 
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#080c10] text-white flex flex-col">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col">
       <PublicNav />
       <div className="flex-1 flex items-center justify-center p-6">
         {children}
@@ -160,12 +160,12 @@ function StatusCard({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="max-w-sm w-full text-center rounded-2xl border border-white/8 bg-white/3 p-10">
+    <div className="max-w-sm w-full text-center rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
       <div className={`flex h-16 w-16 items-center justify-center rounded-full ${iconBg} mx-auto mb-6`}>
         {icon}
       </div>
-      <h1 className="text-2xl font-bold text-white mb-2">{title}</h1>
-      <p className="text-white/40 mb-8">{message}</p>
+      <h1 className="text-2xl font-bold text-slate-900 mb-2">{title}</h1>
+      <p className="text-slate-500 mb-8">{message}</p>
       {action}
     </div>
   );

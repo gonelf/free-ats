@@ -137,44 +137,41 @@ const sections = [
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <PublicNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-cyan-500/8 blur-[120px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-3xl px-6 pt-20 pb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-5 tracking-tight">
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-3xl px-6 pt-20 pb-12 text-center">
+          <h1 className="font-heading font-bold text-4xl md:text-5xl mb-5 tracking-tight text-slate-900">
             Privacy Policy
           </h1>
-          <p className="text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
             How we collect, use, and protect your information.
           </p>
-          <p className="text-sm text-white/25 mt-4">Last updated: March 25, 2026</p>
+          <p className="text-sm text-slate-400 mt-4">Last updated: March 25, 2026</p>
         </div>
       </section>
 
       {/* Content */}
-      <section className="py-12 border-t border-white/5">
+      <section className="py-12 border-b border-slate-100">
         <div className="mx-auto max-w-3xl px-6">
           <div className="space-y-8">
             {sections.map((section) => (
               <div
                 key={section.title}
-                className="rounded-2xl border border-white/8 bg-white/3 p-6 md:p-8"
+                className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8"
               >
-                <h2 className="text-xl font-semibold text-white mb-5">
+                <h2 className="text-xl font-semibold text-slate-900 mb-5">
                   {section.title}
                 </h2>
                 <div className="space-y-5">
                   {section.content.map((item) => (
                     <div key={item.subtitle}>
-                      <h3 className="text-sm font-semibold text-white/80 mb-1.5">
+                      <h3 className="text-sm font-semibold text-slate-700 mb-1.5">
                         {item.subtitle}
                       </h3>
-                      <p className="text-sm text-white/50 leading-relaxed">
+                      <p className="text-sm text-slate-500 leading-relaxed">
                         {item.text}
                       </p>
                     </div>
@@ -184,12 +181,12 @@ export default function PrivacyPage() {
             ))}
           </div>
 
-          <div className="mt-10 rounded-2xl border border-white/8 bg-white/3 p-6 text-center">
-            <p className="text-sm text-white/40">
+          <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+            <p className="text-sm text-slate-500">
               Have questions?{" "}
               <Link
                 href="mailto:privacy@kitehr.com"
-                className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="text-teal-700 hover:text-teal-800 transition-colors font-medium"
               >
                 privacy@kitehr.com
               </Link>

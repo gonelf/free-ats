@@ -35,15 +35,12 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <PublicNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-cyan-500/8 blur-[120px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-3xl px-6 pt-20 pb-16 text-center">
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-3xl px-6 pt-20 pb-16 text-center">
           <div className="flex justify-center mb-8">
             <Image
               src="/logo.png"
@@ -53,25 +50,25 @@ export default function AboutPage() {
               className="rounded-2xl"
             />
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-4 py-1.5 text-sm font-medium text-teal-700 mb-6">
             <Infinity className="h-3.5 w-3.5" />
             Free ATS, forever
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-5 tracking-tight">
+          <h1 className="font-heading font-bold text-4xl md:text-5xl mb-5 tracking-tight text-slate-900">
             Hiring software that&apos;s actually free
           </h1>
-          <p className="text-xl text-white/50 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
             KiteHR is an applicant tracking system built for modern hiring teams — from first hire to high-volume recruiting.
           </p>
         </div>
       </section>
 
       {/* Mission */}
-      <section className="py-16 border-t border-white/5">
+      <section className="py-16 border-b border-slate-100">
         <div className="mx-auto max-w-3xl px-6">
-          <div className="rounded-2xl border border-white/8 bg-white/3 p-8 md:p-10">
-            <h2 className="text-2xl font-bold mb-5">Why we built KiteHR</h2>
-            <div className="space-y-4 text-white/50 leading-relaxed">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 md:p-10">
+            <h2 className="text-2xl font-bold text-slate-900 mb-5">Why we built KiteHR</h2>
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 Recruiting software has a problem: the tools worth using are expensive, and the free ones are too limited to actually use.
               </p>
@@ -90,20 +87,20 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-16 border-t border-white/5">
+      <section className="py-16 border-b border-slate-100 bg-slate-50">
         <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-2xl font-bold text-center mb-10">What we believe</h2>
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">What we believe</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {values.map((value) => (
               <div
                 key={value.title}
-                className="rounded-2xl border border-white/8 bg-white/3 p-6"
+                className="rounded-2xl border border-slate-200 bg-white p-6"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 mb-4">
-                  <Check className="h-4 w-4 text-cyan-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 mb-4">
+                  <Check className="h-4 w-4 text-teal-700" />
                 </div>
-                <h3 className="font-semibold text-white mb-2">{value.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{value.description}</p>
+                <h3 className="font-semibold text-slate-900 mb-2">{value.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{value.description}</p>
               </div>
             ))}
           </div>
@@ -111,15 +108,15 @@ export default function AboutPage() {
       </section>
 
       {/* What's included */}
-      <section className="py-16 border-t border-white/5">
+      <section className="py-16 border-b border-slate-100">
         <div className="mx-auto max-w-4xl px-6">
-          <h2 className="text-2xl font-bold text-center mb-10">What KiteHR includes</h2>
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">What KiteHR includes</h2>
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="rounded-2xl border border-white/8 bg-white/3 p-6">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-xs text-green-400 mb-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 mb-4">
                 FREE FOREVER
               </div>
-              <h3 className="font-semibold text-white mb-4">Core ATS</h3>
+              <h3 className="font-semibold text-slate-900 mb-4">Core ATS</h3>
               <ul className="space-y-2">
                 {[
                   "Unlimited jobs",
@@ -133,20 +130,20 @@ export default function AboutPage() {
                   "Email templates",
                   "Public job listing pages",
                 ].map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-sm text-white/60">
-                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500/15">
-                      <Check className="h-2.5 w-2.5 text-green-400" />
+                  <li key={f} className="flex items-center gap-3 text-sm text-slate-600">
+                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-100">
+                      <Check className="h-2.5 w-2.5 text-green-700" />
                     </div>
                     {f}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-400 mb-4">
+            <div className="rounded-2xl border-2 border-teal-600 bg-white p-6">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 mb-4">
                 PRO — $49/MO
               </div>
-              <h3 className="font-semibold text-white mb-4">AI Suite</h3>
+              <h3 className="font-semibold text-slate-900 mb-4">AI Suite</h3>
               <ul className="space-y-2">
                 {[
                   "AI resume parsing",
@@ -162,9 +159,9 @@ export default function AboutPage() {
                   "Salary range suggestions",
                   "Reference check questions",
                 ].map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-sm text-white/60">
-                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-500/15">
-                      <Check className="h-2.5 w-2.5 text-cyan-400" />
+                  <li key={f} className="flex items-center gap-3 text-sm text-slate-600">
+                    <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-100">
+                      <Check className="h-2.5 w-2.5 text-teal-700" />
                     </div>
                     {f}
                   </li>
@@ -176,24 +173,19 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <h2 className="text-3xl font-bold mb-4">Start hiring today — free</h2>
-            <p className="text-white/40 mb-8">
-              No credit card. No time limits. Unlimited everything.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Create your free account
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="py-24 bg-teal-700">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">Start hiring today — free</h2>
+          <p className="text-teal-200 mb-8">
+            No credit card. No time limits. Unlimited everything.
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-bold text-teal-700 hover:bg-teal-50 transition-colors"
+          >
+            Create your free account
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
