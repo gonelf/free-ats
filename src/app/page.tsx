@@ -18,12 +18,13 @@ import {
 } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
 import { AiFeaturesPreview } from "@/components/home/AiFeaturesPreview";
+import { DemoModal } from "@/components/home/DemoModal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "KiteHR — Free ATS with AI Superpowers",
+  title: "KiteHR — Hire on Proof, Not Paper",
   description:
-    "Free applicant tracking system with AI built in. Parse resumes, score candidates, and write job posts instantly — unlimited users, jobs & candidates, forever free.",
+    "KiteHR Signal replaces resume uploads with AI-powered skill assessments. Get your top 3 candidates in 72 hours — zero resumes required. Free forever.",
   alternates: {
     canonical: "/",
   },
@@ -101,44 +102,39 @@ export default async function HomePage() {
             <div className="text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-semibold tracking-wider uppercase mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <Sparkles className="w-3 h-3 text-teal-500" />
-                Free forever · AI built-in
+                Introducing Signal · Free forever
               </div>
 
               <h1
                 className="font-heading font-black tracking-tight mb-6 leading-[1.05] text-slate-900"
                 style={{ fontSize: "clamp(2.5rem, 4vw + 1.25rem, 4.5rem)" }}
               >
-                The Free ATS with{" "}
-                <span className="text-teal-700">
-                  AI Superpowers
-                </span>
+                Hire on{" "}
+                <span className="text-teal-700">Proof</span>
+                ,{" "}
+                Not Paper.
               </h1>
 
               <p className="text-base md:text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
-                KiteHR is a professional-grade ATS — completely free, with no seat limits or posting caps.
-                AI is built in as your assistant: it speeds up the work, you make the calls.
+                KiteHR Signal replaces resume uploads with 4-minute AI skill assessments.
+                Get your top 3 candidates in 72 hours — zero resumes required.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-4">
+                <DemoModal />
                 <Link
                   href="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-7 py-3.5 text-base font-bold text-white hover:bg-teal-800 transition-all active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-base font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-95"
                 >
                   Start for free
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link
-                  href="/pricing"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-base font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-95"
-                >
-                  View features
-                </Link>
               </div>
 
               <div className="mt-8 flex items-center gap-6 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden">
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Unlimited Jobs</span>
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Unlimited Users</span>
-                <span className="flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-teal-500" /> AI Built-In</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> &gt;80% interview conversion</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> 72hr time-to-shortlist</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-teal-500" /> Zero resumes</span>
               </div>
             </div>
 
