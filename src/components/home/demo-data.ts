@@ -62,7 +62,7 @@ export const demoJobs: DemoJob[] = [
       {
         id: "fe-4",
         type: "open",
-        text: "A user reports that "the app feels slow on mobile." Walk me through your debugging process from first report to root cause.",
+        text: "A user reports that \"the app feels slow on mobile.\" Walk me through your debugging process from first report to root cause.",
         dictationTranscript:
           "First I'd open Chrome DevTools and run a Lighthouse audit to identify the bottleneck — whether it's LCP, FCP, or TBT. Then I'd check the network tab for large assets, slow API calls, or render-blocking resources. I'd look at the main thread for long tasks and profile JavaScript execution. Once I have a clear picture of where the time is going, I'd address the specific bottleneck — whether that's an unoptimized image, a blocking script, or a heavy component re-render — then re-run Lighthouse to verify the improvement.",
       },
