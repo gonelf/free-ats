@@ -82,6 +82,7 @@ export function NonAtsImportForm() {
           companyName: result.companyName,
           jobTitle: result.jobTitle,
           jobUrl: result.jobUrl,
+          orgId: result.orgId,
         }),
       });
 
