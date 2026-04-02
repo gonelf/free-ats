@@ -39,7 +39,7 @@ interface PublicNavProps {
   variant?: "light" | "dark";
 }
 
-export function PublicNav({ variant = "dark" }: PublicNavProps) {
+export function PublicNav({ variant = "light" }: PublicNavProps) {
   const [useCasesOpen, setUseCasesOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -157,28 +157,28 @@ export function PublicNav({ variant = "dark" }: PublicNavProps) {
 
 export function PublicFooter() {
   return (
-    <footer className="bg-slate-900 border-t border-slate-800 py-12">
+    <footer className="bg-slate-950 border-t border-slate-800/60 py-14">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           {/* Product */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Product</p>
-            <ul className="space-y-2">
-              <li><Link href="/features/hiring-pipeline" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">Features</Link></li>
-              <li><Link href="/pricing" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">Pricing</Link></li>
-              <li><Link href="/blog" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">Blog</Link></li>
-              <li><Link href="/about" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">About</Link></li>
-              <li><Link href="/faq" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">FAQ</Link></li>
-              <li><Link href="/privacy" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">Privacy Policy</Link></li>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-4">Product</p>
+            <ul className="space-y-2.5">
+              <li><Link href="/features/hiring-pipeline" className="text-sm text-slate-400 hover:text-white transition-colors">Features</Link></li>
+              <li><Link href="/pricing" className="text-sm text-slate-400 hover:text-white transition-colors">Pricing</Link></li>
+              <li><Link href="/blog" className="text-sm text-slate-400 hover:text-white transition-colors">Blog</Link></li>
+              <li><Link href="/about" className="text-sm text-slate-400 hover:text-white transition-colors">About</Link></li>
+              <li><Link href="/faq" className="text-sm text-slate-400 hover:text-white transition-colors">FAQ</Link></li>
+              <li><Link href="/privacy" className="text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
           {/* Use Cases */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Use Cases</p>
-            <ul className="space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-4">Use Cases</p>
+            <ul className="space-y-2.5">
               {useCases.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-sm text-slate-400 hover:text-slate-200 transition-colors">
+                  <Link href={item.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -187,11 +187,11 @@ export function PublicFooter() {
           </div>
           {/* Compare */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Compare</p>
-            <ul className="space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-4">Compare</p>
+            <ul className="space-y-2.5">
               {competitors.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-sm text-slate-400 hover:text-slate-200 transition-colors">
+                  <Link href={item.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -200,28 +200,28 @@ export function PublicFooter() {
           </div>
           {/* Account */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Account</p>
-            <ul className="space-y-2">
-              <li><Link href="/login" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">Sign in</Link></li>
-              <li><Link href="/signup" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">Sign up free</Link></li>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-4">Account</p>
+            <ul className="space-y-2.5">
+              <li><Link href="/login" className="text-sm text-slate-400 hover:text-white transition-colors">Sign in</Link></li>
+              <li><Link href="/signup" className="text-sm text-slate-400 hover:text-white transition-colors">Sign up free</Link></li>
             </ul>
           </div>
         </div>
         {/* Alternatives — full-width row for SEO link equity */}
-        <div className="border-t border-slate-800 pt-8 mb-8">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Alternatives</p>
+        <div className="border-t border-slate-800/60 pt-8 mb-8">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-4">Alternatives</p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {alternatives.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-sm text-slate-400 hover:text-slate-200 transition-colors">
+                <Link href={item.href} className="text-sm text-slate-400 hover:text-white transition-colors">
                   {item.label}
                 </Link>
               </li>
             ))}
           </ul>
         </div>
-        <div className="border-t border-slate-800 pt-6 flex items-center gap-2">
-          <Image src="/logo.png" alt="KiteHR" width={20} height={20} className="rounded-md opacity-50" />
+        <div className="border-t border-slate-800/60 pt-6 flex items-center gap-2.5">
+          <Image src="/logo.png" alt="KiteHR" width={20} height={20} className="rounded-md opacity-40" />
           <span className="text-sm text-slate-500">KiteHR</span>
         </div>
       </div>

@@ -74,60 +74,57 @@ const faqs = [
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <PublicNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/8 blur-[100px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-16 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-400 mb-6">
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-4xl px-6 pt-20 pb-16 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-4 py-1.5 text-sm text-teal-700 font-medium mb-6">
             <Infinity className="h-3.5 w-3.5" />
             No per-seat fees. No hidden charges.
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+          <h1 className="font-heading font-bold text-4xl md:text-5xl mb-4 tracking-tight text-slate-900">
             Simple, transparent pricing
           </h1>
-          <p className="text-lg text-white/40 max-w-xl mx-auto">
+          <p className="text-lg text-slate-500 max-w-xl mx-auto">
             Start free. Upgrade when you need AI. Unlimited users and jobs on every plan.
           </p>
         </div>
       </section>
 
       {/* Plans */}
-      <section className="mx-auto max-w-5xl px-6 pb-24">
+      <section className="mx-auto max-w-5xl px-6 py-20">
         <div className="grid md:grid-cols-2 gap-6">
           {/* Free */}
-          <div className="rounded-2xl border border-white/8 bg-white/3 p-8">
+          <div className="rounded-2xl border border-slate-200 bg-white p-8">
             <div className="mb-6">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-xs text-green-400 mb-4">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 mb-4">
                 FREE FOREVER
               </div>
-              <h2 className="text-xl font-bold text-white">Free</h2>
-              <p className="text-sm text-white/40 mt-1">Full ATS, unlimited everything</p>
+              <h2 className="text-xl font-bold text-slate-900">Free</h2>
+              <p className="text-sm text-slate-500 mt-1">Full ATS, unlimited everything</p>
             </div>
             <div className="mb-8">
-              <span className="text-4xl font-bold text-white">$0</span>
-              <span className="text-white/40 ml-2">/ month</span>
+              <span className="text-4xl font-bold text-slate-900">$0</span>
+              <span className="text-slate-400 ml-2">/ month</span>
             </div>
             <Link
               href="/signup"
-              className="block w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-white/10 transition-colors mb-8"
+              className="block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors mb-8"
             >
               Get started free
             </Link>
             <ul className="space-y-3">
               {freeFeatures.map((f) => (
-                <li key={f} className="flex items-center gap-3 text-sm text-white/60">
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15">
-                    <Check className="h-3 w-3 text-green-400" />
+                <li key={f} className="flex items-center gap-3 text-sm text-slate-600">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
+                    <Check className="h-3 w-3 text-green-700" />
                   </div>
                   {f}
                 </li>
               ))}
-              <li className="flex items-center gap-3 text-sm text-white/25">
+              <li className="flex items-center gap-3 text-sm text-slate-300">
                 <div className="flex h-5 w-5 shrink-0 items-center justify-center">
                   <Minus className="h-4 w-4" />
                 </div>
@@ -137,34 +134,34 @@ export default function PricingPage() {
           </div>
 
           {/* Pro */}
-          <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/5 to-white/2 p-8 relative">
+          <div className="rounded-2xl border-2 border-teal-600 bg-white p-8 relative">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="rounded-full bg-cyan-500 px-4 py-1 text-xs font-semibold text-[#080c10]">
+              <span className="rounded-full bg-teal-700 px-4 py-1 text-xs font-semibold text-white">
                 Most popular
               </span>
             </div>
             <div className="mb-6">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-400 mb-4">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 mb-4">
                 <Sparkles className="h-3 w-3" />
                 AI POWERED
               </div>
-              <h2 className="text-xl font-bold text-white">Pro</h2>
-              <p className="text-sm text-white/40 mt-1">Everything in Free + full AI suite</p>
+              <h2 className="text-xl font-bold text-slate-900">Pro</h2>
+              <p className="text-sm text-slate-500 mt-1">Everything in Free + full AI suite</p>
             </div>
             <div className="mb-8">
-              <span className="text-4xl font-bold text-white">$49</span>
-              <span className="text-white/40 ml-2">/ month per workspace</span>
+              <span className="text-4xl font-bold text-slate-900">$49</span>
+              <span className="text-slate-400 ml-2">/ month per workspace</span>
             </div>
             <Link
               href="/signup"
-              className="block w-full rounded-xl bg-cyan-500 px-4 py-3 text-center text-sm font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors mb-8"
+              className="block w-full rounded-xl bg-teal-700 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-teal-800 transition-colors mb-8"
             >
               <span className="flex items-center justify-center gap-2">
                 Start free, upgrade anytime
                 <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
-            <div className="text-xs font-semibold text-white/25 uppercase tracking-wide mb-4">
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">
               Everything in Free, plus:
             </div>
             <ul className="space-y-3">
@@ -172,12 +169,12 @@ export default function PricingPage() {
                 const Icon = f.icon;
                 return (
                   <li key={f.label} className="flex items-start gap-3 text-sm">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 mt-0.5">
-                      <Icon className="h-3.5 w-3.5 text-cyan-400" />
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-teal-50 mt-0.5">
+                      <Icon className="h-3.5 w-3.5 text-teal-600" />
                     </div>
                     <div>
-                      <span className="font-medium text-white">{f.label}</span>
-                      <span className="text-white/35"> — {f.description}</span>
+                      <span className="font-medium text-slate-900">{f.label}</span>
+                      <span className="text-slate-500"> — {f.description}</span>
                     </div>
                   </li>
                 );
@@ -188,16 +185,16 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-t border-white/5 py-24">
+      <section className="border-t border-slate-100 py-24 bg-slate-50">
         <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-2xl font-bold text-white text-center mb-12">
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-12">
             Frequently asked questions
           </h2>
           <div className="space-y-8">
             {faqs.map((faq) => (
-              <div key={faq.q} className="border-b border-white/5 pb-8 last:border-0">
-                <h3 className="font-semibold text-white mb-2">{faq.q}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{faq.a}</p>
+              <div key={faq.q} className="border-b border-slate-200 pb-8 last:border-0">
+                <h3 className="font-semibold text-slate-900 mb-2">{faq.q}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -205,25 +202,20 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
-            <p className="text-white/40 mb-8">
-              Create your free account and start hiring in minutes.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Get started free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <p className="mt-4 text-sm text-white/25">No credit card required</p>
-          </div>
+      <section className="py-24 bg-teal-700">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">Ready to get started?</h2>
+          <p className="text-teal-200 mb-8">
+            Create your free account and start hiring in minutes.
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-bold text-teal-700 hover:bg-teal-50 transition-colors"
+          >
+            Get started free
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <p className="mt-4 text-sm text-teal-300">No credit card required</p>
         </div>
       </section>
 

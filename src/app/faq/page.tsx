@@ -137,7 +137,7 @@ const faqJsonLd = {
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen bg-[#080c10] text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -145,15 +145,12 @@ export default function FAQPage() {
       <PublicNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/8 blur-[100px] rounded-full" />
-        </div>
-        <div className="relative mx-auto max-w-3xl px-6 pt-20 pb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+      <section className="border-b border-slate-100">
+        <div className="mx-auto max-w-3xl px-6 pt-20 pb-12 text-center">
+          <h1 className="font-heading font-bold text-4xl md:text-5xl mb-4 tracking-tight text-slate-900">
             Frequently asked questions
           </h1>
-          <p className="text-lg text-white/40">
+          <p className="text-lg text-slate-500">
             Everything you need to know about KiteHR.
           </p>
         </div>
@@ -164,12 +161,12 @@ export default function FAQPage() {
         <div className="mx-auto max-w-3xl px-6 space-y-16">
           {faqSections.map((section) => (
             <div key={section.title}>
-              <h2 className="text-lg font-semibold text-cyan-400 mb-6">{section.title}</h2>
+              <h2 className="text-lg font-semibold text-teal-700 mb-6">{section.title}</h2>
               <div className="space-y-6">
                 {section.faqs.map((faq) => (
-                  <div key={faq.q} className="border-b border-white/5 pb-6 last:border-0">
-                    <h3 className="font-semibold text-white mb-2">{faq.q}</h3>
-                    <p className="text-sm text-white/40 leading-relaxed">{faq.a}</p>
+                  <div key={faq.q} className="border-b border-slate-100 pb-6 last:border-0">
+                    <h3 className="font-semibold text-slate-900 mb-2">{faq.q}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{faq.a}</p>
                   </div>
                 ))}
               </div>
@@ -179,24 +176,19 @@ export default function FAQPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 border-t border-white/5">
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-cyan-500/8 blur-[80px] rounded-full" />
-          </div>
-          <div className="relative">
-            <h2 className="text-2xl font-bold mb-3">Still have questions?</h2>
-            <p className="text-white/40 mb-8">
-              Start with the free plan — no credit card, no commitment.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-8 py-3.5 text-base font-semibold text-[#080c10] hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
-            >
-              Get started free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="py-24 bg-teal-700">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="text-2xl font-bold text-white mb-3">Still have questions?</h2>
+          <p className="text-teal-200 mb-8">
+            Start with the free plan — no credit card, no commitment.
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-bold text-teal-700 hover:bg-teal-50 transition-colors"
+          >
+            Get started free
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
