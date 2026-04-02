@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import { extractJobFromText } from "@/lib/ai/job-extractor";
 
+export const maxDuration = 60;
+
 async function fetchUrlText(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {

@@ -12,6 +12,9 @@
     "src/app/api/admin/sop-populate": {
       "maxDuration": 300
     },
+    "src/app/api/admin/non-ats-import": {
+      "maxDuration": 60
+    },
     "src/app/api/cron/send-outreach-emails": {
       "maxDuration": 60
     }
