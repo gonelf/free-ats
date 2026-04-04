@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { PublicNav, PublicFooter } from "@/components/public-layout";
 import { SignalDemoPreview } from "@/components/home/SignalDemoPreview";
-import { DemoModal } from "@/components/home/DemoModal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -121,7 +120,13 @@ export default async function HomePage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <DemoModal />
+                <Link
+                  href="/demo"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-7 py-3.5 text-base font-bold text-white hover:bg-teal-800 transition-all active:scale-95"
+                >
+                  Try a Demo Assessment
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
                 <Link
                   href="/signup"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-base font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-95"
