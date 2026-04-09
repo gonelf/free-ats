@@ -137,7 +137,16 @@ export async function POST(request: NextRequest) {
   };
 
   // Ask Gemini what to do (may return text or a tool call)
-  const decision = await getChatDecision(history, message, orgContext);
+  let decision: Awaited<ReturnType<typeof getChatDecision>>;
+  try {
+    decision = await getChatDecision(history, message, orgContext);
+  } catch (err) {
+    console.error("[chat] getChatDecision failed:", err);
+    return NextResponse.json(
+      { error: "AI service error. Please try again." },
+      { status: 500 }
+    );
+  }
 
   // Plain Q&A — no credits charged
   if (!decision.toolName) {
@@ -165,7 +174,7 @@ export async function POST(request: NextRequest) {
   // Execute the tool
   let toolResult: string;
   try {
-    toolResult = await executeToolCall(decision.toolName, decision.toolArgs ?? {});
+    toolResult = await executeToolCall(decision.toolName, decision.toolArgs ?? {}, org.id);
   } catch {
     return NextResponse.json({ error: "Action failed. Please try again." }, { status: 500 });
   }

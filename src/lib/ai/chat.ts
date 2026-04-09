@@ -8,6 +8,8 @@ import {
 import { draftEmail } from "@/lib/ai/email-drafter";
 import { AI_CREDIT_COSTS } from "@/lib/ai/credits";
 import { SchemaType, type FunctionDeclaration } from "@google/generative-ai";
+import { db } from "@/lib/db";
+import { slugify } from "@/lib/utils";
 
 export type GeminiChatMessage = {
   role: "user" | "model";
@@ -25,6 +27,7 @@ export interface OrgContext {
 // Credit cost for each tool action (maps to existing AI_CREDIT_COSTS keys)
 export const ACTION_CREDIT_COSTS: Record<string, number> = {
   generate_job_description: AI_CREDIT_COSTS["generate-job-description"], // 8
+  create_job_posting: AI_CREDIT_COSTS["generate-job-description"],       // 8
   draft_email: AI_CREDIT_COSTS["draft-email"],                           // 5
   suggest_interview_questions: AI_CREDIT_COSTS["suggest-questions"],     // 5
   suggest_salary_range: AI_CREDIT_COSTS["suggest-salary"],               // 3
@@ -36,11 +39,28 @@ export const chatToolDeclarations: FunctionDeclaration[] = [
   {
     name: "generate_job_description",
     description:
-      "Generate a complete job description for a given role. Use when the user asks to write, create, or draft a job description or job posting.",
+      "Generate a complete job description for a given role. Use when the user only wants to see or copy a job description, without saving it.",
     parameters: {
       type: SchemaType.OBJECT,
       properties: {
         title: { type: SchemaType.STRING, description: "Job title" },
+        context: {
+          type: SchemaType.STRING,
+          description: "Additional context about the role, team, or requirements",
+        },
+      },
+      required: ["title"],
+    },
+  },
+  {
+    name: "create_job_posting",
+    description:
+      "Generate a job description AND save it as a draft job posting in the ATS. Use when the user asks to create, add, post, or publish a job — any intent to actually save a job to the system.",
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        title: { type: SchemaType.STRING, description: "Job title" },
+        location: { type: SchemaType.STRING, description: "Job location (e.g. Remote, New York, NY)" },
         context: {
           type: SchemaType.STRING,
           description: "Additional context about the role, team, or requirements",
@@ -153,7 +173,7 @@ export async function getChatDecision(
 ): Promise<ChatDecision> {
   const chat = flashModel.startChat({
     history,
-    systemInstruction: buildSystemPrompt(ctx),
+    systemInstruction: { role: "user", parts: [{ text: buildSystemPrompt(ctx) }] },
     tools: [{ functionDeclarations: chatToolDeclarations }],
   });
 
@@ -171,13 +191,20 @@ export async function getChatDecision(
     }
   }
 
-  return { text: response.text() };
+  let text: string;
+  try {
+    text = response.text();
+  } catch {
+    text = "I couldn't generate a response. Please try again.";
+  }
+  return { text };
 }
 
 // Execute the tool and return a formatted markdown result
 export async function executeToolCall(
   toolName: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
+  orgId?: string
 ): Promise<string> {
   switch (toolName) {
     case "generate_job_description": {
@@ -245,6 +272,55 @@ export async function executeToolCall(
           : "No issues found.";
       const verdict = result.hasBias ? "⚠️ Issues found" : "✅ Looks inclusive";
       return `**Bias Check:** ${verdict} (score: ${result.score}/100)\n\n${issueList}`;
+    }
+
+    case "create_job_posting": {
+      if (!orgId) return "Unable to create job posting: no organization context.";
+
+      const result = await generateJobDescription(
+        args.title as string,
+        args.context as string | undefined
+      );
+
+      // Find default pipeline
+      const pipeline = await db.pipeline.findFirst({
+        where: { organizationId: orgId, isDefault: true },
+        select: { id: true },
+      });
+      if (!pipeline) return "Unable to create job posting: no default pipeline found.";
+
+      // Generate unique slug
+      const baseSlug = slugify(args.title as string);
+      let slug = baseSlug;
+      let counter = 1;
+      while (await db.job.findFirst({ where: { organizationId: orgId, slug } })) {
+        slug = `${baseSlug}-${counter++}`;
+      }
+
+      const salaryMin = result.salaryRange?.min ?? null;
+      const salaryMax = result.salaryRange?.max ?? null;
+
+      const job = await db.job.create({
+        data: {
+          organizationId: orgId,
+          title: args.title as string,
+          description: result.description,
+          requirements: result.requirements,
+          location: (args.location as string | undefined) ?? null,
+          salaryMin,
+          salaryMax,
+          slug,
+          pipelineId: pipeline.id,
+          status: "DRAFT",
+        },
+        select: { id: true },
+      });
+
+      const salaryLine = result.salaryRange
+        ? ` · ${result.salaryRange.currency} ${result.salaryRange.min.toLocaleString()}–${result.salaryRange.max.toLocaleString()}`
+        : "";
+
+      return `✅ **Job posting created as a draft!**\n\n**[${args.title} →](/jobs/${job.id})**${salaryLine}\n\nI've saved the full description and requirements. You can review and publish it from the [Jobs page](/jobs).`;
     }
 
     default:
